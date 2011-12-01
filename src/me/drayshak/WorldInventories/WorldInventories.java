@@ -1,17 +1,11 @@
 package me.drayshak.WorldInventories;
 
-import java.awt.Color;
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -66,6 +60,8 @@ public class WorldInventories extends JavaPlugin
         player.setFoodLevel(playerstats.getFoodLevel());
         player.setExhaustion(playerstats.getExhaustion());
         player.setSaturation(playerstats.getSaturation());
+        player.setLevel(playerstats.getLevel());
+        player.setExp(playerstats.getExp());
     }
     
     public void savePlayerInventory(String player, Group group, WIPlayerInventory toStore)
@@ -180,7 +176,7 @@ public class WorldInventories extends JavaPlugin
         catch (FileNotFoundException e)
         {
             WorldInventories.logError("Player " + player.getName() + " will get a new stats file on next save (clearing now).");
-            playerstats = new WIPlayerStats(20, 20, 0, 0);
+            playerstats = new WIPlayerStats(20, 20, 0, 0, 0, 0F);
             this.setPlayerStats(player, playerstats);
         }
         catch (Exception e)
@@ -226,7 +222,7 @@ public class WorldInventories extends JavaPlugin
     
     public void savePlayerStats(Player player, Group group)
     {
-        WIPlayerStats playerstats = new WIPlayerStats(player.getHealth(), player.getFoodLevel(), player.getExhaustion(), player.getSaturation());
+        WIPlayerStats playerstats = new WIPlayerStats(player.getHealth(), player.getFoodLevel(), player.getExhaustion(), player.getSaturation(), player.getLevel(), player.getExp());
  
         FileOutputStream fOS = null;
         ObjectOutputStream obOut = null;

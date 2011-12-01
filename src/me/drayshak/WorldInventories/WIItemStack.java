@@ -1,8 +1,10 @@
 package me.drayshak.WorldInventories;
 
 import java.io.Serializable;
+import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.material.MaterialData;
+import org.bukkit.enchantments.Enchantment;
 
 public class WIItemStack implements Serializable
 {
@@ -12,8 +14,11 @@ public class WIItemStack implements Serializable
     private WIMaterialData data = null;
     private short durability = 0; 
     
-    public WIItemStack(final int ttype, final int tamount, final short tdamage, final Byte tdata)
+    private Map< Enchantment, Integer > enchantments = null;
+    
+    public WIItemStack(final int ttype, final int tamount, final short tdamage, final Byte tdata, final Map< Enchantment, Integer > tenchantments)
     {
+        this.enchantments = tenchantments;
         this.type = ttype;
         this.amount = tamount;
         this.durability = tdamage;
@@ -51,5 +56,10 @@ public class WIItemStack implements Serializable
     public WIMaterialData getData()
     {
         return this.data;
+    }
+
+    public Map< Enchantment, Integer > getEnchantments()
+    {
+        return this.enchantments;
     }
 }

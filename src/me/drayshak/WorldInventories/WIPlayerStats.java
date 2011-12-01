@@ -8,14 +8,19 @@ public class WIPlayerStats implements Serializable
     private int health;
     private int foodlevel;
     private float exhausation;
-    private float saturation;    
+    private float saturation;
     
-    public WIPlayerStats(int health, int foodlevel, float exhaustion, float saturation)
+    private int level;
+    private float exp;
+    
+    public WIPlayerStats(int health, int foodlevel, float exhaustion, float saturation, int level, float exp)
     {
         this.health = health;
         this.foodlevel = foodlevel;
         this.exhausation = exhaustion;
         this.saturation = saturation;
+        this.level = level;
+        this.exp = exp;
     }
     
     public int getHealth()
@@ -56,5 +61,25 @@ public class WIPlayerStats implements Serializable
     public void setSaturation(float saturation)
     {
         this.saturation = saturation;
+    }
+    
+    public int getLevel()
+    {
+        return this.level;
+    }
+    
+    public void setLevel(int level)
+    {
+        this.level = level;
+    }
+    
+    public float getExp()
+    {
+        return this.exp;
+    }
+    
+    public void setExp(float exp)
+    {
+        this.exp = exp;
     }
 }

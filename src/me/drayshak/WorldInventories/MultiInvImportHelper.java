@@ -1,5 +1,8 @@
 package me.drayshak.WorldInventories;
 
+import java.util.HashMap;
+import org.bukkit.enchantments.Enchantment;
+
 public class MultiInvImportHelper
 {
     public static WIItemStack itemFromMIString(String sItem)
@@ -8,7 +11,7 @@ public class MultiInvImportHelper
         
         if (sSplit.length >= 4)
         {
-            return new WIItemStack(Integer.parseInt(sSplit[0]), Integer.parseInt(sSplit[1]), Short.parseShort(sSplit[3]), Byte.parseByte(sSplit[2]));
+            return new WIItemStack(Integer.parseInt(sSplit[0]), Integer.parseInt(sSplit[1]), Short.parseShort(sSplit[3]), Byte.parseByte(sSplit[2]), new HashMap<Enchantment, Integer>());
         }
         else
         {

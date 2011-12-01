@@ -30,9 +30,16 @@ public class WIPlayerInventory implements Serializable
             if(items[i] == null) playerItems[i] = null;
             else
             {
+                
                 MaterialData data = items[i].getData();
-                if(data == null)    playerItems[i] = new WIItemStack(items[i].getTypeId(), items[i].getAmount(), items[i].getDurability(), null);
-                else                playerItems[i] = new WIItemStack(items[i].getTypeId(), items[i].getAmount(), items[i].getDurability(), data.getData()); 
+                if(data == null)
+                {
+                    playerItems[i] = new WIItemStack(items[i].getTypeId(), items[i].getAmount(), items[i].getDurability(), null, items[i].getEnchantments());
+                }
+                else
+                {
+                    playerItems[i] = new WIItemStack(items[i].getTypeId(), items[i].getAmount(), items[i].getDurability(), data.getData(), items[i].getEnchantments());
+                } 
             }
         }        
     }
@@ -46,8 +53,8 @@ public class WIPlayerInventory implements Serializable
             else
             {
                 MaterialData data = items[i].getData();
-                if(data == null)    playerArmour[i] = new WIItemStack(items[i].getTypeId(), items[i].getAmount(), items[i].getDurability(), null);
-                else                playerArmour[i] = new WIItemStack(items[i].getTypeId(), items[i].getAmount(), items[i].getDurability(), data.getData()); 
+                if(data == null)    playerArmour[i] = new WIItemStack(items[i].getTypeId(), items[i].getAmount(), items[i].getDurability(), null, items[i].getEnchantments());
+                else                playerArmour[i] = new WIItemStack(items[i].getTypeId(), items[i].getAmount(), items[i].getDurability(), data.getData(), items[i].getEnchantments()); 
             }
         }        
     }
@@ -73,6 +80,8 @@ public class WIPlayerInventory implements Serializable
                 WIMaterialData data = playerItems[i].getData();
                 if(data == null) itemRet[i] = new ItemStack(playerItems[i].getTypeId(), playerItems[i].getAmount(), playerItems[i].getDurability(), null);
                 else             itemRet[i] = new ItemStack(playerItems[i].getTypeId(), playerItems[i].getAmount(), playerItems[i].getDurability(), data.getData());
+            
+                if(!playerItems[i].getEnchantments().isEmpty()) itemRet[i].addEnchantments(playerItems[i].getEnchantments());            
             }
         }
         
@@ -90,6 +99,8 @@ public class WIPlayerInventory implements Serializable
                 WIMaterialData data = playerArmour[i].getData();
                 if(data == null) itemRet[i] = new ItemStack(playerArmour[i].getTypeId(), playerArmour[i].getAmount(), playerArmour[i].getDurability(), null);
                 else             itemRet[i] = new ItemStack(playerArmour[i].getTypeId(), playerArmour[i].getAmount(), playerArmour[i].getDurability(), data.getData());
+            
+                if(!playerArmour[i].getEnchantments().isEmpty()) itemRet[i].addEnchantments(playerArmour[i].getEnchantments());
             }
         }
         
