@@ -43,6 +43,7 @@ public class WIItemStack implements Serializable
             
                 
             this.durability = tdata;
+            if(durability < 0) durability = 0;
         }
     }
     
