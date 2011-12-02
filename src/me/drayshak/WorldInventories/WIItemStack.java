@@ -1,6 +1,7 @@
 package me.drayshak.WorldInventories;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.material.MaterialData;
@@ -13,12 +14,17 @@ public class WIItemStack implements Serializable
     private int amount = 0;
     private WIMaterialData data = null;
     private short durability = 0; 
-    
-    private Map< Enchantment, Integer > enchantments = null;
+   
+    private Map< Integer, Integer > enchantments = null;
+    public boolean doenchantments = true;
     
     public WIItemStack(final int ttype, final int tamount, final short tdamage, final Byte tdata, final Map< Enchantment, Integer > tenchantments)
     {
-        this.enchantments = tenchantments;
+        for(Map.Entry<Enchantment, Integer> enchantment : tenchantments.entrySet())
+        {
+            enchantments.put(enchantment.getKey().getId(), enchantment.getValue());
+        }
+
         this.type = ttype;
         this.amount = tamount;
         this.durability = tdamage;
@@ -60,6 +66,13 @@ public class WIItemStack implements Serializable
 
     public Map< Enchantment, Integer > getEnchantments()
     {
-        return this.enchantments;
+        Map< Enchantment, Integer > ret = new HashMap<Enchantment, Integer>();
+        
+        for(Map.Entry<Integer, Integer> enchantment : enchantments.entrySet())
+        {
+            ret.put(Enchantment.getById(enchantment.getKey()), enchantment.getValue());
+        }
+        
+        return ret;
     }
 }

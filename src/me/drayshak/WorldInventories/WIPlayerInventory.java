@@ -81,7 +81,10 @@ public class WIPlayerInventory implements Serializable
                 if(data == null) itemRet[i] = new ItemStack(playerItems[i].getTypeId(), playerItems[i].getAmount(), playerItems[i].getDurability(), null);
                 else             itemRet[i] = new ItemStack(playerItems[i].getTypeId(), playerItems[i].getAmount(), playerItems[i].getDurability(), data.getData());
             
-                if(!playerItems[i].getEnchantments().isEmpty()) itemRet[i].addEnchantments(playerItems[i].getEnchantments());            
+                if(playerItems[i].doenchantments)
+                {
+                    if(!playerItems[i].getEnchantments().isEmpty()) itemRet[i].addEnchantments(playerItems[i].getEnchantments());            
+                }
             }
         }
         
@@ -99,8 +102,11 @@ public class WIPlayerInventory implements Serializable
                 WIMaterialData data = playerArmour[i].getData();
                 if(data == null) itemRet[i] = new ItemStack(playerArmour[i].getTypeId(), playerArmour[i].getAmount(), playerArmour[i].getDurability(), null);
                 else             itemRet[i] = new ItemStack(playerArmour[i].getTypeId(), playerArmour[i].getAmount(), playerArmour[i].getDurability(), data.getData());
-            
-                if(!playerArmour[i].getEnchantments().isEmpty()) itemRet[i].addEnchantments(playerArmour[i].getEnchantments());
+                
+                if(playerItems[i].doenchantments)
+                {            
+                    if(!playerArmour[i].getEnchantments().isEmpty()) itemRet[i].addEnchantments(playerArmour[i].getEnchantments());
+                }
             }
         }
         
