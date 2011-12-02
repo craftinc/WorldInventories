@@ -15,7 +15,7 @@ public class WIItemStack implements Serializable
     private WIMaterialData data = null;
     private short durability = 0; 
    
-    private Map< Integer, Integer > enchantments = null;
+    private Map< Integer, Integer > enchantments = new HashMap<Integer, Integer>();
     
     public WIItemStack(final int ttype, final int tamount, final short tdamage, final Byte tdata, final Map< Enchantment, Integer > tenchantments)
     {
