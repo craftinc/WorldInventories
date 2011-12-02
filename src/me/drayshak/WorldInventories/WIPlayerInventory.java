@@ -1,6 +1,8 @@
 package me.drayshak.WorldInventories;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
@@ -32,14 +34,17 @@ public class WIPlayerInventory implements Serializable
             {
                 
                 MaterialData data = items[i].getData();
-                if(data == null)
+                
+                try
                 {
-                    playerItems[i] = new WIItemStack(items[i].getTypeId(), items[i].getAmount(), items[i].getDurability(), null, items[i].getEnchantments());
+                    if(data == null)    playerItems[i] = new WIItemStack(items[i].getTypeId(), items[i].getAmount(), items[i].getDurability(), null, items[i].getEnchantments());
+                    else                playerItems[i] = new WIItemStack(items[i].getTypeId(), items[i].getAmount(), items[i].getDurability(), data.getData(), items[i].getEnchantments()); 
                 }
-                else
+                catch(NullPointerException e)
                 {
-                    playerItems[i] = new WIItemStack(items[i].getTypeId(), items[i].getAmount(), items[i].getDurability(), data.getData(), items[i].getEnchantments());
-                } 
+                    if(data == null)    playerItems[i] = new WIItemStack(items[i].getTypeId(), items[i].getAmount(), items[i].getDurability(), null, new HashMap<Enchantment, Integer>());
+                    else                playerItems[i] = new WIItemStack(items[i].getTypeId(), items[i].getAmount(), items[i].getDurability(), data.getData(), new HashMap<Enchantment, Integer>());                    
+                }
             }
         }        
     }
@@ -53,8 +58,17 @@ public class WIPlayerInventory implements Serializable
             else
             {
                 MaterialData data = items[i].getData();
-                if(data == null)    playerArmour[i] = new WIItemStack(items[i].getTypeId(), items[i].getAmount(), items[i].getDurability(), null, items[i].getEnchantments());
-                else                playerArmour[i] = new WIItemStack(items[i].getTypeId(), items[i].getAmount(), items[i].getDurability(), data.getData(), items[i].getEnchantments()); 
+                
+                try
+                {
+                    if(data == null)    playerArmour[i] = new WIItemStack(items[i].getTypeId(), items[i].getAmount(), items[i].getDurability(), null, items[i].getEnchantments());
+                    else                playerArmour[i] = new WIItemStack(items[i].getTypeId(), items[i].getAmount(), items[i].getDurability(), data.getData(), items[i].getEnchantments()); 
+                }
+                catch(NullPointerException e)
+                {
+                    if(data == null)    playerArmour[i] = new WIItemStack(items[i].getTypeId(), items[i].getAmount(), items[i].getDurability(), null, new HashMap<Enchantment, Integer>());
+                    else                playerArmour[i] = new WIItemStack(items[i].getTypeId(), items[i].getAmount(), items[i].getDurability(), data.getData(), new HashMap<Enchantment, Integer>());                    
+                }
             }
         }        
     }
