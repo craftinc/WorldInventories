@@ -285,7 +285,7 @@ public class WorldInventories extends JavaPlugin
             List<String> sWorlds = MIConfig.getStringList(sGroup, null);
             if(sWorlds != null)
             {
-                Group group = new Group(sGroup, sWorlds);
+                Group group = new Group(sGroup, sWorlds, false);
                 WorldInventories.groups.add(group); 
                 config.setProperty("groups." + sGroup, sWorlds);
             }
@@ -316,7 +316,7 @@ public class WorldInventories extends JavaPlugin
                     Group group = findFirstGroupForWorld(sWorld);
                     if(group == null)
                     {
-                        group = new Group(sWorld, Arrays.asList(sWorld));
+                        group = new Group(sWorld, Arrays.asList(sWorld), false);
                         WorldInventories.groups.add(group); 
                         config.setProperty("groups." + sWorld, Arrays.asList(sWorld));
                         config.save();
@@ -433,7 +433,7 @@ public class WorldInventories extends JavaPlugin
             List<String> worldnames = WorldInventories.config.getStringList("groups." + group, null);
             if(worldnames != null)
             {
-                WorldInventories.groups.add(new Group(group, worldnames));
+                WorldInventories.groups.add(new Group(group, worldnames, WorldInventories.config.getBoolean("groups." + group + ".dokeepinv", false)));
             }
         }
         
