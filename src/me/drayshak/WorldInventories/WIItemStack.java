@@ -16,7 +16,6 @@ public class WIItemStack implements Serializable
     private short durability = 0; 
    
     private Map< Integer, Integer > enchantments = null;
-    public boolean doenchantments = true;
     
     public WIItemStack(final int ttype, final int tamount, final short tdamage, final Byte tdata, final Map< Enchantment, Integer > tenchantments)
     {

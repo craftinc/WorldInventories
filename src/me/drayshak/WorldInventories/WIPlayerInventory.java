@@ -81,9 +81,13 @@ public class WIPlayerInventory implements Serializable
                 if(data == null) itemRet[i] = new ItemStack(playerItems[i].getTypeId(), playerItems[i].getAmount(), playerItems[i].getDurability(), null);
                 else             itemRet[i] = new ItemStack(playerItems[i].getTypeId(), playerItems[i].getAmount(), playerItems[i].getDurability(), data.getData());
             
-                if(playerItems[i].doenchantments)
+                try
                 {
                     if(!playerItems[i].getEnchantments().isEmpty()) itemRet[i].addEnchantments(playerItems[i].getEnchantments());            
+                }
+                catch(NullPointerException e)
+                {
+                    // Don't worry about it, no enchantments because it loaded an old style file
                 }
             }
         }
@@ -103,9 +107,13 @@ public class WIPlayerInventory implements Serializable
                 if(data == null) itemRet[i] = new ItemStack(playerArmour[i].getTypeId(), playerArmour[i].getAmount(), playerArmour[i].getDurability(), null);
                 else             itemRet[i] = new ItemStack(playerArmour[i].getTypeId(), playerArmour[i].getAmount(), playerArmour[i].getDurability(), data.getData());
                 
-                if(playerItems[i].doenchantments)
-                {            
+                try
+                {          
                     if(!playerArmour[i].getEnchantments().isEmpty()) itemRet[i].addEnchantments(playerArmour[i].getEnchantments());
+                }
+                catch(NullPointerException e)
+                {
+                    // Don't worry about it, no enchantments because it loaded an old style file
                 }
             }
         }
