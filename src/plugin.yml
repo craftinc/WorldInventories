@@ -1,6 +1,8 @@
 name: WorldInventories
 main: me.drayshak.WorldInventories.WorldInventories
-version: 0.0.14
+version: 0.0.15
+authors: drayshak
+description: Automatic inventory switching for groups of worlds
 commands:
   wireload:
     description: Reload WorldInventories configuration
