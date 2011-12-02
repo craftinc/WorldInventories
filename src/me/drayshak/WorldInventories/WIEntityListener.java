@@ -28,14 +28,25 @@ public class WIEntityListener extends EntityListener
             String togroupname = "default";
             if(togroup != null) togroupname = togroup.getName();               
             
-            WorldInventories.logStandard("Player " + player.getName() + " died in world " + world + ", emptying inventory for group: " + togroupname);
-            
-            if(togroup.doesKeepInventory())
+            boolean doKeepInventory = false;
+            try
             {
+                doKeepInventory = togroup.doesKeepInventory();
+            }
+            catch (NullPointerException e)
+            {
+                
+            }
+            
+            if(doKeepInventory)
+            {
+                WorldInventories.logStandard("Player " + player.getName() + " died in world " + world + ", set to keep inventory: " + togroupname);
                 event.getDrops().clear();
             }
             else
             {
+                WorldInventories.logStandard("Player " + player.getName() + " died in world " + world + ", emptying inventory for group: " + togroupname);
+                
                 // Make the saved inventory blank so players can't duplicate by switching worlds and picking items back up
                 plugin.savePlayerInventory(player.getName(), togroup, new WIPlayerInventory(new ItemStack[36], new ItemStack[4]));
             }
