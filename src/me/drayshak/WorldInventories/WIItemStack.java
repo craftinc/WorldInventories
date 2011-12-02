@@ -27,6 +27,9 @@ public class WIItemStack implements Serializable
         this.type = ttype;
         this.amount = tamount;
         this.durability = tdamage;
+        
+        if(durability < 0) durability = 0;
+        
         if (tdata != null)
         {
             Material tMat = Material.getMaterial(ttype);
