@@ -28,8 +28,6 @@ public class WIItemStack implements Serializable
         this.amount = tamount;
         this.durability = tdamage;
         
-        if(durability < 0) durability = 0;
-        
         if (tdata != null)
         {
             Material tMat = Material.getMaterial(ttype);
@@ -40,10 +38,8 @@ public class WIItemStack implements Serializable
                 final MaterialData mdata = tMat.getNewData(tdata);
                 this.data = new WIMaterialData(mdata.getItemTypeId(), mdata.getData());
             }                
-            
                 
             this.durability = tdata;
-            if(durability < 0) durability = 0;
         }
     }
     
