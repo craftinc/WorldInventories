@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
@@ -38,6 +39,8 @@ public class WorldInventories extends JavaPlugin
     public static boolean doNotifications = true;
     public static boolean doMultiInvImport = false;
     public static boolean doStats = false;
+    public static int saveInterval = 0;
+    public static Timer saveTimer = new Timer();
     
     public WIPlayerInventory getPlayerInventory(Player player)
     {
@@ -420,6 +423,14 @@ public class WorldInventories extends JavaPlugin
         }
         else doStats = btDoStats;         
         
+	Integer iSaveInterval = WorldInventories.config.getInt("saveinterval", 0);
+	if(iSaveInterval == null)
+	{
+	    bConfigChanged = true;
+	    config.setProperty("saveinterval", 0);
+	}
+	else saveInterval = iSaveInterval;
+	
         if(bConfigChanged) config.save();
     }
     
@@ -508,6 +519,11 @@ public class WorldInventories extends JavaPlugin
             WorldInventories.pluginManager.registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Normal, this);
             
             WorldInventories.logStandard("Initialised successfully!");
+	    
+	    if(saveInterval >= 30)
+	    {
+		saveTimer.scheduleAtFixedRate(new SaveTask(this), saveInterval * 1000, saveInterval * 1000);
+	    }
             
         }
         else WorldInventories.logError("Failed to initialise.");
