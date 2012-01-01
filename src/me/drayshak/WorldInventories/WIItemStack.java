@@ -43,7 +43,7 @@ public class WIItemStack implements Serializable
             
         }
 
-        if(this.durability <= 0) this.durability = 0;
+        if(this.durability <= 0) this.durability = Material.getMaterial(ttype).getMaxDurability();
     }
     
     public int getTypeId()
