@@ -39,7 +39,7 @@ public class WIItemStack implements Serializable
                 this.data = new WIMaterialData(mdata.getItemTypeId(), mdata.getData());
             }                
                 
-            this.durability = tdata;
+            if(tdata != 0) this.durability = tdata;
         }
     }
     
