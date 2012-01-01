@@ -14,7 +14,7 @@ public class SaveTask extends TimerTask
     
     public void run()
     {
-        WorldInventories.logStandard("Timer: saving player inventories.");
+        WorldInventories.logStandard("Timer: saving player inventories. New save due in " + WorldInventories.saveInterval + " seconds.");
         
         for(Player player : WorldInventories.bukkitServer.getOnlinePlayers())
         {
@@ -29,7 +29,7 @@ public class SaveTask extends TimerTask
             }
         }
         
-        WorldInventories.logStandard("Done - another save due in " + WorldInventories.saveInterval*1000 + " seconds.");
+        //WorldInventories.logStandard("Done - another save due in " + WorldInventories.saveInterval*1000 + " seconds.");
 
     }
 }
