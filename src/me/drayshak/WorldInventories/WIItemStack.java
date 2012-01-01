@@ -40,11 +40,10 @@ public class WIItemStack implements Serializable
             }                
                 
             this.durability = tdata;
+            
         }
-        else
-        {
-            if(this.durability <= 0) this.durability = 0;
-        }
+
+        if(this.durability <= 0) this.durability = 0;
     }
     
     public int getTypeId()
