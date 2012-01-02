@@ -97,7 +97,7 @@ public class WIPlayerInventory implements Serializable
             
                 try
                 {
-                    if(!playerItems[i].getEnchantments().isEmpty()) itemRet[i].addEnchantments(playerItems[i].getEnchantments());            
+                    if(!playerItems[i].getEnchantments().isEmpty()) itemRet[i].addUnsafeEnchantments(playerItems[i].getEnchantments());            
                 }
                 catch(NullPointerException e)
                 {
@@ -123,7 +123,7 @@ public class WIPlayerInventory implements Serializable
                 
                 try
                 {          
-                    if(!playerArmour[i].getEnchantments().isEmpty()) itemRet[i].addEnchantments(playerArmour[i].getEnchantments());
+                    if(!playerArmour[i].getEnchantments().isEmpty()) itemRet[i].addUnsafeEnchantments(playerArmour[i].getEnchantments());
                 }
                 catch(NullPointerException e)
                 {
