@@ -1,7 +1,7 @@
 name: WorldInventories
 main: me.drayshak.WorldInventories.WorldInventories
-version: 1.0.1a
-author: drayshak, dog.big, sylphio
+version: 1.0.2
+author: drayshak
 description: Automatic inventory switching for groups of worlds
 commands:
   wireload:
