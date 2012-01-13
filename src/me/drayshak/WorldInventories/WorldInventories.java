@@ -97,7 +97,7 @@ public class WorldInventories extends JavaPlugin
         catch (Exception e)
         {
             WorldInventories.logError("Failed to save inventory for player: " + player + ": " + e.getMessage());
-        }
+	}
     }
     
     public WIPlayerInventory loadPlayerInventory(Player player, Group group)
@@ -432,6 +432,11 @@ public class WorldInventories extends JavaPlugin
 	else saveInterval = iSaveInterval;
 	
         if(bConfigChanged) config.save();
+    }
+    
+    public List<Group> getGroups()
+    {
+	return groups;
     }
     
     private boolean loadConfiguration()
