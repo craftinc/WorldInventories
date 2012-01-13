@@ -35,12 +35,21 @@ public class WIItemStack implements Serializable
             if (tMat == null)   this.data = new WIMaterialData(ttype, tdata);
             else 
             {
-                final MaterialData mdata = tMat.getNewData(tdata);
-                this.data = new WIMaterialData(mdata.getItemTypeId(), mdata.getData());
+                if (tMat.getMaxDurability() > 0)
+                    this.data = null;
+                else
+                {    
+                     final MaterialData mdata = tMat.getNewData(tdata);
+                     this.data = new WIMaterialData(mdata.getItemTypeId(), mdata.getData());
+                }
             }                
                 
-            this.durability = tdata;
+            if (this.data != null)    
+                 this.durability = tdata;   
+            
         }
+
+        
     }
     
     public int getTypeId()
