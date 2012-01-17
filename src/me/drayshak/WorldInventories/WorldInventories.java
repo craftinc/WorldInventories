@@ -41,6 +41,7 @@ public class WorldInventories extends JavaPlugin
     public static boolean doStats = false;
     public static int saveInterval = 0;
     public static Timer saveTimer = new Timer();
+    public static boolean outputTimerToConsole = true;
     
     public WIPlayerInventory getPlayerInventory(Player player)
     {
@@ -430,6 +431,14 @@ public class WorldInventories extends JavaPlugin
 	    config.setProperty("saveinterval", 0);
 	}
 	else saveInterval = iSaveInterval;
+	
+	Boolean bOutputTimerToConsole = WorldInventories.config.getBoolean("outputtimertoconsole", true);
+	if(bOutputTimerToConsole == null)
+	{
+	    bConfigChanged = true;
+	    config.setProperty("outputtimertoconsole", true);
+	}
+	else outputTimerToConsole = bOutputTimerToConsole;
 	
         if(bConfigChanged) config.save();
     }
