@@ -13,12 +13,12 @@ public class MultiInvImportHelper
         if (sSplit.length >= 4)
         {
             int typeId = Integer.parseInt(sSplit[0]);
-        	   short durability = 0;
-        	   byte data = 0;
-        	   if(Material.getMaterial(typeId).getMaxDurability() > 0)
+            short durability = 0;
+            byte data = 0;
+            if(Material.getMaterial(typeId).getMaxDurability() > 0)
                 durability = Short.parseShort(sSplit[3]);
             else
-        	       data = Byte.parseByte(sSplit[3]);
+                data = Byte.parseByte(sSplit[3]);
             return new WIItemStack(typeId, Integer.parseInt(sSplit[1]), durability, data, new HashMap<Enchantment, Integer>());
         }
         else
