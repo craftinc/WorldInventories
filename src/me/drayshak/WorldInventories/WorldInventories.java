@@ -369,7 +369,17 @@ public class WorldInventories extends JavaPlugin
         
         getConfig().options().copyDefaults(true);
         
-        Set<String> worldgroups = getConfig().getConfigurationSection("groups").getKeys(false);
+        Set<String> worldgroups = null;
+        
+        try
+        {
+            worldgroups = getConfig().getConfigurationSection("groups").getKeys(false);
+        }
+        catch(NullPointerException e)
+        {
+            logStandard("No groups exist in the configuration, making them.");
+        }
+        
         if(worldgroups == null)
         {
             bConfigChanged = true;
