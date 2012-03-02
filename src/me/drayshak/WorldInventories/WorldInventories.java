@@ -1,15 +1,7 @@
 package me.drayshak.WorldInventories;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Timer;
+import java.io.*;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
@@ -17,25 +9,22 @@ import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.Event.Priority;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.config.Configuration;
 
 public class WorldInventories extends JavaPlugin
 {
     public static final Logger log = Logger.getLogger("Minecraft");
-    protected static Configuration config;
     public static PluginManager pluginManager = null;
     public static Server bukkitServer = null;
     public static ArrayList<Group> groups = null;
-    private final WIPlayerListener playerListener = new WIPlayerListener(this);
-    private final WIEntityListener entityListener = new WIEntityListener(this);
-    private final WIWorldListener worldListener = new WIWorldListener(this);
     public static boolean doNotifications = true;
     public static boolean doMultiInvImport = false;
     public static boolean doStats = false;
@@ -281,17 +270,16 @@ public class WorldInventories extends JavaPlugin
             return false;
         }
         
-        Configuration MIConfig = new Configuration(fMIConfig);
-        MIConfig.load();
+        FileConfiguration MIConfig = YamlConfiguration.loadConfiguration(fMIConfig);
         
-        for (String sGroup : MIConfig.getKeys())
+        for (String sGroup : MIConfig.getConfigurationSection("").getKeys(false))
         {
-            List<String> sWorlds = MIConfig.getStringList(sGroup, null);
+            List<String> sWorlds = MIConfig.getStringList(sGroup);
             if(sWorlds != null)
             {
                 Group group = new Group(sGroup, sWorlds, false);
                 WorldInventories.groups.add(group); 
-                config.setProperty("groups." + sGroup, sWorlds);
+                getConfig().set("groups." + sGroup, sWorlds);
             }
             else
             {
@@ -299,7 +287,7 @@ public class WorldInventories extends JavaPlugin
             }
         }                           
         
-        config.save();
+        this.saveConfig();
         
         ArrayList<String> sMIShares = new ArrayList(Arrays.asList(MISharesLocation.list()));
         
@@ -322,8 +310,8 @@ public class WorldInventories extends JavaPlugin
                     {
                         group = new Group(sWorld, Arrays.asList(sWorld), false);
                         WorldInventories.groups.add(group); 
-                        config.setProperty("groups." + sWorld, Arrays.asList(sWorld));
-                        config.save();
+                        getConfig().set("groups." + sWorld, Arrays.asList(sWorld));
+                        this.saveConfig();
 
                         WorldInventories.logError("A world was found that doesn't belong to any groups! It was saved as its own group. To put it in a group, edit the WorldInventories config.yml: " + sWorld);
                     }                       
@@ -337,8 +325,7 @@ public class WorldInventories extends JavaPlugin
                             String sFilename = shareFile.getName();
                             String playerName = sFilename.substring(0, sFilename.length() - 4);
                                 
-                            Configuration playerConfig = new Configuration(shareFile);
-                            playerConfig.load();
+                            Configuration playerConfig = YamlConfiguration.loadConfiguration(shareFile);
                             
                             String sPlayerInventory = playerConfig.getString("survival");
                             WIPlayerInventory playerInventory = MultiInvImportHelper.playerInventoryFromMIString(sPlayerInventory);
@@ -376,11 +363,13 @@ public class WorldInventories extends JavaPlugin
         log.log(Level.FINE, "[WorldInventories] " + line);
     }
     
-    private void createDefConfigIfNecessary()
+    private void loadConfigAndCreateDefaultsIfNecessary()
     {
         boolean bConfigChanged = false;
         
-        List<String> worldgroups = WorldInventories.config.getKeys("groups");
+        getConfig().options().copyDefaults(true);
+        
+        Set<String> worldgroups = getConfig().getConfigurationSection("groups").getKeys(false);
         if(worldgroups == null)
         {
             bConfigChanged = true;
@@ -389,58 +378,58 @@ public class WorldInventories extends JavaPlugin
             examplegroups.add("examplegroupone");
             examplegroups.add("examplegrouptwo");
             
-            config.setProperty("groups", examplegroups);
+            getConfig().set("groups", examplegroups);
             
             List<String> exampleworlds = Arrays.asList("exampleworldone", "exampleworldtwo");
             
-            config.setProperty("groups.exampleworldone", exampleworlds);
+            getConfig().set("groups.exampleworldone", exampleworlds);
             
             List<String> exampleworldstwo = Arrays.asList("exampleworldthree");
             
-            config.setProperty("groups.examplegrouptwo", exampleworldstwo);
+            getConfig().set("groups.examplegrouptwo", exampleworldstwo);
         }
         
-        Boolean btDoNotifications = WorldInventories.config.getBoolean("donotifications", true);
+        Boolean btDoNotifications = getConfig().getBoolean("donotifications", true);
         if(btDoNotifications == null)
         {
             bConfigChanged = true;
-            config.setProperty("donotifications", true);
+            getConfig().set("donotifications", true);
         }
         else doNotifications = btDoNotifications;
      
-        Boolean btDoMVImport = WorldInventories.config.getBoolean("domiimport", false);
+        Boolean btDoMVImport = getConfig().getBoolean("domiimport", false);
         if(btDoMVImport == null)
         {
             bConfigChanged = true;
-            config.setProperty("domiimport", false);
+            getConfig().set("domiimport", false);
         }
         else doMultiInvImport = btDoMVImport;    
         
-        Boolean btDoStats = WorldInventories.config.getBoolean("dostats", false);
+        Boolean btDoStats = getConfig().getBoolean("dostats", false);
         if(btDoStats == null)
         {
             bConfigChanged = true;
-            config.setProperty("dostats", false);
+            getConfig().set("dostats", false);
         }
         else doStats = btDoStats;         
         
-	Integer iSaveInterval = WorldInventories.config.getInt("saveinterval", 0);
+	Integer iSaveInterval = getConfig().getInt("saveinterval", 0);
 	if(iSaveInterval == null)
 	{
 	    bConfigChanged = true;
-	    config.setProperty("saveinterval", 0);
+	    getConfig().set("saveinterval", 0);
 	}
 	else saveInterval = iSaveInterval;
 	
-	Boolean bOutputTimerToConsole = WorldInventories.config.getBoolean("outputtimertoconsole", true);
+	Boolean bOutputTimerToConsole = getConfig().getBoolean("outputtimertoconsole", true);
 	if(bOutputTimerToConsole == null)
 	{
 	    bConfigChanged = true;
-	    config.setProperty("outputtimertoconsole", true);
+	    getConfig().set("outputtimertoconsole", true);
 	}
 	else outputTimerToConsole = bOutputTimerToConsole;
 	
-        if(bConfigChanged) config.save();
+        if(bConfigChanged) saveConfig();
     }
     
     public List<Group> getGroups()
@@ -452,13 +441,13 @@ public class WorldInventories extends JavaPlugin
     {
         WorldInventories.groups = new ArrayList<Group>();
         
-        List<String> nodes =  WorldInventories.config.getKeys("groups");
+        Set<String> nodes =  getConfig().getConfigurationSection("groups").getKeys(false);
         for(String group : nodes)
         {
-            List<String> worldnames = WorldInventories.config.getStringList("groups." + group, null);
+            List<String> worldnames = getConfig().getStringList("groups." + group);
             if(worldnames != null)
             {
-                WorldInventories.groups.add(new Group(group, worldnames, WorldInventories.config.getBoolean("groups." + group + ".dokeepinv", false)));
+                WorldInventories.groups.add(new Group(group, worldnames, getConfig().getBoolean("groups." + group + ".dokeepinv", false)));
             }
         }
         
@@ -491,11 +480,8 @@ public class WorldInventories extends JavaPlugin
         WorldInventories.bukkitServer = this.getServer();
         WorldInventories.pluginManager = WorldInventories.bukkitServer.getPluginManager();
         
-        config = this.getConfiguration();
-        config.load();
-        
         WorldInventories.logStandard("Loading configuration...");
-        this.createDefConfigIfNecessary();
+        this.loadConfigAndCreateDefaultsIfNecessary();
         
         boolean bConfiguration = this.loadConfiguration();
         
@@ -515,10 +501,8 @@ public class WorldInventories extends JavaPlugin
             {
                 boolean bSuccess = this.importMultiInvData();
 
-                
-
-                config.setProperty("domiimport", false);
-                config.save();
+                this.getConfig().set("domiimport", false);
+                this.saveConfig();
                 
                 if(bSuccess)
                 {
@@ -526,11 +510,9 @@ public class WorldInventories extends JavaPlugin
                 }
             }           
             
-            //WorldInventories.pluginManager.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
-            WorldInventories.pluginManager.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
-            WorldInventories.pluginManager.registerEvent(Event.Type.PLAYER_CHANGED_WORLD, playerListener, Priority.Normal, this);
-            WorldInventories.pluginManager.registerEvent(Event.Type.WORLD_SAVE, worldListener, Priority.Normal, this);
-            WorldInventories.pluginManager.registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Normal, this);
+            getServer().getPluginManager().registerEvents(new WIEntityListener(this), this);
+            getServer().getPluginManager().registerEvents(new WIPlayerListener(this), this);
+            getServer().getPluginManager().registerEvents(new WIWorldListener(this), this);
             
             WorldInventories.logStandard("Initialised successfully!");
 	    
@@ -574,11 +556,10 @@ public class WorldInventories extends JavaPlugin
             {
                 if(sender.hasPermission("worldinventories.reload"))
                 {
-                    config = this.getConfiguration();
-                    config.load();
+                    this.loadConfigAndCreateDefaultsIfNecessary();
 
                     WorldInventories.logStandard("Reloading configuration...");
-                    this.createDefConfigIfNecessary();
+                    this.loadConfigAndCreateDefaultsIfNecessary();
 
                     boolean bConfiguration = this.loadConfiguration();
 

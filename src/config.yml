@@ -7,3 +7,5 @@ groups:
 donotifications: true
 domiimport: false
 dostats: false
+outputtimertoconsole: true
+saveinterval: 0

@@ -2,20 +2,21 @@ package me.drayshak.WorldInventories;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityListener;
 import org.bukkit.inventory.ItemStack;
 
-public class WIEntityListener extends EntityListener
+public class WIEntityListener implements Listener
 {
-    private static WorldInventories plugin;
+    private final WorldInventories plugin;
     
-    public WIEntityListener(final WorldInventories tplugin)
+    WIEntityListener(final WorldInventories plugin)
     {
-        plugin = tplugin;
+       this.plugin = plugin;
     }
     
-    @Override
+    @EventHandler
     public void onEntityDeath(EntityDeathEvent event)
     {
         Entity entity = event.getEntity();
@@ -46,6 +47,7 @@ public class WIEntityListener extends EntityListener
             else
             {
                 WorldInventories.logStandard("Player " + player.getName() + " died in world " + world + ", emptying inventory for group: " + togroupname);
+                
                 
                 // Make the saved inventory blank so players can't duplicate by switching worlds and picking items back up
                 plugin.savePlayerInventory(player.getName(), togroup, new WIPlayerInventory(new ItemStack[36], new ItemStack[4]));

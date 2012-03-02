@@ -2,20 +2,21 @@ package me.drayshak.WorldInventories;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class WIPlayerListener extends PlayerListener
+public class WIPlayerListener implements Listener
 {
-    private static WorldInventories plugin;
- 
-    public WIPlayerListener(final WorldInventories tplugin)
+    private final WorldInventories plugin;
+    
+    WIPlayerListener(final WorldInventories plugin)
     {
-        plugin = tplugin;
+       this.plugin = plugin;
     }
     
-    @Override
+    @EventHandler
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event)
     {
         Player player = event.getPlayer();
@@ -61,7 +62,7 @@ public class WIPlayerListener extends PlayerListener
         }
     }
     
-    @Override
+    @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event)
     {
         Player player = event.getPlayer();

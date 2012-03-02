@@ -1,19 +1,20 @@
 package me.drayshak.WorldInventories;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.world.WorldListener;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldSaveEvent;
 
-public class WIWorldListener extends WorldListener
+public class WIWorldListener implements Listener
 {
-    private static WorldInventories plugin;
- 
-    public WIWorldListener(final WorldInventories tplugin)
+    private final WorldInventories plugin;
+    
+    WIWorldListener(final WorldInventories plugin)
     {
-        plugin = tplugin;
+       this.plugin = plugin;
     }
     
-    @Override
+    @EventHandler
     public void onWorldSave(WorldSaveEvent event)
     {
         WorldInventories.logStandard("Saving player inventories...");
