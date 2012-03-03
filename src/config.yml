@@ -1,11 +1,37 @@
+# A "group" is a collection of worlds which will share an inventory.
+#  In this example there are two groups, a creative and a survival group
+#  Each group has an overworld and a nether, which will share an inventory
+
+# Inventory switching examples
+# Scenarios when the inventory will not switch:
+#  creative_overworld to creative_nether
+#  survival_nether to survival_overworld
+#  survival_end to survival_overworld
+# Scenarios when the inventory will switch:
+#   creative_overworld to survival_end
+#   survival_nether to creative_nether
+
 groups:
-    examplegroupone:
-    - exampleworldtwo
-    examplegrouptwo:
-    - exampleworldtwo
-    - exampleworldthree
+    creativegroup:
+    - creative_overworld
+    - creative_nether
+    survivalgroup:
+    - survival_overworld
+    - survival_nether
+    - survival_end
+
+# If this is set to false you won't get inventory switching notifications in the console
 donotifications: true
+
+# Set this to true to make WorldInventories attempt to import MultiInv data
+#  Automatically sets itself to false when an attempt is made
 domiimport: false
+
+# Set to true to make hearts, food level, experience and such track with inventory
 dostats: false
+
+# If a save interval is specified below, set this to false to stop it from outputting to the console
 outputtimertoconsole: true
+
+# Set to anything above 30 to make inventories/stats save automatically every x seconds
 saveinterval: 0
