@@ -37,7 +37,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.1-R6</version>
+            <version>1.3.1-R0.1-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
     </dependencies>    
@@ -61,6 +61,7 @@
                 <directory>${basedir}/src</directory>
                 <includes>
                     <include>plugin.yml</include>
+                    <include>config.yml</include>
                 </includes>
             </resource>
         </resources>

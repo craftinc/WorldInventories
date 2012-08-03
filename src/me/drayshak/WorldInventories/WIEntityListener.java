@@ -53,7 +53,7 @@ public class WIEntityListener implements Listener
                 plugin.savePlayerInventory(player.getName(), togroup, new WIPlayerInventory(new ItemStack[36], new ItemStack[4]));
             }
             
-            if(WorldInventories.doStats)
+            if(plugin.getConfig().getBoolean("dostats"))
             {
                 plugin.savePlayerStats(player, togroup, new WIPlayerStats(20, 20, 0, 0, 0, 0F));
             }

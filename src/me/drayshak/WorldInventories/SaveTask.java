@@ -14,25 +14,11 @@ public class SaveTask extends TimerTask
     
     public void run()
     {
-        if(WorldInventories.outputTimerToConsole)
+        if(plugin.getConfig().getBoolean("outputtimertoconsole"))
 	{
-	    WorldInventories.logStandard("Timer: saving player inventories. New save due in " + WorldInventories.saveInterval + " seconds.");
+	    WorldInventories.logStandard("Timer: Saving player information. New save due in " + plugin.getConfig().getInt("saveinterval") + " seconds.");
 	}
         
-        for(Player player : WorldInventories.bukkitServer.getOnlinePlayers())
-        {
-            String world = player.getLocation().getWorld().getName();
-
-            Group tGroup = WorldInventories.findFirstGroupForWorld(world);
-
-            // Don't save if we don't care where we are (default group)
-            if(tGroup != null)
-            {    
-                plugin.savePlayerInventory(player.getName(), WorldInventories.findFirstGroupForWorld(world), plugin.getPlayerInventory(player));
-            }
-        }
-        
-        //WorldInventories.logStandard("Done - another save due in " + WorldInventories.saveInterval*1000 + " seconds.");
-
+        plugin.savePlayers();
     }
 }
