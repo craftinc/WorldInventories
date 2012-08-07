@@ -1,3 +1,9 @@
+## License
+
+This work is licensed under the BSD 2-Clause License, as outlined below.
+
+## BSD 2-Clause License
+
 Copyright (c) 2012, Skyler Welch
 All rights reserved.
 
