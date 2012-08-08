@@ -7,17 +7,17 @@ import org.bukkit.Material;
 import org.bukkit.material.MaterialData;
 import org.bukkit.enchantments.Enchantment;
 
-public class WIItemStack implements Serializable
+public class WIItemStackLegacy implements Serializable
 {
     private static final long serialVersionUID = -6239771143618730223L;
     private int type = 0;
     private int amount = 0;
-    private WIMaterialData data = null;
+    private WIMaterialDataLegacy data = null;
     private short durability = 0; 
    
     private Map< Integer, Integer > enchantments = new HashMap<Integer, Integer>();
     
-    public WIItemStack(final int ttype, final int tamount, final short tdamage, final Byte tdata, final Map< Enchantment, Integer > tenchantments)
+    public WIItemStackLegacy(final int ttype, final int tamount, final short tdamage, final Byte tdata, final Map< Enchantment, Integer > tenchantments)
     {
         for(Map.Entry<Enchantment, Integer> enchantment : tenchantments.entrySet())
         {
@@ -32,7 +32,7 @@ public class WIItemStack implements Serializable
         {
             Material tMat = Material.getMaterial(ttype);
 
-            if (tMat == null)   this.data = new WIMaterialData(ttype, tdata);
+            if (tMat == null)   this.data = new WIMaterialDataLegacy(ttype, tdata);
             else 
             {
                 if (tMat.getMaxDurability() > 0)
@@ -40,7 +40,7 @@ public class WIItemStack implements Serializable
                 else
                 {    
                      final MaterialData mdata = tMat.getNewData(tdata);
-                     this.data = new WIMaterialData(mdata.getItemTypeId(), mdata.getData());
+                     this.data = new WIMaterialDataLegacy(mdata.getItemTypeId(), mdata.getData());
                 }
             }                
                 
@@ -67,7 +67,7 @@ public class WIItemStack implements Serializable
         return this.durability;
     }
     
-    public WIMaterialData getData()
+    public WIMaterialDataLegacy getData()
     {
         return this.data;
     }

@@ -3,10 +3,11 @@ package me.drayshak.WorldInventories;
 import java.util.HashMap;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
 
 public class MultiInvImportHelper
 {
-    public static WIItemStack itemFromMIString(String sItem)
+    public static ItemStack itemFromMIString(String sItem)
     {
         String[] sSplit = sItem.split(",");
         
@@ -19,7 +20,10 @@ public class MultiInvImportHelper
                 durability = Short.parseShort(sSplit[3]);
             else
                 data = Byte.parseByte(sSplit[3]);
-            return new WIItemStack(typeId, Integer.parseInt(sSplit[1]), durability, data, new HashMap<Enchantment, Integer>());
+            
+            ItemStack itemret = new ItemStack(typeId, Integer.parseInt(sSplit[1]), durability, data);
+            itemret.addUnsafeEnchantments(new HashMap<Enchantment, Integer>());
+            return itemret;
         }
         else
         {
@@ -33,14 +37,14 @@ public class MultiInvImportHelper
         
         String[] sSplit = string.split(";-;");
         
-        WIItemStack[] playerItems = null;
-        WIItemStack[] playerArmour = null;
+        ItemStack[] playerItems = null;
+        ItemStack[] playerArmour = null;
         
         if (sSplit.length >= 3)
         {
             if (!sSplit[0].equals("!!!"))
             {
-                playerItems = new WIItemStack[36];
+                playerItems = new ItemStack[36];
                 
                 String[] itemsSplit = sSplit[0].split(";");
                 
@@ -53,7 +57,7 @@ public class MultiInvImportHelper
 
             if (!sSplit[1].equals("!!!"))
             {
-                playerArmour = new WIItemStack[4];
+                playerArmour = new ItemStack[4];
                 
                 String[] armourSplit = sSplit[1].split(";");
 

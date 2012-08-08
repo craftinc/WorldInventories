@@ -91,7 +91,7 @@ public class WorldInventories extends JavaPlugin {
             file.mkdir();
         }
 
-        path += File.separator + player + ".inventory";
+        path += File.separator + player + ".inventory.v2";
 
         try {
             fOS = new FileOutputStream(path);
@@ -125,7 +125,7 @@ public class WorldInventories extends JavaPlugin {
             file.mkdir();
         }
 
-        path += File.separator + player.getName() + ".inventory";
+        path += File.separator + player.getName() + ".inventory.v2";
 
         try {
             fIS = new FileInputStream(path);
