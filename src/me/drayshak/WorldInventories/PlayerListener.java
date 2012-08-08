@@ -78,6 +78,11 @@ public class PlayerListener implements Listener
         {    
             WorldInventories.logDebug("Saving inventory of " + player.getName());
             plugin.savePlayerInventory(player.getName(), tGroup, plugin.getPlayerInventory(player));
+            
+            if(plugin.getConfig().getBoolean("dostats"))
+            {
+                plugin.savePlayerStats(player, tGroup);
+            }
         }
     }
     
@@ -95,6 +100,11 @@ public class PlayerListener implements Listener
             
             WorldInventories.logDebug("Loading inventory of " + player.getName());
             plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player, tGroup));  
+            
+            if(plugin.getConfig().getBoolean("dostats"))
+            {
+                plugin.setPlayerStats(player, plugin.loadPlayerStats(player, tGroup));
+            }            
         }
     }
 }
