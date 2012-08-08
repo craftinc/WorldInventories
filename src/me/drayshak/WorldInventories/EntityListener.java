@@ -41,12 +41,12 @@ public class EntityListener implements Listener
             
             if(doKeepInventory)
             {
-                WorldInventories.logStandard("Player " + player.getName() + " died in world " + world + ", set to keep inventory: " + togroupname);
+                WorldInventories.logDebug("Player " + player.getName() + " died in world " + world + ", set to keep inventory: " + togroupname);
                 event.getDrops().clear();
             }
             else
             {
-                WorldInventories.logStandard("Player " + player.getName() + " died in world " + world + ", emptying inventory for group: " + togroupname);
+                WorldInventories.logDebug("Player " + player.getName() + " died in world " + world + ", emptying inventory for group: " + togroupname);
                 
                 
                 // Make the saved inventory blank so players can't duplicate by switching worlds and picking items back up

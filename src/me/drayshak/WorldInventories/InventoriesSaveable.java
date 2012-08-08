@@ -20,7 +20,7 @@ public class InventoriesSaveable implements Serializable
     
     public void setItemStack(int ID, ItemStack[] items)
     {
-        itemStacks.set(ID, InventoryHelper.formSerializedMap(items));
+        itemStacks.set(ID, ItemStackHelper.formSerializedMap(items));
     }
     
     public void setItemStackList(int ID, List<Map<String, Object>> items)
@@ -30,7 +30,7 @@ public class InventoriesSaveable implements Serializable
 
     public ItemStack[] getItemStack(int ID)
     {
-        return InventoryHelper.formDeserializedArray(itemStacks.get(ID));
+        return ItemStackHelper.formDeserializedArray(itemStacks.get(ID));
     }
     
     public List<Map<String, Object>> getItemStackList(int ID)

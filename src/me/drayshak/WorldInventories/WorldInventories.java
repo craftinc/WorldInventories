@@ -121,6 +121,113 @@ public class WorldInventories extends JavaPlugin
         }
     }
 
+   public void savePlayerEnderChest(String player, Group group, EnderChestHelper toStore)
+    {
+        FileOutputStream fOS = null;
+        ObjectOutputStream obOut = null;
+
+        if (!this.getDataFolder().exists())
+        {
+            this.getDataFolder().mkdir();
+        }
+
+        String path = File.separator;
+
+        // Use default group
+        if (group == null)
+        {
+            path += "default";
+        }
+        else
+        {
+            path += group.getName();
+        }
+
+        path = this.getDataFolder().getAbsolutePath() + path;
+
+        File file = new File(path);
+        if (!file.exists())
+        {
+            file.mkdir();
+        }
+
+        path += File.separator + player + ".enderchest." + fileVersion;
+
+        try
+        {
+            fOS = new FileOutputStream(path);
+            obOut = new ObjectOutputStream(fOS);
+            obOut.writeObject(toStore.getSerializable());
+            obOut.close();
+        }
+        catch (Exception e)
+        {
+            WorldInventories.logError("Failed to save Ender Chest for player: " + player + ": " + e.getMessage());
+        }
+    }    
+    
+    public EnderChestHelper loadPlayerEnderChest(String player, Group group)
+    {
+        InventoriesSaveable playerInventory = null;
+
+        FileInputStream fIS = null;
+        ObjectInputStream obIn = null;
+
+        String path = File.separator;
+
+        // Use default group
+        if (group == null)
+        {
+            path += "default";
+        }
+        else
+        {
+            path += group.getName();
+        }
+
+        path = this.getDataFolder().getAbsolutePath() + path;
+
+        File file = new File(path);
+        if (!file.exists())
+        {
+            file.mkdir();
+        }
+
+        path += File.separator + player + ".enderchest." + fileVersion;
+
+        try
+        {
+            fIS = new FileInputStream(path);
+            obIn = new ObjectInputStream(fIS);
+            playerInventory = (InventoriesSaveable) obIn.readObject();
+            obIn.close();
+            fIS.close();
+        }
+        catch (FileNotFoundException e)
+        {
+            ItemStack[] items = new ItemStack[27];
+            for (int i = 0; i < 27; i++)
+            {
+                items[i] = new ItemStack(Material.AIR);
+            }
+            
+            return new EnderChestHelper(items);
+        }
+        catch (Exception e)
+        {
+            WorldInventories.logDebug("Failed to load Ender Chest for player: " + player + ", showing empty inventory: " + e.getMessage());
+            ItemStack[] items = new ItemStack[27];
+            for (int i = 0; i < 27; i++)
+            {
+                items[i] = new ItemStack(Material.AIR);
+            }
+            
+            return new EnderChestHelper(items);            
+        }
+
+        return new EnderChestHelper(playerInventory);        
+    }
+    
     public PlayerInventoryHelper loadPlayerInventory(Player player, Group group)
     {
         InventoriesSaveable playerInventory = null;
@@ -533,6 +640,7 @@ public class WorldInventories extends JavaPlugin
 
             getServer().getPluginManager().registerEvents(new EntityListener(this), this);
             getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+            getServer().getPluginManager().registerEvents(new InventoryListener(this), this);
 
             WorldInventories.logStandard("Initialised successfully!");
 

@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -28,7 +29,7 @@ public class PlayerListener implements Listener
         
         if (!fromworld.equals(toworld))
         {
-            WorldInventories.logStandard("Player " + player.getName() + " moved from world " + fromworld + " to " + toworld);
+            WorldInventories.logDebug("Player " + player.getName() + " moved from world " + fromworld + " to " + toworld);
             
             Group fromgroup = WorldInventories.findFirstGroupForWorld(fromworld);
             Group togroup = WorldInventories.findFirstGroupForWorld(toworld);
@@ -92,6 +93,7 @@ public class PlayerListener implements Listener
     public void onPlayerQuit(PlayerQuitEvent event)
     {
         Player player = event.getPlayer();
+        
         String world = player.getLocation().getWorld().getName();
         
         WorldInventories.logDebug("Player " + player.getName() + " quit from world: " + world);
@@ -108,6 +110,12 @@ public class PlayerListener implements Listener
             {
                 plugin.savePlayerStats(player, tGroup);
             }
+        }
+        
+        // Save the Ender Chest contents
+        if(player.getOpenInventory().getType() == InventoryType.ENDER_CHEST)
+        {
+            plugin.savePlayerEnderChest(player.getName(), tGroup, new EnderChestHelper(player.getOpenInventory().getTopInventory().getContents()));
         }
     }
     
