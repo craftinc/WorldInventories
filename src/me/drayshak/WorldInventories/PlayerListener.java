@@ -10,11 +10,12 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerListener implements Listener
 {
+
     private final WorldInventories plugin;
     
     PlayerListener(final WorldInventories plugin)
     {
-       this.plugin = plugin;
+        this.plugin = plugin;
     }
     
     @EventHandler
@@ -25,7 +26,7 @@ public class PlayerListener implements Listener
         String fromworld = event.getFrom().getName();
         String toworld = player.getLocation().getWorld().getName();
         
-        if(!fromworld.equals(toworld))
+        if (!fromworld.equals(toworld))
         {
             WorldInventories.logStandard("Player " + player.getName() + " moved from world " + fromworld + " to " + toworld);
             
@@ -33,31 +34,55 @@ public class PlayerListener implements Listener
             Group togroup = WorldInventories.findFirstGroupForWorld(toworld);
             
             plugin.savePlayerInventory(player.getName(), fromgroup, plugin.getPlayerInventory(player));
-            if(plugin.getConfig().getBoolean("dostats")) plugin.savePlayerStats(player, fromgroup);
-      
+            if (plugin.getConfig().getBoolean("dostats"))
+            {
+                plugin.savePlayerStats(player, fromgroup);
+            }
+            
             String fromgroupname = "default";
-            if(fromgroup != null) fromgroupname = fromgroup.getName();             
+            if (fromgroup != null)
+            {
+                fromgroupname = fromgroup.getName();
+            }            
             
             String togroupname = "default";
-            if(togroup != null) togroupname = togroup.getName();            
-
-            if(!fromgroupname.equals(togroupname))
+            if (togroup != null)
+            {
+                togroupname = togroup.getName();
+            }            
+            
+            if (!fromgroupname.equals(togroupname))
             {
                 plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player, togroup));
-                if(plugin.getConfig().getBoolean("dostats")) plugin.setPlayerStats(player, plugin.loadPlayerStats(player, togroup));
-                
-                if(plugin.getConfig().getBoolean("donotifications"))
+                if (plugin.getConfig().getBoolean("dostats"))
                 {
-                    if(plugin.getConfig().getBoolean("dostats")) player.sendMessage(ChatColor.GREEN + "Changed player set to group: " + togroupname);
-                    else                         player.sendMessage(ChatColor.GREEN + "Changed inventory set to group: " + togroupname);
+                    plugin.setPlayerStats(player, plugin.loadPlayerStats(player, togroup));
+                }
+                
+                if (plugin.getConfig().getBoolean("donotifications"))
+                {
+                    if (plugin.getConfig().getBoolean("dostats"))
+                    {
+                        player.sendMessage(ChatColor.GREEN + "Changed player set to group: " + togroupname);
+                    }
+                    else
+                    {
+                        player.sendMessage(ChatColor.GREEN + "Changed inventory set to group: " + togroupname);
+                    }
                 }
             }
             else
             {
-                if(plugin.getConfig().getBoolean("donotifications"))
+                if (plugin.getConfig().getBoolean("donotifications"))
                 {
-                    if(plugin.getConfig().getBoolean("dostats"))    player.sendMessage(ChatColor.GREEN + "No player set change necessary for group: " + togroupname);
-                    else                            player.sendMessage(ChatColor.GREEN + "No inventory change necessary for group: " + togroupname);
+                    if (plugin.getConfig().getBoolean("dostats"))
+                    {
+                        player.sendMessage(ChatColor.GREEN + "No player set change necessary for group: " + togroupname);
+                    }
+                    else
+                    {
+                        player.sendMessage(ChatColor.GREEN + "No inventory change necessary for group: " + togroupname);
+                    }
                 }
             }
         }
@@ -72,14 +97,14 @@ public class PlayerListener implements Listener
         WorldInventories.logDebug("Player " + player.getName() + " quit from world: " + world);
         
         Group tGroup = WorldInventories.findFirstGroupForWorld(world);
-        
+
         // Don't save if we don't care where we are (default group)
-        if(tGroup != null)
-        {    
+        if (tGroup != null)
+        {            
             WorldInventories.logDebug("Saving inventory of " + player.getName());
             plugin.savePlayerInventory(player.getName(), tGroup, plugin.getPlayerInventory(player));
             
-            if(plugin.getConfig().getBoolean("dostats"))
+            if (plugin.getConfig().getBoolean("dostats"))
             {
                 plugin.savePlayerStats(player, tGroup);
             }
@@ -89,19 +114,19 @@ public class PlayerListener implements Listener
     @EventHandler
     public void onPlayerLogin(PlayerLoginEvent event)
     {
-        if(plugin.getConfig().getBoolean("loadinvonlogin"))
+        if (plugin.getConfig().getBoolean("loadinvonlogin"))
         {
             Player player = event.getPlayer();
             String world = player.getLocation().getWorld().getName();
-
+            
             WorldInventories.logDebug("Player " + player.getName() + " logged in to world: " + world);
-
+            
             Group tGroup = WorldInventories.findFirstGroupForWorld(world);
             
             WorldInventories.logDebug("Loading inventory of " + player.getName());
-            plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player, tGroup));  
+            plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player, tGroup));            
             
-            if(plugin.getConfig().getBoolean("dostats"))
+            if (plugin.getConfig().getBoolean("dostats"))
             {
                 plugin.setPlayerStats(player, plugin.loadPlayerStats(player, tGroup));
             }            
