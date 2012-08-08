@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.Material;
-import org.bukkit.material.MaterialData;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.material.MaterialData;
 
 public class WIItemStackLegacy implements Serializable
 {

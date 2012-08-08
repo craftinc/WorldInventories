@@ -2,7 +2,7 @@ package me.drayshak.WorldInventories;
 
 import java.io.Serializable;
 
-public class WIPlayerStats implements Serializable
+public class PlayerStats implements Serializable
 {
     private static final long serialVersionUID = 1L;
     private int health;
@@ -13,7 +13,7 @@ public class WIPlayerStats implements Serializable
     private int level;
     private float exp;
     
-    public WIPlayerStats(int health, int foodlevel, float exhaustion, float saturation, int level, float exp)
+    public PlayerStats(int health, int foodlevel, float exhaustion, float saturation, int level, float exp)
     {
         this.health = health;
         this.foodlevel = foodlevel;

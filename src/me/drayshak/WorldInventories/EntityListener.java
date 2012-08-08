@@ -7,11 +7,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class WIEntityListener implements Listener
+public class EntityListener implements Listener
 {
     private final WorldInventories plugin;
     
-    WIEntityListener(final WorldInventories plugin)
+    EntityListener(final WorldInventories plugin)
     {
        this.plugin = plugin;
     }
@@ -50,12 +50,12 @@ public class WIEntityListener implements Listener
                 
                 
                 // Make the saved inventory blank so players can't duplicate by switching worlds and picking items back up
-                plugin.savePlayerInventory(player.getName(), togroup, new WIPlayerInventory(new ItemStack[36], new ItemStack[4]));
+                plugin.savePlayerInventory(player.getName(), togroup, new PlayerInventoryHelper(new ItemStack[36], new ItemStack[4]));
             }
             
             if(plugin.getConfig().getBoolean("dostats"))
             {
-                plugin.savePlayerStats(player, togroup, new WIPlayerStats(20, 20, 0, 0, 0, 0F));
+                plugin.savePlayerStats(player, togroup, new PlayerStats(20, 20, 0, 0, 0, 0F));
             }
         }
     }

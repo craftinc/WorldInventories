@@ -1,7 +1,6 @@
 package me.drayshak.WorldInventories;
 
 import java.util.TimerTask;
-import org.bukkit.entity.Player;
 
 public class SaveTask extends TimerTask
 {
@@ -12,6 +11,7 @@ public class SaveTask extends TimerTask
 	this.plugin = plugin;
     }
     
+    @Override
     public void run()
     {
         if(plugin.getConfig().getBoolean("outputtimertoconsole"))

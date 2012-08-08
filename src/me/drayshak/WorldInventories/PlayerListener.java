@@ -5,13 +5,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class WIPlayerListener implements Listener
+public class PlayerListener implements Listener
 {
     private final WorldInventories plugin;
     
-    WIPlayerListener(final WorldInventories plugin)
+    PlayerListener(final WorldInventories plugin)
     {
        this.plugin = plugin;
     }
@@ -68,15 +69,32 @@ public class WIPlayerListener implements Listener
         Player player = event.getPlayer();
         String world = player.getLocation().getWorld().getName();
         
-        WorldInventories.logStandard("Player " + player.getName() + " quit from world: " + world);
+        WorldInventories.logDebug("Player " + player.getName() + " quit from world: " + world);
         
         Group tGroup = WorldInventories.findFirstGroupForWorld(world);
         
         // Don't save if we don't care where we are (default group)
         if(tGroup != null)
         {    
-            WorldInventories.logStandard("Saving inventory of " + player.getName());
-            plugin.savePlayerInventory(player.getName(), WorldInventories.findFirstGroupForWorld(world), plugin.getPlayerInventory(player));
+            WorldInventories.logDebug("Saving inventory of " + player.getName());
+            plugin.savePlayerInventory(player.getName(), tGroup, plugin.getPlayerInventory(player));
+        }
+    }
+    
+    @EventHandler
+    public void onPlayerLogin(PlayerLoginEvent event)
+    {
+        if(plugin.getConfig().getBoolean("loadinvonlogin"))
+        {
+            Player player = event.getPlayer();
+            String world = player.getLocation().getWorld().getName();
+
+            WorldInventories.logDebug("Player " + player.getName() + " logged in to world: " + world);
+
+            Group tGroup = WorldInventories.findFirstGroupForWorld(world);
+            
+            WorldInventories.logDebug("Loading inventory of " + player.getName());
+            plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player, tGroup));  
         }
     }
 }

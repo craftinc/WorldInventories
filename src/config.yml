@@ -17,6 +17,7 @@
 # Set "dostats" to true to make hearts, food level, experience and such track with inventory
 # If a save interval is specified, set "outputtimertoconsole" to false to stop it from outputting to the console
 # Set "saveinterval" to anything above 30 to make inventories/stats save automatically every x seconds
+# Set "loadinvonlogin" to true to make the plugin load the player's inventory on login no matter where they spawn
 
 groups:
     creativegroup:
@@ -32,3 +33,4 @@ domiimport: false
 dostats: false
 outputtimertoconsole: true
 saveinterval: 0
+loadinvonlogin: true
