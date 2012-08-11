@@ -41,7 +41,7 @@ public class WorldInventories extends JavaPlugin
         }
     }
 
-    public void setPlayerStats(Player player, PlayerStats playerstats)
+    public void setPlayerStats(Player player, WIPlayerStats playerstats)
     {
         // Never kill a player - must be a bug if it was 0
         player.setHealth(Math.max(playerstats.getHealth(), 1));
@@ -287,9 +287,9 @@ public class WorldInventories extends JavaPlugin
         return new PlayerInventoryHelper(playerInventory);
     }
 
-    public PlayerStats loadPlayerStats(Player player, Group group)
+    public WIPlayerStats loadPlayerStats(Player player, Group group)
     {
-        PlayerStats playerstats = null;
+        WIPlayerStats playerstats = null;
 
         FileInputStream fIS = null;
         ObjectInputStream obIn = null;
@@ -320,25 +320,25 @@ public class WorldInventories extends JavaPlugin
         {
             fIS = new FileInputStream(path);
             obIn = new ObjectInputStream(fIS);
-            playerstats = (PlayerStats) obIn.readObject();
+            playerstats = (WIPlayerStats) obIn.readObject();
             obIn.close();
             fIS.close();
         }
         catch (FileNotFoundException e)
         {
-            WorldInventories.logDebug("Player " + player.getName() + " will get a new stats file on next save (clearing now).");
-            playerstats = new PlayerStats(20, 20, 0, 0, 0, 0F);
+            WorldInventories.logStandard("Player " + player.getName() + " will get a new stats file on next save (clearing now).");
+            playerstats = new WIPlayerStats(20, 20, 0, 0, 0, 0F);
             this.setPlayerStats(player, playerstats);
         }
         catch (Exception e)
         {
-            WorldInventories.logDebug("Failed to load stats for player: " + player.getName() + ", giving defaults: " + e.getMessage());
+            WorldInventories.logStandard("Failed to load stats for player: " + player.getName() + ", giving defaults: " + e.getMessage());
         }
 
         return playerstats;
     }
 
-    public void savePlayerStats(Player player, Group group, PlayerStats playerstats)
+    public void savePlayerStats(Player player, Group group, WIPlayerStats playerstats)
     {
         FileOutputStream fOS = null;
         ObjectOutputStream obOut = null;
@@ -385,7 +385,7 @@ public class WorldInventories extends JavaPlugin
 
     public void savePlayerStats(Player player, Group group)
     {
-        PlayerStats playerstats = new PlayerStats(player.getHealth(), player.getFoodLevel(), player.getExhaustion(), player.getSaturation(), player.getLevel(), player.getExp());
+        WIPlayerStats playerstats = new WIPlayerStats(player.getHealth(), player.getFoodLevel(), player.getExhaustion(), player.getSaturation(), player.getLevel(), player.getExp());
 
         FileOutputStream fOS = null;
         ObjectOutputStream obOut = null;
@@ -531,6 +531,50 @@ public class WorldInventories extends JavaPlugin
 
         return true;
     }
+    
+    public boolean import78Data()
+    {
+        boolean allImported = true;
+        int groupsFound = 0;
+        int inventoriesFound = 0;
+        
+        WorldInventories.logStandard("Starting pre 78 build inventory import...");
+        
+        for(File fGroup : this.getDataFolder().listFiles())
+        {
+            if(fGroup.isDirectory() && fGroup.exists())
+            {
+                groupsFound++;
+                
+                for(File fInventory : new File(this.getDataFolder(), fGroup.getName()).listFiles())
+                {
+                    if(fInventory.isFile())
+                    {
+                        boolean is78Inventory = fInventory.getName().endsWith(".inventory");
+                        if(is78Inventory)
+                        {
+                            inventoriesFound++;
+                            
+                            WIPlayerInventory oldinventory = Import78Helper.load78PlayerInventory(fInventory);
+                            if(oldinventory == null)
+                            {
+                                WorldInventories.logError("Failed to convert " + fInventory.getName() + " in group " + fGroup.getName());
+                                allImported = false;
+                            }
+                            else
+                            {
+                                savePlayerInventory(fInventory.getName().split("\\.")[0], new Group(fGroup.getName(), null, false), new PlayerInventoryHelper(oldinventory.getItems(), oldinventory.getArmour()));
+                            }
+                        }
+                    }
+                }                
+            }            
+        }
+        
+        WorldInventories.logStandard("Attempted conversion of " + Integer.toString(groupsFound) + " groups and " + Integer.toString(inventoriesFound) + " associated inventories");
+        
+        return allImported;
+    }
 
     // NetBeans complains about these log lines but message formatting breaks for me
     public static void logStandard(String line)
@@ -635,6 +679,19 @@ public class WorldInventories extends JavaPlugin
                 if (bSuccess)
                 {
                     WorldInventories.logStandard("MultiInv data import was a success!");
+                }
+            }
+            
+            if(getConfig().getBoolean("do78import"))
+            {
+                boolean bSuccess = this.import78Data();
+                
+                this.getConfig().set("do78import", false);
+                this.saveConfig();
+                
+                if(bSuccess)
+                {
+                    WorldInventories.logStandard("Pre 78 build saves import was a success!");
                 }
             }
 
