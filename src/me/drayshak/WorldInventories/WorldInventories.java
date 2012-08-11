@@ -326,13 +326,13 @@ public class WorldInventories extends JavaPlugin
         }
         catch (FileNotFoundException e)
         {
-            WorldInventories.logStandard("Player " + player.getName() + " will get a new stats file on next save (clearing now).");
+            WorldInventories.logDebug("Player " + player.getName() + " will get a new stats file on next save (clearing now).");
             playerstats = new WIPlayerStats(20, 20, 0, 0, 0, 0F);
             this.setPlayerStats(player, playerstats);
         }
         catch (Exception e)
         {
-            WorldInventories.logStandard("Failed to load stats for player: " + player.getName() + ", giving defaults: " + e.getMessage());
+            WorldInventories.logDebug("Failed to load stats for player: " + player.getName() + ", giving defaults: " + e.getMessage());
         }
 
         return playerstats;
