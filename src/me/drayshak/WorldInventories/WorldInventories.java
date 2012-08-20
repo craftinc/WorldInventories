@@ -682,8 +682,13 @@ public class WorldInventories extends JavaPlugin
                 }
             }
             
-            if(getConfig().getBoolean("do78import"))
+            if(getConfig().getBoolean("do78import") || !getConfig().getBoolean("auto78updated"))
             {
+                if(!getConfig().getBoolean("auto78updated"))
+                {
+                    WorldInventories.logStandard("This appears to be the first time you've run WorldInventories after build 78, automatically trying to import pre-78 data.");
+                }
+                
                 boolean bSuccess = this.import78Data();
                 
                 this.getConfig().set("do78import", false);
@@ -692,6 +697,8 @@ public class WorldInventories extends JavaPlugin
                 if(bSuccess)
                 {
                     WorldInventories.logStandard("Pre 78 build saves import was a success!");
+                    getConfig().set("auto78updated", true);
+                    this.saveConfig();
                 }
             }
 
