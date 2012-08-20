@@ -706,6 +706,13 @@ public class WorldInventories extends JavaPlugin
             getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
             getServer().getPluginManager().registerEvents(new InventoryListener(this), this);
 
+            try {
+                Metrics metrics = new Metrics(this);
+                metrics.start();
+            } catch (IOException e) {
+                WorldInventories.logDebug("Failed to submit Metrics statistics.");
+            }            
+            
             WorldInventories.logStandard("Initialised successfully!");
 
             if (getConfig().getInt("saveinterval") >= 30)
