@@ -10,15 +10,15 @@ public class PlayerInventoryHelper extends InventoryHelper
     
     public PlayerInventoryHelper(ItemStack[] tPlayerItems, ItemStack[] tPlayerArmour)
     {
-        inventories = new InventoriesSaveable(ItemStackHelper.formSerializedMap(tPlayerItems), ItemStackHelper.formSerializedMap(tPlayerArmour));
+        inventories = new InventoriesLists(ItemStackHelper.formSerializedMap(tPlayerItems), ItemStackHelper.formSerializedMap(tPlayerArmour));
     }
  
     public PlayerInventoryHelper(List<Map<String, Object>> tPlayerItems, List<Map<String, Object>> tPlayerArmour)
     {
-        inventories = new InventoriesSaveable(tPlayerItems, tPlayerArmour);
+        inventories = new InventoriesLists(tPlayerItems, tPlayerArmour);
     }
     
-    public PlayerInventoryHelper(InventoriesSaveable inventories)
+    public PlayerInventoryHelper(InventoriesLists inventories)
     {
         this.inventories = inventories;
     }

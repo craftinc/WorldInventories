@@ -55,7 +55,7 @@ public class EntityListener implements Listener
             
             if(plugin.getConfig().getBoolean("dostats"))
             {
-                plugin.savePlayerStats(player, togroup, new WIPlayerStats(20, 20, 0, 0, 0, 0F));
+                plugin.savePlayerStats(player.getName(), togroup, new PlayerStats(20, 20, 0, 0, 0, 0F));
             }
         }
     }
