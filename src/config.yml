@@ -20,7 +20,10 @@
 # Set "loadinvonlogin" to true to make the plugin load the player's inventory on login no matter where they spawn
 # Set "do78import" to true to force a conversion of the pre build 78 files for use in newer versions
 #  Automatically resets itself to false on an attempt
+# Set "do141import" to true to force a conversion of the pre version 1.4.1 files for use in newer versions
+#  Automatically resets itself to false on an attempt
 # When this plugin loads it will automatically try to convert pre build 78 files and add "auto78updated: true" to this file if successful
+# When this plugin loads it will automatically try to convert pre version 1.4.1 files and add "auto141updated: true" to this file if successful
 
 groups:
     creativegroup:
@@ -38,3 +41,4 @@ outputtimertoconsole: true
 saveinterval: 0
 loadinvonlogin: true
 do78import: false
+do141import: false
