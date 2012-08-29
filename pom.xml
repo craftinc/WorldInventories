@@ -30,7 +30,11 @@
         <repository>
             <id>bukkit-repo</id>
             <url>http://repo.bukkit.org/content/groups/public</url>
-        </repository>      
+        </repository>
+        <repository>
+            <id>crafters-drayshak</id>
+            <url>http://crafte.rs/maven_repo</url>
+        </repository>
     </repositories> 
     
     <dependencies>
