@@ -22,7 +22,7 @@
     <!-- Continuous integration -->
     <ciManagement>
         <system>jenkins</system>
-        <url>http://ci.drayshak.co.uk</url>
+        <url>http://ci.crafte.rs</url>
     </ciManagement>    
     
     <!-- Repository locations -->
@@ -56,6 +56,11 @@
             <groupId>xpp3</groupId>
             <type>jar</type>
             <version>1.1.4c</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.co.tggl.pluckerpluck.multiinv</groupId>
+            <artifactId>MultiInv</artifactId>
+            <version>3.1.3</version>
         </dependency>
     </dependencies>        
     

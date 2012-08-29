@@ -4,10 +4,28 @@ import java.util.HashMap;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import uk.co.tggl.pluckerpluck.multiinv.inventory.MIItemStack;
 
 public class MultiInvImportHelper
 {
-
+    public static ItemStack[] MIItemStacktoItemStack(MIItemStack[] mitemstacks)
+    {
+        ItemStack[] itemstacks = new ItemStack[mitemstacks.length];
+        for(int i = 0; i < itemstacks.length; i++)
+        {
+            if(mitemstacks[i] == null)
+            {
+                itemstacks[i] = null;
+            }
+            else
+            {
+                itemstacks[i] = mitemstacks[i].getItemStack();
+            }
+        }
+        
+        return itemstacks;
+    }
+    
     public static ItemStack itemFromMIString(String sItem)
     {
         String[] sSplit = sItem.split(",");

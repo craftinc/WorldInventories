@@ -28,30 +28,12 @@ public class EntityListener implements Listener
             Group togroup = WorldInventories.findFirstGroupForWorld(world);
             String togroupname = "default";
             if(togroup != null) togroupname = togroup.getName();               
-            
-            boolean doKeepInventory = false;
-            try
-            {
-                doKeepInventory = togroup.doesKeepInventory();
-            }
-            catch (NullPointerException e)
-            {
-                
-            }
-            
-            if(doKeepInventory)
-            {
-                WorldInventories.logDebug("Player " + player.getName() + " died in world " + world + ", set to keep inventory: " + togroupname);
-                event.getDrops().clear();
-            }
-            else
-            {
-                WorldInventories.logDebug("Player " + player.getName() + " died in world " + world + ", emptying inventory for group: " + togroupname);
-                
-                
-                // Make the saved inventory blank so players can't duplicate by switching worlds and picking items back up
-                plugin.savePlayerInventory(player.getName(), togroup, new PlayerInventoryHelper(new ItemStack[36], new ItemStack[4]));
-            }
+
+            WorldInventories.logDebug("Player " + player.getName() + " died in world " + world + ", emptying inventory for group: " + togroupname);
+
+
+            // Make the saved inventory blank so players can't duplicate by switching worlds and picking items back up
+            plugin.savePlayerInventory(player.getName(), togroup, new PlayerInventoryHelper(new ItemStack[36], new ItemStack[4]));
             
             if(plugin.getConfig().getBoolean("dostats"))
             {

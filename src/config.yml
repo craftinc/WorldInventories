@@ -14,6 +14,7 @@
 # If "donotifications" is set to false you won't get inventory switching notifications in the console
 # Set "domiimport" to true to make WorldInventories attempt to import MultiInv data
 #  Automatically sets itself to false when an attempt is made
+# Set "miimportmode" to the integer identifier of the mode WI should import from (eg, 0 for MI survival)
 # Set "dostats" to true to make hearts, food level, experience and such track with inventory
 # If a save interval is specified, set "outputtimertoconsole" to false to stop it from outputting to the console
 # Set "saveinterval" to anything above 30 to make inventories/stats save automatically every x seconds
@@ -36,6 +37,7 @@ groups:
 
 donotifications: true
 domiimport: false
+miimportmode: 0
 dostats: false
 outputtimertoconsole: true
 saveinterval: 0

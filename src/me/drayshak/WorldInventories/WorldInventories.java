@@ -6,8 +6,11 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
@@ -18,6 +21,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import uk.co.tggl.pluckerpluck.multiinv.MultiInv;
+import uk.co.tggl.pluckerpluck.multiinv.MultiInvAPI;
+import uk.co.tggl.pluckerpluck.multiinv.inventory.MIInventory;
 
 public class WorldInventories extends JavaPlugin
 {
@@ -409,103 +415,74 @@ public class WorldInventories extends JavaPlugin
 
     public boolean importMultiInvData()
     {
+        int importedgroups = 0;
+        int importedinventories = 0;
+        
         Plugin pMultiInv = WorldInventories.pluginManager.getPlugin("MultiInv");
         if (pMultiInv == null)
         {
             WorldInventories.logError("Failed to import MultiInv shares - Bukkit couldn't find MultiInv. Make sure it is installed and enabled whilst doing the import, then when successful remove it.");
-        }
-
-        File MISharesLocation = new File(pMultiInv.getDataFolder(), "Worlds" + File.separator);
-        if (!MISharesLocation.exists())
-        {
-            WorldInventories.logError("Failed to import MultiInv shares - " + MISharesLocation.toString() + " doesn't seem to exist.");
             return false;
         }
+        
+        MultiInvAPI mapi = new MultiInvAPI((MultiInv) pMultiInv);
+        HashMap<String, String> mgroups = mapi.getGroups();
 
-        File fMIConfig = new File(WorldInventories.pluginManager.getPlugin("MultiInv").getDataFolder(), "shares.yml");
-        if (!fMIConfig.exists())
+        HashMap<String, Group> importgroups = new HashMap();
+        for (String group : mgroups.values())
         {
-            WorldInventories.logError("Failed to import MultiInv shares - shares file doesn't seem to exist.");
+            if(!importgroups.containsKey(group))
+            {
+                importgroups.put(group, new Group(group));
+                importedgroups++;
+            }
+        }
+        
+        for(Map.Entry<String, String> worldgroup : mgroups.entrySet())
+        {
+            String world = worldgroup.getKey();
+            String group = worldgroup.getValue();
+            
+            Group togroup = importgroups.get(group);
+            togroup.addWorld(world);
+        }
+        
+        if(importgroups.values().size() <= 0)
+        {
+            WorldInventories.logStandard("Didn't find any MultiInv groups to import!");
             return false;
         }
-
-        FileConfiguration MIConfig = YamlConfiguration.loadConfiguration(fMIConfig);
-
-        for (String sGroup : MIConfig.getConfigurationSection("").getKeys(false))
+        
+        getConfig().set("groups", null);
+        
+        for(Group group : importgroups.values())
         {
-            List<String> sWorlds = MIConfig.getStringList(sGroup);
-            if (sWorlds != null)
-            {
-                Group group = new Group(sGroup, sWorlds, false);
-                WorldInventories.groups.add(group);
-                getConfig().set("groups." + sGroup, sWorlds);
-            }
-            else
-            {
-                WorldInventories.logDebug("Skipping import of group because it is empty: " + sGroup);
-            }
+            getConfig().set("groups." + group.getName(), group.getWorlds());
         }
-
+        
+        groups.clear();
+        groups.addAll(importgroups.values());
+        
         this.saveConfig();
-
-        ArrayList<String> sMIShares = new ArrayList(Arrays.asList(MISharesLocation.list()));
-
-        if (sMIShares.size() <= 0)
+        
+        for(World world : this.getServer().getWorlds())
         {
-            WorldInventories.logError("Failed to import MultiInv shares - there weren't any shares found!");
-            return false;
-        }
-        else
-        {
-            for (int i = 0; i < sMIShares.size(); i++)
+            for (OfflinePlayer player : this.getServer().getOfflinePlayers())
             {
-                String sWorld = sMIShares.get(i);
-
-                File fWorld = new File(MISharesLocation, sWorld);
-                if (fWorld.isDirectory() && fWorld.exists())
+                MIInventory minventory = mapi.getPlayerInventory(player.getName(), world.getName(), GameMode.getByValue(getConfig().getInt("miimportmode", 0)));
+                if(minventory != null)
                 {
-                    Group group = findFirstGroupForWorld(sWorld);
-                    if (group == null)
-                    {
-                        group = new Group(sWorld, Arrays.asList(sWorld), false);
-                        WorldInventories.groups.add(group);
-                        getConfig().set("groups." + sWorld, Arrays.asList(sWorld));
-                        this.saveConfig();
-
-                        WorldInventories.logError("A world was found that doesn't belong to any groups! It was saved as its own group. To put it in a group, edit the WorldInventories config.yml: " + sWorld);
-                    }
-
-                    //List<String> sPlayer = Arrays.asList(fWorld.list());
-
-                    for (File shareFile : fWorld.listFiles())
-                    {
-                        if (shareFile.getAbsolutePath().endsWith(".yml"))
-                        {
-                            String sFilename = shareFile.getName();
-                            String playerName = sFilename.substring(0, sFilename.length() - 4);
-
-                            Configuration playerConfig = YamlConfiguration.loadConfiguration(shareFile);
-
-                            String sPlayerInventory = playerConfig.getString("survival");
-                            PlayerInventoryHelper playerInventory = MultiInvImportHelper.playerInventoryFromMIString(sPlayerInventory);
-                            if (playerInventory == null)
-                            {
-                                sPlayerInventory = playerConfig.getString("creative");
-                            }
-                            if (playerInventory == null)
-                            {
-                                logError("Failed to load MultiInv data - found player file but failed to convert it: " + playerName);
-                            }
-                            else
-                            {
-                                this.savePlayerInventory(playerName, group, playerInventory);
-                            }
-                        }
-                    }
+                    ItemStack[] armour = MultiInvImportHelper.MIItemStacktoItemStack(minventory.getArmorContents());
+                    ItemStack[] inventory = MultiInvImportHelper.MIItemStacktoItemStack(minventory.getInventoryContents());
+                    
+                    savePlayerInventory(player.getName(), findFirstGroupForWorld(world.getName()), new PlayerInventoryHelper(inventory, armour));
+                    importedinventories++;
                 }
             }
         }
 
+        WorldInventories.logStandard("Attempted to import " + Integer.toString(importedgroups) + " groups and " + Integer.toString(importedinventories) + " inventories from MultiInv.");
+        this.getServer().getPluginManager().disablePlugin((MultiInv)pMultiInv);
         return true;
     }
    
@@ -540,7 +517,7 @@ public class WorldInventories extends JavaPlugin
                             }
                             else
                             {
-                                savePlayerInventory(fInventory.getName().split("\\.")[0], new Group(fGroup.getName(), null, false), new PlayerInventoryHelper(oldinventory.getItems(), oldinventory.getArmour()));
+                                savePlayerInventory(fInventory.getName().split("\\.")[0], new Group(fGroup.getName()), new PlayerInventoryHelper(oldinventory.getItems(), oldinventory.getArmour()));
                             }
                         }
                     }
@@ -586,7 +563,7 @@ public class WorldInventories extends JavaPlugin
                             }
                             else
                             {
-                                savePlayerInventory(fFile.getName().split("\\.")[0], new Group(fGroup.getName(), null, false), oldinventory);
+                                savePlayerInventory(fFile.getName().split("\\.")[0], new Group(fGroup.getName()), oldinventory);
                             }
                         }
                         
@@ -603,7 +580,7 @@ public class WorldInventories extends JavaPlugin
                             }
                             else
                             {
-                                savePlayerEnderChest(fFile.getName().split("\\.")[0], new Group(fGroup.getName(), null, false), oldinventory);
+                                savePlayerEnderChest(fFile.getName().split("\\.")[0], new Group(fGroup.getName()), oldinventory);
                             }
                         }
                         
@@ -620,7 +597,7 @@ public class WorldInventories extends JavaPlugin
                             }
                             else
                             {
-                                savePlayerStats(fFile.getName().split("\\.")[0], new Group(fGroup.getName(), null, false), oldstats);
+                                savePlayerStats(fFile.getName().split("\\.")[0], new Group(fGroup.getName()), oldstats);
                             }
                         }                        
                     }
@@ -672,7 +649,7 @@ public class WorldInventories extends JavaPlugin
             List<String> worldnames = getConfig().getStringList("groups." + group);
             if (worldnames != null)
             {
-                WorldInventories.groups.add(new Group(group, worldnames, getConfig().getBoolean("groups." + group + ".dokeepinv", false)));
+                WorldInventories.groups.add(new Group(group, worldnames));
                 for (String world : worldnames)
                 {
                     WorldInventories.logDebug("Adding " + group + ":" + world);
