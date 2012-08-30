@@ -299,7 +299,7 @@ public class WorldInventories extends JavaPlugin
             file.mkdir();
         }
 
-        path += File.separator + player.getName() + ".stats.xml";
+        path += File.separator + player.getName() + ".stats." + fileVersion + ".xml";
 
         try
         {
