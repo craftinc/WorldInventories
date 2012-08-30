@@ -27,9 +27,15 @@ public class PlayerListener implements Listener
         String fromworld = event.getFrom().getName();
         String toworld = player.getLocation().getWorld().getName();
         
+        if(WorldInventories.exempts.contains(player.getName().toLowerCase()))
+        {
+            WorldInventories.logDebug("Ignoring exempt player world switch: " + player.getName());
+            return;
+        }           
+        
         if (!fromworld.equals(toworld))
         {
-            WorldInventories.logDebug("Player " + player.getName() + " moved from world " + fromworld + " to " + toworld);
+            WorldInventories.logDebug("Player " + player.getName() + " moved from world " + fromworld + " to " + toworld);            
             
             Group fromgroup = WorldInventories.findFirstGroupForWorld(fromworld);
             Group togroup = WorldInventories.findFirstGroupForWorld(toworld);
@@ -98,6 +104,12 @@ public class PlayerListener implements Listener
         
         WorldInventories.logDebug("Player " + player.getName() + " quit from world: " + world);
         
+        if(WorldInventories.exempts.contains(player.getName().toLowerCase()))
+        {
+            WorldInventories.logDebug("Ignoring exempt player logout: " + player.getName());
+            return;
+        }           
+        
         Group tGroup = WorldInventories.findFirstGroupForWorld(world);
 
         // Don't save if we don't care where we are (default group)
@@ -128,6 +140,12 @@ public class PlayerListener implements Listener
             String world = player.getLocation().getWorld().getName();
             
             WorldInventories.logDebug("Player " + player.getName() + " logged in to world: " + world);
+            
+            if(WorldInventories.exempts.contains(player.getName().toLowerCase()))
+            {
+                WorldInventories.logDebug("Ignoring exempt player login: " + player.getName());
+                return;
+            }            
             
             Group tGroup = WorldInventories.findFirstGroupForWorld(world);
             

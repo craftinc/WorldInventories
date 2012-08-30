@@ -27,6 +27,12 @@ public class InventoryListener implements Listener
             String player = event.getPlayer().getName();
             String world = event.getPlayer().getWorld().getName();
             
+            if(WorldInventories.exempts.contains(player.toLowerCase()))
+            {
+                WorldInventories.logDebug("Ignoring exempt player Ender Chest open: " + player);
+                return;
+            }
+            
             Group worldgroup = WorldInventories.findFirstGroupForWorld(world);
             
             WorldInventories.logDebug("Ender Chest opened by " + player + " in world " + world + ", group " + worldgroup);
@@ -44,6 +50,12 @@ public class InventoryListener implements Listener
         {
             String player = event.getPlayer().getName();
             String world = event.getPlayer().getWorld().getName();
+            
+            if(WorldInventories.exempts.contains(player.toLowerCase()))
+            {
+                WorldInventories.logDebug("Ignoring exempt player Ender Chest close: " + player);
+                return;
+            }            
             
             Group worldgroup = WorldInventories.findFirstGroupForWorld(world);
             

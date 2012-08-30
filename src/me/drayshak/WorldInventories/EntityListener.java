@@ -25,9 +25,18 @@ public class EntityListener implements Listener
             Player player = (Player)event.getEntity();
             String world = player.getWorld().getName();
             
+            if(WorldInventories.exempts.contains(player.getName().toLowerCase()))
+            {
+                WorldInventories.logDebug("Ignoring exempt player death: " + player.getName());
+                return;
+            }
+            
             Group togroup = WorldInventories.findFirstGroupForWorld(world);
             String togroupname = "default";
-            if(togroup != null) togroupname = togroup.getName();               
+            if(togroup != null)
+            {
+                togroupname = togroup.getName();
+            }               
 
             WorldInventories.logDebug("Player " + player.getName() + " died in world " + world + ", emptying inventory for group: " + togroupname);
 

@@ -13,9 +13,6 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -31,6 +28,7 @@ public class WorldInventories extends JavaPlugin
     public static PluginManager pluginManager = null;
     public static Server bukkitServer = null;
     public static ArrayList<Group> groups = null;
+    public static List<String> exempts = null;
     public static Timer saveTimer = new Timer();
     public static String fileVersion = "v4";
     private XStream xstream = new XStream();
@@ -622,9 +620,9 @@ public class WorldInventories extends JavaPlugin
 
     private void loadConfigAndCreateDefaultsIfNecessary()
     {
-        saveDefaultConfig();
+        //saveDefaultConfig();
 
-        //getConfig().options().copyDefaults(true);
+        getConfig().options().copyDefaults(true);
         saveConfig();
     }
 
@@ -651,6 +649,14 @@ public class WorldInventories extends JavaPlugin
             }
         }
 
+        WorldInventories.exempts = getConfig().getStringList("exempt");
+        for (String player : WorldInventories.exempts)
+        {
+            WorldInventories.logStandard("Adding " + player + " to exemption list");
+        }
+        
+        WorldInventories.logStandard("Loaded " + Integer.toString(exempts.size()) + " player exemptions.");
+        
         return true;
     }
 
@@ -802,6 +808,54 @@ public class WorldInventories extends JavaPlugin
             }
 
             return true;
+        }
+        else if (command.equalsIgnoreCase("wiexempt"))
+        {
+            if(sender.hasPermission("worldinventories.exempt"))
+            {
+                if(args.length != 2)
+                {
+                    sender.sendMessage(ChatColor.RED + "Wrong number of arguments given. Usage is /wiexempt <add/remove> <player>");
+                    return true;
+                }
+                
+                args[1] = args[1].toLowerCase();
+                
+                if(args[0].equalsIgnoreCase("add"))
+                {
+                    if(WorldInventories.exempts.contains(args[1]))
+                    {
+                        sender.sendMessage(ChatColor.RED + "That player is already in the exemption list.");
+                    }
+                    else
+                    {
+                        WorldInventories.exempts.add(args[1]);
+                        sender.sendMessage(ChatColor.GREEN + "Added " + args[1] + " to the exemption list successfully.");
+                        getConfig().set("exempt", WorldInventories.exempts);
+                        saveConfig();
+                    }
+                }
+                else if(args[0].equalsIgnoreCase("remove"))
+                {
+                    if(!WorldInventories.exempts.contains(args[1].toLowerCase()))
+                    {
+                        sender.sendMessage(ChatColor.RED + "That player isn't in the exemption list.");
+                    }
+                    else
+                    {
+                        WorldInventories.exempts.remove(args[1]);
+                        sender.sendMessage(ChatColor.GREEN + "Removed " + args[1] + " from the exemption list successfully.");
+                        getConfig().set("exempt", WorldInventories.exempts);
+                        saveConfig();
+                    }
+                }
+                else
+                {
+                    sender.sendMessage(ChatColor.RED + "Argument invalid. Usage is /wiexempt <add/remove> <player>");
+                }
+                
+                return true;
+            }
         }
 
         return false;
