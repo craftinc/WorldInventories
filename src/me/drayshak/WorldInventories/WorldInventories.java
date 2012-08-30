@@ -652,7 +652,7 @@ public class WorldInventories extends JavaPlugin
         WorldInventories.exempts = getConfig().getStringList("exempt");
         for (String player : WorldInventories.exempts)
         {
-            WorldInventories.logStandard("Adding " + player + " to exemption list");
+            WorldInventories.logDebug("Adding " + player + " to exemption list");
         }
         
         WorldInventories.logStandard("Loaded " + Integer.toString(exempts.size()) + " player exemptions.");
