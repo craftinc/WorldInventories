@@ -1,15 +1,20 @@
 name: WorldInventories
 main: me.drayshak.WorldInventories.WorldInventories
-version: 1.5.1
+version: 1.5.2
 author: drayshak
 description: Automatic inventory switching for groups of worlds
 commands:
   wireload:
     description: Reload WorldInventories configuration
     permission: worldinventories.reload
-    usage: No arguments, simply do /wireload. Default permissions are given to ops.
+    usage: /<command>
+  wiexempt:
+    description: Manage exempt players
+    permission: worldinventories.exempt
+    usage: /<command> [add/remove] [player]
 permissions:
   worldinventories.*:
     children:
       worldinventories.reload: true
+      worldinventories.exempt: true
     default: op
