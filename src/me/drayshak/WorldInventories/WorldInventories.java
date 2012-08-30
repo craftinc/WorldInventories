@@ -33,6 +33,7 @@ public class WorldInventories extends JavaPlugin
     public static ArrayList<Group> groups = null;
     public static Timer saveTimer = new Timer();
     public static String fileVersion = "v4";
+    private XStream xstream = new XStream();
 
     public PlayerInventoryHelper getPlayerInventory(Player player)
     {
@@ -114,7 +115,6 @@ public class WorldInventories extends JavaPlugin
 
         try
         {
-            XStream xstream = new XStream();
             xstream.toXML(toStore.inventories, new FileOutputStream(path));
         }        
         catch (Exception e)
@@ -156,7 +156,6 @@ public class WorldInventories extends JavaPlugin
 
         try
         {
-            XStream xstream = new XStream();
             xstream.toXML(toStore.inventories, new FileOutputStream(path));
         }        
         catch (Exception e)
@@ -195,7 +194,6 @@ public class WorldInventories extends JavaPlugin
 
         try
         {
-            XStream xstream = new XStream();
             playerInventory = (InventoriesLists) xstream.fromXML(new FileInputStream(path));
         }
         catch (FileNotFoundException e)
@@ -253,7 +251,6 @@ public class WorldInventories extends JavaPlugin
 
         try
         {
-            XStream xstream = new XStream();
             playerInventory = (InventoriesLists) xstream.fromXML(new FileInputStream(path));
         }
         catch (FileNotFoundException e)
@@ -308,7 +305,6 @@ public class WorldInventories extends JavaPlugin
 
         try
         {
-            XStream xstream = new XStream();
             playerstats = (PlayerStats) xstream.fromXML(new FileInputStream(path));
         }
         catch (FileNotFoundException e)
@@ -358,7 +354,6 @@ public class WorldInventories extends JavaPlugin
 
         try
         {
-            XStream xstream = new XStream();
             xstream.toXML(playerstats, new FileOutputStream(path));
         }    
         catch (Exception e)
@@ -402,7 +397,6 @@ public class WorldInventories extends JavaPlugin
 
         try
         {
-            XStream xstream = new XStream();
             xstream.toXML(playerstats, new FileOutputStream(path));
         }    
         catch (Exception e)
