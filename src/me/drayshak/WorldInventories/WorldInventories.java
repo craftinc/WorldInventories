@@ -697,19 +697,6 @@ public class WorldInventories extends JavaPlugin
 
         if (bInitialised)
         {
-            if (getConfig().getBoolean("domiimport"))
-            {
-                boolean bSuccess = this.importMultiInvData();
-
-                this.getConfig().set("domiimport", false);
-                this.saveConfig();
-
-                if (bSuccess)
-                {
-                    WorldInventories.logStandard("MultiInv data import was a success!");
-                }
-            }
-            
             if(getConfig().getBoolean("do78import") || !getConfig().getBoolean("auto78updated"))
             {
                 if(!getConfig().getBoolean("auto78updated"))
@@ -747,6 +734,19 @@ public class WorldInventories extends JavaPlugin
                     WorldInventories.logStandard("Pre 141 build saves import was a success!");
                     getConfig().set("auto141updated", true);
                     this.saveConfig();
+                }
+            }            
+            
+            if (getConfig().getBoolean("domiimport"))
+            {
+                boolean bSuccess = this.importMultiInvData();
+
+                this.getConfig().set("domiimport", false);
+                this.saveConfig();
+
+                if (bSuccess)
+                {
+                    WorldInventories.logStandard("MultiInv data import was a success!");
                 }
             }            
             
