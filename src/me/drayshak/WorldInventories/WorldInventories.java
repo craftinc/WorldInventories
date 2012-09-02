@@ -1,14 +1,22 @@
 package me.drayshak.WorldInventories;
 
 import com.thoughtworks.xstream.XStream;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.ItemInWorldManager;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.NBTTagCompound;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -17,9 +25,7 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.CraftOfflinePlayer;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -118,14 +124,23 @@ public class WorldInventories extends JavaPlugin
 
         path += File.separator + player + ".inventory." + fileVersion + ".xml";
 
+        FileOutputStream fOS = null;
         try
         {
-            xstream.toXML(toStore.inventories, new FileOutputStream(path));
+            fOS = new FileOutputStream(path);
+            xstream.toXML(toStore.inventories, fOS);
         }        
         catch (Exception e)
         {
             WorldInventories.logError("Failed to save inventory for player: " + player + ": " + e.getMessage());
         }
+        finally
+        {
+            if (fOS != null)
+            {
+                try { fOS.close(); } catch (IOException e) {}
+            }
+        }        
         
         WorldInventories.logDebug("Saved inventory for player: " + player + " " + path);
     }
@@ -159,13 +174,22 @@ public class WorldInventories extends JavaPlugin
 
         path += File.separator + player + ".enderchest." + fileVersion + ".xml";
 
+        FileOutputStream fOS = null;
         try
         {
-            xstream.toXML(toStore.inventories, new FileOutputStream(path));
+            fOS = new FileOutputStream(path);
+            xstream.toXML(toStore.inventories, fOS);
         }        
         catch (Exception e)
         {
             WorldInventories.logError("Failed to save Ender Chest for player: " + player + ": " + e.getMessage());
+        }
+        finally
+        {
+            if (fOS != null)
+            {
+                try { fOS.close(); } catch (IOException e) {}
+            }
         }
         
         WorldInventories.logDebug("Saved Ender Chest for player: " + player + " " + path);
@@ -197,9 +221,11 @@ public class WorldInventories extends JavaPlugin
 
         path += File.separator + player + ".enderchest." + fileVersion + ".xml";
 
+        FileInputStream fIS = null;
         try
         {
-            playerInventory = (InventoriesLists) xstream.fromXML(new FileInputStream(path));
+            fIS = new FileInputStream(path);
+            playerInventory = (InventoriesLists) xstream.fromXML(path);
         }
         catch (FileNotFoundException e)
         {
@@ -221,6 +247,13 @@ public class WorldInventories extends JavaPlugin
             }
             
             return new EnderChestHelper(items);            
+        }
+        finally
+        {
+            if (fIS != null)
+            {
+                try { fIS.close(); } catch (IOException e) {}
+            }
         }
 
         WorldInventories.logDebug("Loaded Ender Chest for player: " + player + " " + path);
@@ -254,9 +287,11 @@ public class WorldInventories extends JavaPlugin
 
         path += File.separator + player.getName() + ".inventory." + fileVersion + ".xml";
 
+        FileInputStream fIS = null;
         try
         {
-            playerInventory = (InventoriesLists) xstream.fromXML(new FileInputStream(path));
+            fIS = new FileInputStream(path);
+            playerInventory = (InventoriesLists) xstream.fromXML(fIS);
         }
         catch (FileNotFoundException e)
         {
@@ -275,6 +310,13 @@ public class WorldInventories extends JavaPlugin
         catch (Exception e)
         {
             WorldInventories.logDebug("Failed to load inventory for player: " + player.getName() + ", giving empty inventory: " + e.getMessage());
+        }
+        finally
+        {
+            if (fIS != null)
+            {
+                try { fIS.close(); } catch (IOException e) {}
+            }
         }
         
         WorldInventories.logDebug("Loaded inventory for player: " + player + " " + path);
@@ -308,9 +350,11 @@ public class WorldInventories extends JavaPlugin
 
         path += File.separator + player.getName() + ".stats." + fileVersion + ".xml";
 
+        FileInputStream fIS = null;
         try
         {
-            playerstats = (PlayerStats) xstream.fromXML(new FileInputStream(path));
+            fIS = new FileInputStream(path);
+            playerstats = (PlayerStats) xstream.fromXML(fIS);
         }
         catch (FileNotFoundException e)
         {
@@ -321,6 +365,13 @@ public class WorldInventories extends JavaPlugin
         catch (Exception e)
         {
             WorldInventories.logDebug("Failed to load stats for player: " + player.getName() + ", giving defaults: " + e.getMessage());
+        }
+        finally
+        {
+            if (fIS != null)
+            {
+                try { fIS.close(); } catch (IOException e) {}
+            }
         }
         
         WorldInventories.logDebug("Loaded stats for player: " + player + " " + path);
@@ -357,13 +408,22 @@ public class WorldInventories extends JavaPlugin
 
         path += File.separator + player + ".stats." + fileVersion + ".xml";
 
+        FileOutputStream fOS = null;
         try
         {
-            xstream.toXML(playerstats, new FileOutputStream(path));
+            fOS = new FileOutputStream(path);
+            xstream.toXML(playerstats, fOS);
         }    
         catch (Exception e)
         {
             WorldInventories.logError("Failed to save stats for player: " + player + ": " + e.getMessage());
+        }
+        finally
+        {
+            if (fOS != null)
+            {
+                try { fOS.close(); } catch (IOException e) {}
+            }
         }
         
         WorldInventories.logDebug("Saved stats for player: " + player + " " + path);
@@ -400,14 +460,23 @@ public class WorldInventories extends JavaPlugin
 
         path += File.separator + player.getName() + ".stats." + fileVersion + ".xml";
 
+        FileOutputStream fOS = null;
         try
         {
-            xstream.toXML(playerstats, new FileOutputStream(path));
+            fOS = new FileOutputStream(path);
+            xstream.toXML(playerstats, fOS);
         }    
         catch (Exception e)
         {
             WorldInventories.logError("Failed to save stats for player: " + player + ": " + e.getMessage());
         }
+        finally
+        {
+            if (fOS != null)
+            {
+                try { fOS.close(); } catch (IOException e) {}
+            }
+        }        
         
         WorldInventories.logDebug("Saved stats for player: " + player + " " + path);
     }
@@ -730,12 +799,10 @@ public class WorldInventories extends JavaPlugin
     {
         for (Group tGroup : WorldInventories.groups)
         {
-            for (String tWorld : tGroup.getWorlds())
+            int index = tGroup.getWorlds().indexOf(world);
+            if(index != -1)
             {
-                if (tWorld.equals(world))
-                {
-                    return tGroup;
-                }
+                return tGroup;
             }
         }
 
