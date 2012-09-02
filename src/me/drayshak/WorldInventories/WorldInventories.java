@@ -5,6 +5,10 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.minecraft.server.EntityPlayer;
+import net.minecraft.server.ItemInWorldManager;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.NBTTagCompound;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -13,6 +17,9 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.CraftOfflinePlayer;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -477,6 +484,65 @@ public class WorldInventories extends JavaPlugin
         this.getServer().getPluginManager().disablePlugin((MultiInv)pMultiInv);
         return true;
     }
+    
+    public boolean importVanilla()
+    {
+        int imported = 0;
+        int failed = 0;
+        
+        WorldInventories.logStandard("Starting vanilla players import...");
+        
+        Group group = findFirstGroupForWorld(getConfig().getString("vanillatogroup"));
+        if(group == null)
+        {
+            WorldInventories.logStandard("Warning: importing from vanilla in to the default group (does the group specified exist?)");
+        }
+        
+        OfflinePlayer[] offlineplayers = getServer().getOfflinePlayers();
+        final MinecraftServer server = ((CraftServer) getServer()).getServer();
+        
+        if(offlineplayers.length <= 0)
+        {
+            WorldInventories.logStandard("Found no offline players to import!");
+            return false;
+        }
+        
+        for(OfflinePlayer offlineplayer : offlineplayers)
+        {
+            final EntityPlayer entity = new EntityPlayer(server, server.getWorldServer(0), offlineplayer.getName(), new ItemInWorldManager(server.getWorldServer(0)));
+            if(entity == null)
+            {
+                WorldInventories.logStandard("Failed to import " + offlineplayer.getName() + ", couldn't create EntityPlayer.");
+            }
+            else
+            {
+                Player player = null;
+                try
+                {
+                    player = entity.getBukkitEntity();
+                    player.loadData();
+                }
+                catch(Exception e)
+                {
+                    WorldInventories.logStandard("Failed to import " + offlineplayer.getName() + ", couldn't load player data.");
+                    e.printStackTrace();
+                    
+                    failed++;
+                    continue;
+                }
+                
+                this.savePlayerStats(player, group);
+                this.savePlayerInventory(player.getName(), group, getPlayerInventory(player));            
+                //Possible when 1.3.2 Bukkit is released
+                //this.savePlayerEnderChest(player.getName(), group, new EnderChestHelper(((HumanEntity)player).getEnderChest()));
+                
+                imported++;
+            }
+        }
+        
+        WorldInventories.logStandard("Imported " + Integer.toString(imported) + "/" + Integer.toString(offlineplayers.length) + " (" + Integer.toString(failed) + " failures).");
+        return (failed <= 0);
+    }
    
     public boolean import78Data()
     {
@@ -703,6 +769,19 @@ public class WorldInventories extends JavaPlugin
 
         if (bInitialised)
         {
+            if(getConfig().getBoolean("dovanillaimport"))
+            {
+                boolean bSuccess = this.importVanilla();
+                
+                this.getConfig().set("dovanillaimport", false);
+                this.saveConfig();
+                
+                if(bSuccess)
+                {
+                    WorldInventories.logStandard("Vanilla saves import was a success!");
+                }                
+            }
+            
             if(getConfig().getBoolean("do78import") || !getConfig().getBoolean("auto78updated"))
             {
                 if(!getConfig().getBoolean("auto78updated"))
