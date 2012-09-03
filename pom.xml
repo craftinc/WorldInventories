@@ -33,7 +33,7 @@
         </repository>
         <repository>
             <id>crafters-drayshak</id>
-            <url>http://crafte.rs/maven_repo</url>
+            <url>http://drayshak.co.uk/maven_repo</url>
         </repository>
     </repositories> 
     
