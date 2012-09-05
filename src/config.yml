@@ -28,6 +28,8 @@
 #  Automatically resets itself to false on an attempt
 # When this plugin loads it will automatically try to convert pre build 78 files and add "auto78updated: true" to this file if successful
 # When this plugin loads it will automatically try to convert pre version 1.4.1 files and add "auto141updated: true" to this file if successful
+# Set "dovanillaimport" to true to attempt an import of the items and stats stored in players player.dat file
+#  Set "vanillatogroup" to the group you want to import to. If blank it will use the default group.
 
 groups:
     creativegroup:
@@ -51,3 +53,4 @@ saveinterval: 0
 loadinvonlogin: true
 do78import: false
 do141import: false
+dovanillaimport: false
