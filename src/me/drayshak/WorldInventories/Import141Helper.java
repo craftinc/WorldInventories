@@ -2,6 +2,7 @@ package me.drayshak.WorldInventories;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 
 public class Import141Helper
@@ -27,6 +28,17 @@ public class Import141Helper
             e.printStackTrace();
             return null;
         }
+        finally
+        {
+            if(obIn != null)
+            {
+                try { obIn.close(); } catch (IOException e) {}
+            }            
+            if (fIS != null)
+            {
+                try { fIS.close(); } catch (IOException e) {}
+            }
+        }          
 
         return new PlayerInventoryHelper(new InventoriesLists(playerInventory.getItemStacks()));
     }
@@ -52,6 +64,17 @@ public class Import141Helper
             e.printStackTrace();
             return null;
         }
+        finally
+        {
+            if(obIn != null)
+            {
+                try { obIn.close(); } catch (IOException e) {}
+            }            
+            if (fIS != null)
+            {
+                try { fIS.close(); } catch (IOException e) {}
+            }
+        }        
 
         return new EnderChestHelper(new InventoriesLists(playerInventory.getItemStacks()));
     }    
@@ -77,6 +100,17 @@ public class Import141Helper
             e.printStackTrace();
             return null;
         }
+        finally
+        {
+            if(obIn != null)
+            {
+                try { obIn.close(); } catch (IOException e) {}
+            }            
+            if (fIS != null)
+            {
+                try { fIS.close(); } catch (IOException e) {}
+            }
+        }          
         
         return new PlayerStats(oldstats.getHealth(), oldstats.getFoodLevel(), oldstats.getExhaustion(), oldstats.getSaturation(), oldstats.getLevel(), oldstats.getExp());
     }

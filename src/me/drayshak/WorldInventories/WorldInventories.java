@@ -221,25 +221,11 @@ public class WorldInventories extends JavaPlugin
 
         path += File.separator + player + ".enderchest." + fileVersion + ".xml";
 
-        FileInputStream fIS = null;
-        try
+        file = new File(path);
+        if(!file.exists())
         {
-            fIS = new FileInputStream(path);
-            playerInventory = (InventoriesLists) xstream.fromXML(path);
-        }
-        catch (FileNotFoundException e)
-        {
-            ItemStack[] items = new ItemStack[27];
-            for (int i = 0; i < 27; i++)
-            {
-                items[i] = new ItemStack(Material.AIR);
-            }
+            WorldInventories.logDebug("Making new Ender Chest for player: " + player);
             
-            return new EnderChestHelper(items);
-        }
-        catch (Exception e)
-        {
-            WorldInventories.logDebug("Failed to load Ender Chest for player: " + player + ", showing empty inventory: " + e.getMessage());
             ItemStack[] items = new ItemStack[27];
             for (int i = 0; i < 27; i++)
             {
@@ -248,12 +234,9 @@ public class WorldInventories extends JavaPlugin
             
             return new EnderChestHelper(items);            
         }
-        finally
+        else
         {
-            if (fIS != null)
-            {
-                try { fIS.close(); } catch (IOException e) {}
-            }
+            playerInventory = (InventoriesLists) xstream.fromXML(file);
         }
 
         WorldInventories.logDebug("Loaded Ender Chest for player: " + player + " " + path);
@@ -287,13 +270,8 @@ public class WorldInventories extends JavaPlugin
 
         path += File.separator + player.getName() + ".inventory." + fileVersion + ".xml";
 
-        FileInputStream fIS = null;
-        try
-        {
-            fIS = new FileInputStream(path);
-            playerInventory = (InventoriesLists) xstream.fromXML(fIS);
-        }
-        catch (FileNotFoundException e)
+        file = new File(path);
+        if(!file.exists())
         {
             WorldInventories.logDebug("Player " + player.getName() + " will get a new item file on next save (clearing now).");
             player.getInventory().clear();
@@ -305,18 +283,11 @@ public class WorldInventories extends JavaPlugin
 
             player.getInventory().setArmorContents(armour);
             
-            return new PlayerInventoryHelper(player.getInventory().getContents(), player.getInventory().getArmorContents());
+            return new PlayerInventoryHelper(player.getInventory().getContents(), player.getInventory().getArmorContents());               
         }
-        catch (Exception e)
+        else
         {
-            WorldInventories.logDebug("Failed to load inventory for player: " + player.getName() + ", giving empty inventory: " + e.getMessage());
-        }
-        finally
-        {
-            if (fIS != null)
-            {
-                try { fIS.close(); } catch (IOException e) {}
-            }
+            playerInventory = (InventoriesLists) xstream.fromXML(file);         
         }
         
         WorldInventories.logDebug("Loaded inventory for player: " + player + " " + path);
@@ -350,28 +321,16 @@ public class WorldInventories extends JavaPlugin
 
         path += File.separator + player.getName() + ".stats." + fileVersion + ".xml";
 
-        FileInputStream fIS = null;
-        try
-        {
-            fIS = new FileInputStream(path);
-            playerstats = (PlayerStats) xstream.fromXML(fIS);
-        }
-        catch (FileNotFoundException e)
+        file = new File(path);
+        if(!file.exists())
         {
             WorldInventories.logDebug("Player " + player.getName() + " will get a new stats file on next save (clearing now).");
             playerstats = new PlayerStats(20, 20, 0, 0, 0, 0F);
-            this.setPlayerStats(player, playerstats);
+            this.setPlayerStats(player, playerstats);            
         }
-        catch (Exception e)
+        else
         {
-            WorldInventories.logDebug("Failed to load stats for player: " + player.getName() + ", giving defaults: " + e.getMessage());
-        }
-        finally
-        {
-            if (fIS != null)
-            {
-                try { fIS.close(); } catch (IOException e) {}
-            }
+            playerstats = (PlayerStats) xstream.fromXML(file);
         }
         
         WorldInventories.logDebug("Loaded stats for player: " + player + " " + path);
