@@ -140,7 +140,13 @@
                                     <excludes>
                                         <exclude>**</exclude>
                                     </excludes>
-                                </filter>                                
+                                </filter>
+                                <filter>
+                                    <artifact>uk.co.tggl.pluckerpluck.multiinv:MultiInv</artifact>
+                                    <excludes>
+                                        <exclude>**</exclude>
+                                    </excludes>
+                                </filter>             
                                 <filter>
                                     <artifact>com.thoughtworks.xstream</artifact>
                                     <includes>
