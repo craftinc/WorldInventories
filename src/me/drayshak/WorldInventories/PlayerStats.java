@@ -13,7 +13,7 @@ public class PlayerStats
     private int level;
     private float exp;
     
-    Collection<PotionEffect> potioneffects;
+    private Collection<PotionEffect> potioneffects;
     
     public PlayerStats(int health, int foodlevel, float exhaustion, float saturation, int level, float exp, Collection<PotionEffect> potioneffects)
     {

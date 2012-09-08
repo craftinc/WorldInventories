@@ -1,9 +1,8 @@
 package me.drayshak.WorldInventories;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.mapper.MapperWrapper;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,7 +45,28 @@ public class WorldInventories extends JavaPlugin
     public static List<String> exempts = null;
     public static Timer saveTimer = new Timer();
     public static String fileVersion = "v4";
-    private XStream xstream = new XStream();
+    private XStream xstream = new XStream()
+    {
+        // Taken from XStream test class
+        //  Ignores and wipes any unrecognised fields instead of throwing an exception
+        @Override
+        protected MapperWrapper wrapMapper(MapperWrapper next)
+        {
+            return new MapperWrapper(next)
+            {
+                @Override
+                public boolean shouldSerializeMember(Class definedIn, String fieldName)
+                {
+                    if (definedIn == Object.class)
+                    {
+                        return false;
+                    }
+                    
+                    return super.shouldSerializeMember(definedIn, fieldName);
+                }
+            };
+        }
+    };
 
     public PlayerInventoryHelper getPlayerInventory(Player player)
     {
@@ -786,6 +806,11 @@ public class WorldInventories extends JavaPlugin
     {
         WorldInventories.logStandard("Initialising...");
 
+        xstream.alias("potioneffecttype", org.bukkit.craftbukkit.potion.CraftPotionEffectType.class);
+        xstream.alias("playerstats", me.drayshak.WorldInventories.PlayerStats.class);
+        xstream.alias("inventorieslists", me.drayshak.WorldInventories.InventoriesLists.class);
+        xstream.alias("potioneffect", org.bukkit.potion.PotionEffect.class);
+        
         boolean bInitialised = true;
 
         WorldInventories.bukkitServer = this.getServer();
