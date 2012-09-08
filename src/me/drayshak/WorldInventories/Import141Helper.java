@@ -112,6 +112,6 @@ public class Import141Helper
             }
         }          
         
-        return new PlayerStats(oldstats.getHealth(), oldstats.getFoodLevel(), oldstats.getExhaustion(), oldstats.getSaturation(), oldstats.getLevel(), oldstats.getExp());
+        return new PlayerStats(oldstats.getHealth(), oldstats.getFoodLevel(), oldstats.getExhaustion(), oldstats.getSaturation(), oldstats.getLevel(), oldstats.getExp(), null);
     }
 }

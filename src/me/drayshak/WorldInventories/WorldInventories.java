@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
 import uk.co.tggl.pluckerpluck.multiinv.MultiInv;
 import uk.co.tggl.pluckerpluck.multiinv.MultiInvAPI;
 import uk.co.tggl.pluckerpluck.multiinv.inventory.MIInventory;
@@ -69,6 +71,17 @@ public class WorldInventories extends JavaPlugin
         player.setSaturation(playerstats.getSaturation());
         player.setLevel(playerstats.getLevel());
         player.setExp(playerstats.getExp());
+        
+	for (PotionEffect effect : player.getActivePotionEffects())
+        {
+            player.removePotionEffect(effect.getType());
+        }
+        
+        Collection<PotionEffect> potioneffects = playerstats.getPotionEffects();
+        if(potioneffects != null)
+        {
+            player.addPotionEffects(playerstats.getPotionEffects());
+        }
     }
 
     public void savePlayers()
@@ -325,7 +338,7 @@ public class WorldInventories extends JavaPlugin
         if(!file.exists())
         {
             WorldInventories.logDebug("Player " + player.getName() + " will get a new stats file on next save (clearing now).");
-            playerstats = new PlayerStats(20, 20, 0, 0, 0, 0F);
+            playerstats = new PlayerStats(20, 20, 0, 0, 0, 0F, null);
             this.setPlayerStats(player, playerstats);            
         }
         else
@@ -390,7 +403,7 @@ public class WorldInventories extends JavaPlugin
 
     public void savePlayerStats(Player player, Group group)
     {
-        PlayerStats playerstats = new PlayerStats(player.getHealth(), player.getFoodLevel(), player.getExhaustion(), player.getSaturation(), player.getLevel(), player.getExp());
+        PlayerStats playerstats = new PlayerStats(player.getHealth(), player.getFoodLevel(), player.getExhaustion(), player.getSaturation(), player.getLevel(), player.getExp(), player.getActivePotionEffects());
         
         if (!this.getDataFolder().exists())
         {
