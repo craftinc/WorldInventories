@@ -3,6 +3,7 @@ package me.drayshak.WorldInventories;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -745,12 +747,27 @@ public class WorldInventories extends JavaPlugin
         log.log(Level.FINE, "[WorldInventories] " + line);
     }
 
-    private void loadConfigAndCreateDefaultsIfNecessary()
+    private boolean loadConfigAndCreateDefaultsIfNecessary()
     {
         //saveDefaultConfig();
 
+        try
+        {
+            YamlConfiguration config = new YamlConfiguration();
+            config.load(new File(this.getDataFolder().getPath() + File.separator + "config.yml"));            
+        }
+        catch(FileNotFoundException e) { }
+        catch(Exception e)
+        {
+            WorldInventories.logError("Failed to load configuration: " + e.getMessage());
+
+            return false;
+        }
+        
         getConfig().options().copyDefaults(true);
         saveConfig();
+        
+        return true;        
     }
 
     public List<Group> getGroups()
@@ -762,17 +779,21 @@ public class WorldInventories extends JavaPlugin
     {
         WorldInventories.groups = new ArrayList<Group>();
 
+        String defaultmode = getConfig().getString("gamemodes.default", "SURVIVAL");
         Set<String> nodes = getConfig().getConfigurationSection("groups").getKeys(false);
-        for (String group : nodes)
+        for (String sgroup : nodes)
         {
-            List<String> worldnames = getConfig().getStringList("groups." + group);
+            List<String> worldnames = getConfig().getStringList("groups." + sgroup);
             if (worldnames != null)
             {
-                WorldInventories.groups.add(new Group(group, worldnames));
+                Group group = new Group(sgroup, worldnames, GameMode.valueOf(getConfig().getString("gamemodes." + sgroup, defaultmode)));
+                WorldInventories.groups.add(group);
                 for (String world : worldnames)
                 {
-                    WorldInventories.logDebug("Adding " + group + ":" + world);
+                    WorldInventories.logDebug("Adding " + sgroup + ":" + world + ":" + group.getGameMode().toString());
                 }
+                
+                
             }
         }
 
@@ -817,7 +838,13 @@ public class WorldInventories extends JavaPlugin
         WorldInventories.pluginManager = WorldInventories.bukkitServer.getPluginManager();
 
         WorldInventories.logStandard("Loading configuration...");
-        this.loadConfigAndCreateDefaultsIfNecessary();
+        boolean loaded = this.loadConfigAndCreateDefaultsIfNecessary();
+        if(!loaded)
+        {
+            WorldInventories.logError("Failed to load configuration! See the message above for details.");
+            pluginManager.disablePlugin(this);
+            return;
+        }
 
         boolean bConfiguration = this.loadConfiguration();
 

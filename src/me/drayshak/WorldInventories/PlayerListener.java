@@ -3,10 +3,11 @@ package me.drayshak.WorldInventories;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerListener implements Listener
@@ -66,30 +67,21 @@ public class PlayerListener implements Listener
                     plugin.setPlayerStats(player, plugin.loadPlayerStats(player, togroup));
                 }
                 
+                if(plugin.getConfig().getBoolean("dogamemodeswitch"))
+                {
+                    player.setGameMode(togroup.getGameMode());
+                }                
+                
                 if (plugin.getConfig().getBoolean("donotifications"))
                 {
-                    if (plugin.getConfig().getBoolean("dostats"))
-                    {
-                        player.sendMessage(ChatColor.GREEN + "Changed player set to group: " + togroupname);
-                    }
-                    else
-                    {
-                        player.sendMessage(ChatColor.GREEN + "Changed inventory set to group: " + togroupname);
-                    }
+                    player.sendMessage(ChatColor.GREEN + "Changed player information to match group: " + togroupname);
                 }
             }
             else
             {
                 if (plugin.getConfig().getBoolean("donotifications"))
                 {
-                    if (plugin.getConfig().getBoolean("dostats"))
-                    {
-                        player.sendMessage(ChatColor.GREEN + "No player set change necessary for group: " + togroupname);
-                    }
-                    else
-                    {
-                        player.sendMessage(ChatColor.GREEN + "No inventory change necessary for group: " + togroupname);
-                    }
+                    player.sendMessage(ChatColor.GREEN + "No player information change needed to match group: " + togroupname);
                 }
             }
         }
@@ -131,31 +123,42 @@ public class PlayerListener implements Listener
         }
     }
     
-    @EventHandler
-    public void onPlayerLogin(PlayerLoginEvent event)
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerJoin(PlayerJoinEvent event)
     {
         if (plugin.getConfig().getBoolean("loadinvonlogin"))
         {
             Player player = event.getPlayer();
             String world = player.getLocation().getWorld().getName();
             
-            WorldInventories.logDebug("Player " + player.getName() + " logged in to world: " + world);
+            WorldInventories.logDebug("Player " + player.getName() + " join world: " + world);
             
             if(WorldInventories.exempts.contains(player.getName().toLowerCase()))
             {
-                WorldInventories.logDebug("Ignoring exempt player login: " + player.getName());
+                WorldInventories.logDebug("Ignoring exempt player join: " + player.getName());
                 return;
             }            
             
             Group tGroup = WorldInventories.findFirstGroupForWorld(world);
             
-            WorldInventories.logDebug("Loading inventory of " + player.getName());
+            //WorldInventories.logDebug("Loading inventory of " + player.getName());
             plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player, tGroup));            
             
             if (plugin.getConfig().getBoolean("dostats"))
             {
                 plugin.setPlayerStats(player, plugin.loadPlayerStats(player, tGroup));
-            }            
+            }
+            
+            if(plugin.getConfig().getBoolean("dogamemodeswitch"))
+            {
+                //WorldInventories.logDebug("Should change gamemode to " + tGroup.getGameMode().toString() + " for " + player.getName());
+                event.getPlayer().setGameMode(tGroup.getGameMode());
+            }              
+            
+            if(plugin.getConfig().getBoolean("donotifications"))
+            {
+                player.sendMessage(ChatColor.GREEN + "Player information loaded for group: " + tGroup.getName());
+            }
         }
     }
 }

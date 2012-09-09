@@ -2,21 +2,33 @@ package me.drayshak.WorldInventories;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.GameMode;
 
 public class Group
 {
     private String name;
     private List<String> worlds;
+    private GameMode gamemode;
     
     public Group(String tName)
     {
         this.name = tName;
         this.worlds = new ArrayList<String>();
+        this.gamemode = GameMode.SURVIVAL;
     }
+    
     public Group(String tName, List<String> tWorlds)
     {
         this.name = tName;
         this.worlds = tWorlds;
+        this.gamemode = GameMode.SURVIVAL;
+    }
+    
+    public Group(String tName, List<String> tWorlds, GameMode mode)
+    {
+        this.name = tName;
+        this.worlds = tWorlds;
+        this.gamemode = mode;        
     }
     
     public void addWorld(String world)
@@ -45,6 +57,16 @@ public class Group
     public void setWorlds(List<String> tWorlds)
     {
         this.worlds = tWorlds;
+    }
+    
+    public GameMode getGameMode()
+    {
+        return this.gamemode;
+    }
+    
+    public void setGameMode(GameMode mode)
+    {
+        this.gamemode = mode;
     }
     
     public boolean contains(String tWorldName)
