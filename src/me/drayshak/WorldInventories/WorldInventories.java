@@ -754,7 +754,7 @@ public class WorldInventories extends JavaPlugin
         try
         {
             YamlConfiguration config = new YamlConfiguration();
-            config.load(new File(this.getDataFolder().getPath() + File.separator + "config.yml"));            
+            config.load(new File(this.getDataFolder().getPath(), "config.yml"));            
         }
         catch(FileNotFoundException e) { }
         catch(Exception e)
