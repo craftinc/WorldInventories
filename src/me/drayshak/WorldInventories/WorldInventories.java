@@ -28,6 +28,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -596,8 +597,8 @@ public class WorldInventories extends JavaPlugin
                 
                 this.savePlayerStats(player, group);
                 this.savePlayerInventory(player.getName(), group, getPlayerInventory(player));            
-                //Possible when 1.3.2 Bukkit is released
-                //this.savePlayerEnderChest(player.getName(), group, new EnderChestHelper(((HumanEntity)player).getEnderChest()));
+
+                this.savePlayerEnderChest(player.getName(), group, new EnderChestHelper(((HumanEntity)player).getEnderChest().getContents()));
                 
                 imported++;
             }
