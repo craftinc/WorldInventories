@@ -19,6 +19,6 @@ public class SaveTask extends TimerTask
 	    WorldInventories.logStandard("Timer: Saving player information. New save due in " + plugin.getConfig().getInt("saveinterval") + " seconds.");
 	}
         
-        plugin.savePlayers();
+        plugin.savePlayers(plugin.getConfig().getBoolean("outputtimertoconsole"));
     }
 }

@@ -107,9 +107,12 @@ public class WorldInventories extends JavaPlugin
         }
     }
 
-    public void savePlayers()
+    public void savePlayers(boolean outputtoconsole)
     {
-        WorldInventories.logStandard("Saving player information...");
+        if(outputtoconsole)
+        {
+            WorldInventories.logStandard("Saving player information...");
+        }
 
         for (Player player : WorldInventories.bukkitServer.getOnlinePlayers())
         {
@@ -128,7 +131,10 @@ public class WorldInventories extends JavaPlugin
             }
         }
 
-        WorldInventories.logStandard("Done.");
+        if(outputtoconsole)
+        {
+            WorldInventories.logStandard("Done.");
+        }
     }
 
     public void savePlayerInventory(String player, Group group, PlayerInventoryHelper toStore)
@@ -956,7 +962,7 @@ public class WorldInventories extends JavaPlugin
     @Override
     public void onDisable()
     {
-        savePlayers();
+        savePlayers(true);
 
         WorldInventories.logStandard("Plugin disabled");
     }
