@@ -105,8 +105,8 @@ public class PlayerListener implements Listener
         Group tGroup = WorldInventories.findFirstGroupForWorld(world);
 
         // Don't save if we don't care where we are (default group)
-        if (tGroup != null)
-        {            
+        //if (tGroup != null)
+        //{            
             WorldInventories.logDebug("Saving inventory of " + player.getName());
             plugin.savePlayerInventory(player.getName(), tGroup, plugin.getPlayerInventory(player));
             
@@ -114,7 +114,7 @@ public class PlayerListener implements Listener
             {
                 plugin.savePlayerStats(player, tGroup);
             }
-        }
+        //}
         
         // Save the Ender Chest contents
         if(player.getOpenInventory().getType() == InventoryType.ENDER_CHEST)
