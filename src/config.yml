@@ -33,22 +33,22 @@
 # Set "dogamemodeswitch" to true and add groups to gamemodes as per the example to enforce gamemodes
 #  SURVIVAL, CREATIVE or HARDCORE at the time of writing (follows Bukkit's names)
 groups:
-    creativegroup:
-    - creative_overworld
-    - creative_nether
-    survivalgroup:
-    - survival_overworld
-    - survival_nether
-    - survival_end
+#    creativegroup:
+#    - creative_overworld
+#    - creative_nether
+#    survivalgroup:
+#    - survival_overworld
+#    - survival_nether
+#    - survival_end
     
 gamemodes:
-  default: SURVIVAL
-  creativegroup: CREATIVE
-  survivalgroup: SURVIVAL    
+#  default: SURVIVAL
+#  creativegroup: CREATIVE
+#  survivalgroup: SURVIVAL    
     
 exempt:
-  - exampleplayer
-  - exampleplayer2
+#  - exampleplayer
+#  - exampleplayer2
 
 dogamemodeswitch: false
 donotifications: true
