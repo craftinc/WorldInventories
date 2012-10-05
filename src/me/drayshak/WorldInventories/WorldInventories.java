@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -763,7 +764,11 @@ public class WorldInventories extends JavaPlugin
             YamlConfiguration config = new YamlConfiguration();
             config.load(new File(this.getDataFolder().getPath(), "config.yml"));            
         }
-        catch(FileNotFoundException e) { }
+        catch(FileNotFoundException e)
+        {
+            saveDefaultConfig();
+            return true;
+        }
         catch(Exception e)
         {
             WorldInventories.logError("Failed to load configuration: " + e.getMessage());
@@ -787,7 +792,18 @@ public class WorldInventories extends JavaPlugin
         WorldInventories.groups = new ArrayList<Group>();
 
         String defaultmode = getConfig().getString("gamemodes.default", "SURVIVAL");
-        Set<String> nodes = getConfig().getConfigurationSection("groups").getKeys(false);
+        
+        Set<String> nodes = null;
+        try
+        {
+            nodes = getConfig().getConfigurationSection("groups").getKeys(false);
+        }
+        catch(NullPointerException e)
+        {
+            nodes = new HashSet<String>();
+            WorldInventories.logError("Warning: No groups found. Everything will be in the 'default' group.");
+        }
+        
         for (String sgroup : nodes)
         {
             List<String> worldnames = getConfig().getStringList("groups." + sgroup);
@@ -804,7 +820,15 @@ public class WorldInventories extends JavaPlugin
             }
         }
 
-        WorldInventories.exempts = getConfig().getStringList("exempt");
+        try
+        {
+            WorldInventories.exempts = getConfig().getStringList("exempt");
+        }
+        catch(NullPointerException e)
+        {
+            WorldInventories.exempts = new ArrayList<String>();
+        }
+        
         for (String player : WorldInventories.exempts)
         {
             WorldInventories.logDebug("Adding " + player + " to exemption list");

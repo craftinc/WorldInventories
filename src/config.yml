@@ -32,6 +32,7 @@
 #  Set "vanillatogroup" to the group you want to import to. If blank it will use the default group.
 # Set "dogamemodeswitch" to true and add groups to gamemodes as per the example to enforce gamemodes
 #  SURVIVAL, CREATIVE or HARDCORE at the time of writing (follows Bukkit's names)
+
 groups:
 #    creativegroup:
 #    - creative_overworld
