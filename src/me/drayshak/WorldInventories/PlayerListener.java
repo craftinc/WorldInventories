@@ -5,10 +5,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class PlayerListener implements Listener
 {
@@ -18,6 +20,31 @@ public class PlayerListener implements Listener
     PlayerListener(final WorldInventories plugin)
     {
         this.plugin = plugin;
+    }
+    
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event)
+    {
+        Player player = event.getEntity().getPlayer();
+        
+        if(WorldInventories.exempts.contains(player.getName().toLowerCase()))
+        {
+            WorldInventories.logDebug("Ignoring exempt player death: " + player.getName());
+            return;
+        }
+        
+        Group group = WorldInventories.findFirstGroupForWorld(player.getWorld().getName());
+        
+        plugin.savePlayerInventory(player.getName(), group, new PlayerInventoryHelper(new ItemStack[36], new ItemStack[4]));
+        if (plugin.getConfig().getBoolean("dostats"))
+        {
+            plugin.savePlayerStats(player.getName(), group, new PlayerStats(20, 20, 0, 0, 0, 0F, null));
+        }   
+
+        if (plugin.getConfig().getBoolean("donotifications"))
+        {
+            player.sendMessage(ChatColor.GREEN + "You died! Wiped inventory and stats for group: " + group.getName());
+        }     
     }
     
     @EventHandler
