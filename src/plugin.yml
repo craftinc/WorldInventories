@@ -1,6 +1,6 @@
 name: WorldInventories
 main: me.drayshak.WorldInventories.WorldInventories
-version: 1.5.7-beta4
+version: 1.5.7
 author: drayshak
 description: Automatic inventory switching for groups of worlds
 commands:
