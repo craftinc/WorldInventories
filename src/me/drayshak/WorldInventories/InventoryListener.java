@@ -33,7 +33,7 @@ public class InventoryListener implements Listener
                 return;
             }
             
-            Group worldgroup = WorldInventories.findFirstGroupForWorld(world);
+            Group worldgroup = WorldInventories.findFirstGroupThenDefault(world);
             
             WorldInventories.logDebug("Ender Chest opened by " + player + " in world " + world + ", group " + worldgroup);
             
@@ -57,7 +57,7 @@ public class InventoryListener implements Listener
                 return;
             }            
             
-            Group worldgroup = WorldInventories.findFirstGroupForWorld(world);
+            Group worldgroup = WorldInventories.findFirstGroupThenDefault(world);
             
             WorldInventories.logDebug("Ender Chest closed by " + player + " in world " + world + ", group " + worldgroup);
             

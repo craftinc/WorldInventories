@@ -33,7 +33,7 @@ public class PlayerListener implements Listener
             return;
         }
         
-        Group group = WorldInventories.findFirstGroupForWorld(player.getWorld().getName());
+        Group group = WorldInventories.findFirstGroupThenDefault(player.getWorld().getName());
         
         plugin.savePlayerInventory(player.getName(), group, new PlayerInventoryHelper(new ItemStack[36], new ItemStack[4]));
         if (plugin.getConfig().getBoolean("dostats"))
@@ -65,28 +65,16 @@ public class PlayerListener implements Listener
         {
             WorldInventories.logDebug("Player " + player.getName() + " moved from world " + fromworld + " to " + toworld);            
             
-            Group fromgroup = WorldInventories.findFirstGroupForWorld(fromworld);
-            Group togroup = WorldInventories.findFirstGroupForWorld(toworld);
+            Group fromgroup = WorldInventories.findFirstGroupThenDefault(fromworld);
+            Group togroup = WorldInventories.findFirstGroupThenDefault(toworld);
             
             plugin.savePlayerInventory(player.getName(), fromgroup, plugin.getPlayerInventory(player));
             if (plugin.getConfig().getBoolean("dostats"))
             {
                 plugin.savePlayerStats(player, fromgroup);
-            }
+            }    
             
-            String fromgroupname = "default";
-            if (fromgroup != null)
-            {
-                fromgroupname = fromgroup.getName();
-            }            
-            
-            String togroupname = "default";
-            if (togroup != null)
-            {
-                togroupname = togroup.getName();
-            }            
-            
-            if (!fromgroupname.equals(togroupname))
+            if (!fromgroup.getName().equals(togroup.getName()))
             {
                 plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player, togroup));
                 if (plugin.getConfig().getBoolean("dostats"))
@@ -101,14 +89,14 @@ public class PlayerListener implements Listener
                 
                 if (plugin.getConfig().getBoolean("donotifications"))
                 {
-                    player.sendMessage(ChatColor.GREEN + "Changed player information to match group: " + togroupname);
+                    player.sendMessage(ChatColor.GREEN + "Changed player information to match group: " + togroup.getName());
                 }
             }
             else
             {
                 if (plugin.getConfig().getBoolean("donotifications"))
                 {
-                    player.sendMessage(ChatColor.GREEN + "No player information change needed to match group: " + togroupname);
+                    player.sendMessage(ChatColor.GREEN + "No player information change needed to match group: " + togroup.getName());
                 }
             }
         }
@@ -129,7 +117,7 @@ public class PlayerListener implements Listener
             return;
         }           
         
-        Group tGroup = WorldInventories.findFirstGroupForWorld(world);
+        Group tGroup = WorldInventories.findFirstGroupThenDefault(world);
 
         // Don't save if we don't care where we are (default group)
         //if (tGroup != null)
@@ -166,7 +154,7 @@ public class PlayerListener implements Listener
                 return;
             }            
             
-            Group tGroup = WorldInventories.findFirstGroupForWorld(world);
+            Group tGroup = WorldInventories.findFirstGroupThenDefault(world);
             
             //WorldInventories.logDebug("Loading inventory of " + player.getName());
             plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player, tGroup));            

@@ -73,4 +73,9 @@ public class Group
     {
         return this.worlds.contains(tWorldName);
     }
+    
+    public static String getName(Group g)
+    {
+        return g.getName();
+    }
 }

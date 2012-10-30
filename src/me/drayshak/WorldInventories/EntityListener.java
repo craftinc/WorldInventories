@@ -31,15 +31,9 @@ public class EntityListener implements Listener
                 return;
             }
             
-            Group togroup = WorldInventories.findFirstGroupForWorld(world);
-            String togroupname = "default";
-            if(togroup != null)
-            {
-                togroupname = togroup.getName();
-            }               
+            Group togroup = WorldInventories.findFirstGroupThenDefault(world);       
 
-            WorldInventories.logDebug("Player " + player.getName() + " died in world " + world + ", emptying inventory for group: " + togroupname);
-
+            WorldInventories.logDebug("Player " + player.getName() + " died in world " + world + ", emptying inventory for group: " + togroup.getName());
 
             // Make the saved inventory blank so players can't duplicate by switching worlds and picking items back up
             plugin.savePlayerInventory(player.getName(), togroup, new PlayerInventoryHelper(new ItemStack[36], new ItemStack[4]));

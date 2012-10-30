@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -119,15 +120,15 @@ public class WorldInventories extends JavaPlugin
         {
             String world = player.getLocation().getWorld().getName();
 
-            Group tGroup = WorldInventories.findFirstGroupForWorld(world);
+            Group tGroup = WorldInventories.findFirstGroupThenDefault(world);
 
             // Don't save if we don't care where we are (default group)
-            if (tGroup != null)
+            if (tGroup.getName() != "default")
             {
-                savePlayerInventory(player.getName(), WorldInventories.findFirstGroupForWorld(world), getPlayerInventory(player));
+                savePlayerInventory(player.getName(), WorldInventories.findFirstGroupThenDefault(world), getPlayerInventory(player));
                 if (getConfig().getBoolean("dostats"))
                 {
-                    savePlayerStats(player, WorldInventories.findFirstGroupForWorld(world));
+                    savePlayerStats(player, WorldInventories.findFirstGroupThenDefault(world));
                 }
             }
         }
@@ -145,17 +146,7 @@ public class WorldInventories extends JavaPlugin
             this.getDataFolder().mkdir();
         }
 
-        String path = File.separator;
-
-        // Use default group
-        if (group == null)
-        {
-            path += "default";
-        }
-        else
-        {
-            path += group.getName();
-        }
+        String path = File.separator + group.getName();
 
         path = this.getDataFolder().getAbsolutePath() + path;
 
@@ -195,17 +186,7 @@ public class WorldInventories extends JavaPlugin
             this.getDataFolder().mkdir();
         }
 
-        String path = File.separator;
-
-        // Use default group
-        if (group == null)
-        {
-            path += "default";
-        }
-        else
-        {
-            path += group.getName();
-        }
+        String path = File.separator + group.getName();
 
         path = this.getDataFolder().getAbsolutePath() + path;
 
@@ -242,17 +223,7 @@ public class WorldInventories extends JavaPlugin
     {
         InventoriesLists playerInventory = null;
         
-        String path = File.separator;
-
-        // Use default group
-        if (group == null)
-        {
-            path += "default";
-        }
-        else
-        {
-            path += group.getName();
-        }
+        String path = File.separator + group.getName();
 
         path = this.getDataFolder().getAbsolutePath() + path;
 
@@ -291,17 +262,7 @@ public class WorldInventories extends JavaPlugin
     {
         InventoriesLists playerInventory = null;
 
-        String path = File.separator;
-
-        // Use default group
-        if (group == null)
-        {
-            path += "default";
-        }
-        else
-        {
-            path += group.getName();
-        }
+        String path = File.separator + group.getName();
 
         path = this.getDataFolder().getAbsolutePath() + path;
 
@@ -342,17 +303,7 @@ public class WorldInventories extends JavaPlugin
     {
         PlayerStats playerstats = null;
 
-        String path = File.separator;
-
-        // Use default group
-        if (group == null)
-        {
-            path += "default";
-        }
-        else
-        {
-            path += group.getName();
-        }
+        String path = File.separator + group.getName();
 
         path = this.getDataFolder().getAbsolutePath() + path;
 
@@ -388,17 +339,7 @@ public class WorldInventories extends JavaPlugin
             this.getDataFolder().mkdir();
         }
 
-        String path = File.separator;
-
-        // Use default group
-        if (group == null)
-        {
-            path += "default";
-        }
-        else
-        {
-            path += group.getName();
-        }
+        String path = File.separator + group.getName();
 
         path = this.getDataFolder().getAbsolutePath() + path;
 
@@ -545,7 +486,7 @@ public class WorldInventories extends JavaPlugin
                     ItemStack[] armour = MultiInvImportHelper.MIItemStacktoItemStack(minventory.getArmorContents());
                     ItemStack[] inventory = MultiInvImportHelper.MIItemStacktoItemStack(minventory.getInventoryContents());
                     
-                    savePlayerInventory(player.getName(), findFirstGroupForWorld(world.getName()), new PlayerInventoryHelper(inventory, armour));
+                    savePlayerInventory(player.getName(), findFirstGroupThenDefault(world.getName()), new PlayerInventoryHelper(inventory, armour));
                     importedinventories++;
                 }
             }
@@ -563,7 +504,7 @@ public class WorldInventories extends JavaPlugin
         
         WorldInventories.logStandard("Starting vanilla players import...");
         
-        Group group = findFirstGroupForWorld(getConfig().getString("vanillatogroup"));
+        Group group = findFirstGroupThenDefault(getConfig().getString("vanillatogroup"));
         if(group == null)
         {
             WorldInventories.logStandard("Warning: importing from vanilla in to the default group (does the group specified exist?)");
@@ -804,6 +745,10 @@ public class WorldInventories extends JavaPlugin
             WorldInventories.logError("Warning: No groups found. Everything will be in the 'default' group.");
         }
         
+        List<String> empty = Collections.emptyList();
+        Group defaultgroup = new Group("default", empty, GameMode.valueOf(getConfig().getString("gamemodes.default", defaultmode)));
+        WorldInventories.groups.add(defaultgroup);
+        
         for (String sgroup : nodes)
         {
             List<String> worldnames = getConfig().getStringList("groups." + sgroup);
@@ -839,7 +784,7 @@ public class WorldInventories extends JavaPlugin
         return true;
     }
 
-    public static Group findFirstGroupForWorld(String world)
+    public static Group findFirstGroupThenDefault(String world)
     {
         for (Group tGroup : WorldInventories.groups)
         {
@@ -850,7 +795,7 @@ public class WorldInventories extends JavaPlugin
             }
         }
 
-        return null;
+        return groups.get(0);
     }
 
     @Override
