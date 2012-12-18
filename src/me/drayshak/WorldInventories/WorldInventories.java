@@ -17,9 +17,9 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.minecraft.server.EntityPlayer;
-import net.minecraft.server.ItemInWorldManager;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.v1_4_5.EntityPlayer;
+import net.minecraft.server.v1_4_5.ItemInWorldManager;
+import net.minecraft.server.v1_4_5.MinecraftServer;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -29,7 +29,7 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.v1_4_5.CraftServer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -803,7 +803,7 @@ public class WorldInventories extends JavaPlugin
     {
         WorldInventories.logStandard("Initialising...");
 
-        xstream.alias("potioneffecttype", org.bukkit.craftbukkit.potion.CraftPotionEffectType.class);
+        xstream.alias("potioneffecttype", org.bukkit.craftbukkit.v1_4_5.potion.CraftPotionEffectType.class);
         xstream.alias("playerstats", me.drayshak.WorldInventories.PlayerStats.class);
         xstream.alias("inventorieslists", me.drayshak.WorldInventories.InventoriesLists.class);
         xstream.alias("potioneffect", org.bukkit.potion.PotionEffect.class);
