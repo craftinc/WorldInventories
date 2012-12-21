@@ -8,9 +8,9 @@ public class InventoryHelperOld
 {
     public static int ITEMS = 0;
     
-    protected InventoriesListsOld inventories;
+    protected InventoriesLists inventories;
        
-    public InventoriesListsOld getSerializable()
+    public InventoriesLists getSerializable()
     {
         return this.inventories;
     }

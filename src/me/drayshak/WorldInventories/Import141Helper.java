@@ -40,7 +40,7 @@ public class Import141Helper
             }
         }          
 
-        return new PlayerInventoryHelperOld(new InventoriesListsOld(playerInventory.getItemStacks()));
+        return new PlayerInventoryHelperOld(new InventoriesLists(playerInventory.getItemStacks()));
     }
     
     public static EnderChestHelperOld load141EnderChest(File file)
@@ -76,7 +76,7 @@ public class Import141Helper
             }
         }        
 
-        return new EnderChestHelperOld(new InventoriesListsOld(playerInventory.getItemStacks()));
+        return new EnderChestHelperOld(new InventoriesLists(playerInventory.getItemStacks()));
     }    
     
     public static PlayerStats load141PlayerStats(File file)

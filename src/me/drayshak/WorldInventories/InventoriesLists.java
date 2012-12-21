@@ -6,17 +6,17 @@ import java.util.List;
 import java.util.Map;
 import org.bukkit.inventory.ItemStack;
 
-public class InventoriesListsOld
+public class InventoriesLists
 {
     private List<List<Map<String, Object>>> itemStacks;
   
-    public InventoriesListsOld(List<Map<String, Object>>... argItemStacks)
+    public InventoriesLists(List<Map<String, Object>>... argItemStacks)
     {
         itemStacks = new ArrayList<List<Map<String, Object>>>(argItemStacks.length);
         itemStacks.addAll(Arrays.asList(argItemStacks));
     }
     
-    public InventoriesListsOld(List<List<Map<String, Object>>> itemStacks)
+    public InventoriesLists(List<List<Map<String, Object>>> itemStacks)
     {
         this.itemStacks = itemStacks;
     }

@@ -8,15 +8,15 @@ public class EnderChestHelperOld extends InventoryHelperOld
 {
     public EnderChestHelperOld(ItemStack[] items)
     {
-        inventories = new InventoriesListsOld(ItemStackHelper.formSerializedMap(items));
+        inventories = new InventoriesLists(ItemStackHelper.formSerializedMap(items));
     }
  
     public EnderChestHelperOld(List<Map<String, Object>> items)
     {
-        inventories = new InventoriesListsOld(items);
+        inventories = new InventoriesLists(items);
     }
     
-    public EnderChestHelperOld(InventoriesListsOld inventories)
+    public EnderChestHelperOld(InventoriesLists inventories)
     {
         this.inventories = inventories;
     }

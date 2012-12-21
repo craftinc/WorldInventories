@@ -7,11 +7,11 @@ public class Import15Helper
 {
     public static EnderChestHelperOld load15PlayerEnderChest(File file, XStream xstream)
     {
-        InventoriesListsOld playerInventory = null;
+        InventoriesLists playerInventory = null;
       
         try
         {
-            playerInventory = (InventoriesListsOld) xstream.fromXML(file);
+            playerInventory = (InventoriesLists) xstream.fromXML(file);
         }
         catch(Exception e)
         {
@@ -25,11 +25,11 @@ public class Import15Helper
     
     public static PlayerInventoryHelperOld load15PlayerInventory(File file, XStream xstream)
     {
-        InventoriesListsOld playerInventory = null;
+        InventoriesLists playerInventory = null;
       
         try
         {
-            playerInventory = (InventoriesListsOld) xstream.fromXML(file);
+            playerInventory = (InventoriesLists) xstream.fromXML(file);
         }
         catch(Exception e)
         {
