@@ -696,7 +696,7 @@ public class WorldInventories extends JavaPlugin
         //xstream.alias("potioneffecttype", org.bukkit.craftbukkit.v1_4_5.potion.CraftPotionEffectType.class);
         xstream.alias("playerstats", me.drayshak.WorldInventories.PlayerStats.class);
         xstream.alias("inventorieslists", me.drayshak.WorldInventories.InventoriesLists.class);
-        //xstream.alias("potioneffect", org.bukkit.potion.PotionEffect.class);    
+        xstream.alias("potioneffects", org.bukkit.potion.PotionEffect.class);    
         
         //xstream.aliasPackage("org.bukkit.craftbukkit", "org.bukkit.craftbukkit.v1__4__5");        
         
