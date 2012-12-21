@@ -797,16 +797,24 @@ public class WorldInventories extends JavaPlugin
 
         return groups.get(0);
     }
+    
+    // If using externally you must call this before loading any inventories
+    public void setXStreamAliases()
+    {
+        xstream.alias("potioneffecttype", org.bukkit.craftbukkit.v1_4_5.potion.CraftPotionEffectType.class);
+        xstream.alias("playerstats", me.drayshak.WorldInventories.PlayerStats.class);
+        xstream.alias("inventorieslists", me.drayshak.WorldInventories.InventoriesLists.class);
+        xstream.alias("potioneffect", org.bukkit.potion.PotionEffect.class);
+        
+        xstream.aliasPackage("cb", "org.bukkit.craftbukkit.v1__4__5");
+    }
 
     @Override
     public void onEnable()
     {
         WorldInventories.logStandard("Initialising...");
 
-        xstream.alias("potioneffecttype", org.bukkit.craftbukkit.v1_4_5.potion.CraftPotionEffectType.class);
-        xstream.alias("playerstats", me.drayshak.WorldInventories.PlayerStats.class);
-        xstream.alias("inventorieslists", me.drayshak.WorldInventories.InventoriesLists.class);
-        xstream.alias("potioneffect", org.bukkit.potion.PotionEffect.class);
+        this.setXStreamAliases();
         
         boolean bInitialised = true;
 
