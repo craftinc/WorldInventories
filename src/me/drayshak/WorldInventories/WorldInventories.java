@@ -4,7 +4,6 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,9 +16,6 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.minecraft.server.v1_4_5.EntityPlayer;
-import net.minecraft.server.v1_4_5.ItemInWorldManager;
-import net.minecraft.server.v1_4_5.MinecraftServer;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -30,7 +26,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_4_5.CraftServer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -50,7 +45,7 @@ public class WorldInventories extends JavaPlugin
     public static ArrayList<Group> groups = null;
     public static List<String> exempts = null;
     public static Timer saveTimer = new Timer();
-    public static String fileVersion = "v4";
+    public static String statsFileVersion = "v5";
     public static String inventoryFileVersion = "v5";
     private XStream xstream = new XStream()
     {
@@ -121,7 +116,7 @@ public class WorldInventories extends JavaPlugin
             InventoryHelper helper = new InventoryHelper();
             
             // Don't save if we don't care where we are (default group)
-            if (tGroup.getName() != "default")
+            if (!"default".equals(tGroup.getName()))
             {
                 helper.setInventory(player.getInventory().getContents());
                 helper.setArmour(player.getInventory().getArmorContents());
@@ -312,8 +307,6 @@ public class WorldInventories extends JavaPlugin
 
     public PlayerStats loadPlayerStats(Player player, Group group)
     {
-        PlayerStats playerstats = null;
-
         String path = File.separator + group.getName();
 
         path = this.getDataFolder().getAbsolutePath() + path;
@@ -322,27 +315,65 @@ public class WorldInventories extends JavaPlugin
         if (!file.exists())
         {
             file.mkdir();
-        }
+        }         
 
-        path += File.separator + player.getName() + ".stats." + fileVersion + ".xml";
-
+        path += File.separator + player.getName() + ".stats." + statsFileVersion + ".yml";      
+        
         file = new File(path);
-        if(!file.exists())
+        FileConfiguration pc = null;
+        try
         {
-            WorldInventories.logDebug("Player " + player.getName() + " will get a new stats file on next save (clearing now).");
-            playerstats = new PlayerStats(20, 20, 0, 0, 0, 0F, null);
-            this.setPlayerStats(player, playerstats);            
+            file.createNewFile();
+            pc = YamlConfiguration.loadConfiguration(new File(path));        
+        }
+        catch (Exception e)
+        {
+            WorldInventories.logError("Failed to load stats for player: " + player + ": " + e.getMessage());
+        }
+        
+/*
+        int health, int foodlevel, float exhaustion, float saturation
+        int level, float exp, Collection<PotionEffect> potioneffects
+ */        
+        
+        int health;
+        int foodlevel;
+        double exhaustion;
+        double saturation;
+        int level;
+        double exp;
+        List<PotionEffect> potioneffects;
+        
+        health = pc.getInt("health", -1);
+        foodlevel = pc.getInt("foodlevel", 20);
+        exhaustion = pc.getDouble("exhaustion", 0);
+        saturation = pc.getDouble("saturation", 0);
+        level = pc.getInt("level", 0);
+        exp = pc.getDouble("exp", 0);
+        potioneffects = (List<PotionEffect>) pc.getList("potioneffects", null);
+        
+        PlayerStats playerstats = new PlayerStats(20, 20, 0, 0, 0, 0F, null);
+        
+        if(health == -1)
+        {
+            WorldInventories.logDebug("Player " + player.getName() + " will get a new stats file on next save (clearing now).");           
         }
         else
         {
-            playerstats = (PlayerStats) xstream.fromXML(file);
+            playerstats = new PlayerStats(health, foodlevel, (float)exhaustion, (float)saturation, level, (float)exp, potioneffects);
         }
+        
+        this.setPlayerStats(player, playerstats);  
         
         WorldInventories.logDebug("Loaded stats for player: " + player + " " + path);
 
         return playerstats;
     }
 
+    public void savePlayerStats(Player player, Group group)
+    {
+        savePlayerStats(player.getName(), group, new PlayerStats(player.getHealth(), player.getFoodLevel(), player.getExhaustion(), player.getSaturation(), player.getLevel(), player.getExp(), player.getActivePotionEffects()));
+    }
     public void savePlayerStats(String player, Group group, PlayerStats playerstats)
     {
         if (!this.getDataFolder().exists())
@@ -358,82 +389,37 @@ public class WorldInventories extends JavaPlugin
         if (!file.exists())
         {
             file.mkdir();
-        }
+        }      
 
-        path += File.separator + player + ".stats." + fileVersion + ".xml";
+        path += File.separator + player + ".stats." + statsFileVersion + ".yml";
 
-        FileOutputStream fOS = null;
+        file = new File(path);
+
         try
         {
-            fOS = new FileOutputStream(path);
-            xstream.toXML(playerstats, fOS);
+            file.createNewFile();
+            FileConfiguration pc = YamlConfiguration.loadConfiguration(file);
+            //int health, int foodlevel, float exhaustion, float saturation
+            //int level, float exp, Collection<PotionEffect> potioneffects
+            pc.set("health", playerstats.getHealth());
+            pc.set("foodlevel", playerstats.getFoodLevel());
+            pc.set("exhaustion", playerstats.getExhaustion());
+            pc.set("saturation", playerstats.getSaturation());
+            pc.set("level", playerstats.getLevel());
+            pc.set("exp", playerstats.getExp());
+            pc.set("potioneffects", playerstats.getPotionEffects());
+            
+            pc.save(file);
         }    
         catch (Exception e)
         {
             WorldInventories.logError("Failed to save stats for player: " + player + ": " + e.getMessage());
         }
-        finally
-        {
-            if (fOS != null)
-            {
-                try { fOS.close(); } catch (IOException e) {}
-            }
-        }
         
         WorldInventories.logDebug("Saved stats for player: " + player + " " + path);
     }
 
-    public void savePlayerStats(Player player, Group group)
-    {
-        PlayerStats playerstats = new PlayerStats(player.getHealth(), player.getFoodLevel(), player.getExhaustion(), player.getSaturation(), player.getLevel(), player.getExp(), player.getActivePotionEffects());
-        
-        if (!this.getDataFolder().exists())
-        {
-            this.getDataFolder().mkdir();
-        }
-
-        String path = File.separator;
-
-        // Use default group
-        if (group == null)
-        {
-            path += "default";
-        }
-        else
-        {
-            path += group.getName();
-        }
-
-        path = this.getDataFolder().getAbsolutePath() + path;
-
-        File file = new File(path);
-        if (!file.exists())
-        {
-            file.mkdir();
-        }
-
-        path += File.separator + player.getName() + ".stats." + fileVersion + ".xml";
-
-        FileOutputStream fOS = null;
-        try
-        {
-            fOS = new FileOutputStream(path);
-            xstream.toXML(playerstats, fOS);
-        }    
-        catch (Exception e)
-        {
-            WorldInventories.logError("Failed to save stats for player: " + player + ": " + e.getMessage());
-        }
-        finally
-        {
-            if (fOS != null)
-            {
-                try { fOS.close(); } catch (IOException e) {}
-            }
-        }        
-        
-        WorldInventories.logDebug("Saved stats for player: " + player + " " + path);
-    }
+  
 
     public boolean importMultiInvData()
     {
@@ -526,8 +512,7 @@ public class WorldInventories extends JavaPlugin
         }
         
         OfflinePlayer[] offlineplayers = getServer().getOfflinePlayers();
-        final MinecraftServer server = ((CraftServer) getServer()).getServer();
-        
+
         if(offlineplayers.length <= 0)
         {
             WorldInventories.logStandard("Found no offline players to import!");
@@ -536,28 +521,22 @@ public class WorldInventories extends JavaPlugin
         
         for(OfflinePlayer offlineplayer : offlineplayers)
         {
-            final EntityPlayer entity = new EntityPlayer(server, server.getWorldServer(0), offlineplayer.getName(), new ItemInWorldManager(server.getWorldServer(0)));
-            if(entity == null)
+            Player player = null;
+            try
+            {
+                player = (Player) offlineplayer;
+            }
+            catch(Exception e)
+            {
+                WorldInventories.logError("  (Warning) Couldn't convert a player.");
+            }
+            
+            if(player == null)
             {
                 WorldInventories.logStandard("Failed to import " + offlineplayer.getName() + ", couldn't create EntityPlayer.");
             }
             else
             {
-                Player player = null;
-                try
-                {
-                    player = entity.getBukkitEntity();
-                    player.loadData();
-                }
-                catch(Exception e)
-                {
-                    WorldInventories.logStandard("Failed to import " + offlineplayer.getName() + ", couldn't load player data.");
-                    e.printStackTrace();
-                    
-                    failed++;
-                    continue;
-                }
-                
                 savePlayerStats(player, group);
                 
                 InventoryHelper helper = new InventoryHelper();
@@ -822,7 +801,7 @@ public class WorldInventories extends JavaPlugin
     }
     
     // If using externally you must call this before loading any inventories
-    public void setXStreamAliases()
+    /*public void setXStreamAliases()
     {
         xstream.alias("potioneffecttype", org.bukkit.craftbukkit.v1_4_5.potion.CraftPotionEffectType.class);
         xstream.alias("playerstats", me.drayshak.WorldInventories.PlayerStats.class);
@@ -830,14 +809,14 @@ public class WorldInventories extends JavaPlugin
         xstream.alias("potioneffect", org.bukkit.potion.PotionEffect.class);    
         
         xstream.aliasPackage("org.bukkit.craftbukkit", "org.bukkit.craftbukkit.v1__4__5");
-    }
+    }*/
 
     @Override
     public void onEnable()
     {
         WorldInventories.logStandard("Initialising...");
 
-        this.setXStreamAliases();
+        //this.setXStreamAliases();
         
         boolean bInitialised = true;
 
