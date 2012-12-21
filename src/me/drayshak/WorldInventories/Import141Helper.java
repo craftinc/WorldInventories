@@ -7,7 +7,7 @@ import java.io.ObjectInputStream;
 
 public class Import141Helper
 {
-    public static PlayerInventoryHelper load141PlayerInventory(File file)
+    public static PlayerInventoryHelperOld load141PlayerInventory(File file)
     {
         InventoriesSaveable playerInventory = null;
 
@@ -40,7 +40,7 @@ public class Import141Helper
             }
         }          
 
-        return new PlayerInventoryHelper(new InventoriesLists(playerInventory.getItemStacks()));
+        return new PlayerInventoryHelperOld(new InventoriesLists(playerInventory.getItemStacks()));
     }
     
     public static EnderChestHelper load141EnderChest(File file)

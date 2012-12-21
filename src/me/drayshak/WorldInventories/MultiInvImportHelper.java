@@ -54,7 +54,7 @@ public class MultiInvImportHelper
         }
     }
 
-    public static PlayerInventoryHelper playerInventoryFromMIString(String string)
+    public static PlayerInventoryHelperOld playerInventoryFromMIString(String string)
     {
         if (string == null)
         {
@@ -95,6 +95,6 @@ public class MultiInvImportHelper
             }
         }
 
-        return new PlayerInventoryHelper(playerItems, playerArmour);
+        return new PlayerInventoryHelperOld(playerItems, playerArmour);
     }
 }

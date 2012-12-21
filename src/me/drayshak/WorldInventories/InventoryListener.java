@@ -1,5 +1,6 @@
 package me.drayshak.WorldInventories;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -36,8 +37,7 @@ public class InventoryListener implements Listener
             Group worldgroup = WorldInventories.findFirstGroupThenDefault(world);
             
             WorldInventories.logDebug("Ender Chest opened by " + player + " in world " + world + ", group " + worldgroup);
-            
-            inventory.setContents(plugin.loadPlayerEnderChest(player, worldgroup).getItems());
+            inventory.setContents(plugin.loadPlayerInventory((Player)event.getPlayer(), worldgroup, me.drayshak.WorldInventories.InventoryType.ENDERCHEST).getInventory());
         }
     }
     
@@ -61,7 +61,12 @@ public class InventoryListener implements Listener
             
             WorldInventories.logDebug("Ender Chest closed by " + player + " in world " + world + ", group " + worldgroup);
             
-            plugin.savePlayerEnderChest(player, worldgroup, new EnderChestHelper(inventory.getContents()));
+            Player pplayer = (Player)event.getPlayer();
+            InventoryHelper helper = new InventoryHelper();
+            helper.setArmour(null);
+            helper.setInventory(inventory.getContents());
+            
+            plugin.savePlayerInventory(player, worldgroup, me.drayshak.WorldInventories.InventoryType.ENDERCHEST, helper);
         }        
     }
 }

@@ -28,6 +28,7 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_4_5.CraftServer;
 import org.bukkit.entity.HumanEntity;
@@ -50,6 +51,7 @@ public class WorldInventories extends JavaPlugin
     public static List<String> exempts = null;
     public static Timer saveTimer = new Timer();
     public static String fileVersion = "v4";
+    public static String inventoryFileVersion = "v5";
     private XStream xstream = new XStream()
     {
         // Taken from XStream test class
@@ -73,16 +75,11 @@ public class WorldInventories extends JavaPlugin
         }
     };
 
-    public PlayerInventoryHelper getPlayerInventory(Player player)
-    {
-        return new PlayerInventoryHelper(player.getInventory().getContents(), player.getInventory().getArmorContents());
-    }
-
-    public void setPlayerInventory(Player player, PlayerInventoryHelper playerInventory)
+    public void setPlayerInventory(Player player, InventoryHelper playerInventory)
     {
         if (playerInventory != null)
         {
-            player.getInventory().setContents(playerInventory.getItems());
+            player.getInventory().setContents(playerInventory.getInventory());
             player.getInventory().setArmorContents(playerInventory.getArmour());
         }
     }
@@ -119,13 +116,17 @@ public class WorldInventories extends JavaPlugin
         for (Player player : WorldInventories.bukkitServer.getOnlinePlayers())
         {
             String world = player.getLocation().getWorld().getName();
-
             Group tGroup = WorldInventories.findFirstGroupThenDefault(world);
 
+            InventoryHelper helper = new InventoryHelper();
+            
             // Don't save if we don't care where we are (default group)
             if (tGroup.getName() != "default")
             {
-                savePlayerInventory(player.getName(), WorldInventories.findFirstGroupThenDefault(world), getPlayerInventory(player));
+                helper.setInventory(player.getInventory().getContents());
+                helper.setArmour(player.getInventory().getArmorContents());
+                savePlayerInventory(player.getName(), WorldInventories.findFirstGroupThenDefault(world), InventoryType.INVENTORY, helper);
+                
                 if (getConfig().getBoolean("dostats"))
                 {
                     savePlayerStats(player, WorldInventories.findFirstGroupThenDefault(world));
@@ -139,7 +140,7 @@ public class WorldInventories extends JavaPlugin
         }
     }
 
-    public void savePlayerInventory(String player, Group group, PlayerInventoryHelper toStore)
+    public void savePlayerInventory(String player, Group group, InventoryType type, InventoryHelper inventory)
     {
         if (!this.getDataFolder().exists())
         {
@@ -154,38 +155,49 @@ public class WorldInventories extends JavaPlugin
         if (!file.exists())
         {
             file.mkdir();
+        }      
+        
+        String sType = "unknown";
+        if(type == InventoryType.INVENTORY)
+        {
+            sType = "inventory";
+        }
+        else if(type == InventoryType.ENDERCHEST)
+        {
+            sType = "enderchest";
         }
 
-        path += File.separator + player + ".inventory." + fileVersion + ".xml";
+        path += File.separator + player + "." + sType + "." + inventoryFileVersion + ".yml";
+        
+        file = new File(path);
 
-        FileOutputStream fOS = null;
         try
         {
-            fOS = new FileOutputStream(path);
-            xstream.toXML(toStore.inventories, fOS);
+            file.createNewFile();
+            FileConfiguration pc = YamlConfiguration.loadConfiguration(new File(path));
+            
+            if(type == InventoryType.INVENTORY)
+            {
+                pc.set("armour", inventory.getArmour());
+                pc.set("inventory", inventory.getInventory());
+            }
+            else if(type == InventoryType.ENDERCHEST)
+            {
+                pc.set("enderchest", inventory.getInventory());
+            }
+            
+            pc.save(file);
         }        
         catch (Exception e)
         {
-            WorldInventories.logError("Failed to save inventory for player: " + player + ": " + e.getMessage());
-        }
-        finally
-        {
-            if (fOS != null)
-            {
-                try { fOS.close(); } catch (IOException e) {}
-            }
-        }        
+            WorldInventories.logError("Failed to save " + sType + " for player: " + player + ": " + e.getMessage());
+        }    
         
-        WorldInventories.logDebug("Saved inventory for player: " + player + " " + path);
+        WorldInventories.logDebug("Saved " + sType + " for player: " + player + " " + path);
     }
-
-   public void savePlayerEnderChest(String player, Group group, EnderChestHelper toStore)
+    
+    public InventoryHelper loadPlayerInventory(Player player, Group group, InventoryType type)
     {
-        if (!this.getDataFolder().exists())
-        {
-            this.getDataFolder().mkdir();
-        }
-
         String path = File.separator + group.getName();
 
         path = this.getDataFolder().getAbsolutePath() + path;
@@ -194,109 +206,108 @@ public class WorldInventories extends JavaPlugin
         if (!file.exists())
         {
             file.mkdir();
+        }         
+        
+        String sType = "unknown";
+        if(type == InventoryType.INVENTORY)
+        {
+            sType = "inventory";
+        }
+        else if(type == InventoryType.ENDERCHEST)
+        {
+            sType = "enderchest";
         }
 
-        path += File.separator + player + ".enderchest." + fileVersion + ".xml";
-
-        FileOutputStream fOS = null;
+        path += File.separator + player.getName() + "." + sType + "." + inventoryFileVersion + ".yml";       
+        
+        file = new File(path);
+        FileConfiguration pc = null;
         try
         {
-            fOS = new FileOutputStream(path);
-            xstream.toXML(toStore.inventories, fOS);
-        }        
+            file.createNewFile();
+            pc = YamlConfiguration.loadConfiguration(new File(path));        
+        }
         catch (Exception e)
         {
-            WorldInventories.logError("Failed to save Ender Chest for player: " + player + ": " + e.getMessage());
-        }
-        finally
-        {
-            if (fOS != null)
-            {
-                try { fOS.close(); } catch (IOException e) {}
-            }
-        }
+            WorldInventories.logError("Failed to load " + sType + " for player: " + player + ": " + e.getMessage());
+        }    
+
+        List armour = null;
+        List inventory = null;
         
-        WorldInventories.logDebug("Saved Ender Chest for player: " + player + " " + path);
-    }    
-    
-    public EnderChestHelper loadPlayerEnderChest(String player, Group group)
-    {
-        InventoriesLists playerInventory = null;
+        ItemStack[] iArmour = new ItemStack[4];
+        ItemStack[] iInventory = null;
         
-        String path = File.separator + group.getName();
-
-        path = this.getDataFolder().getAbsolutePath() + path;
-
-        File file = new File(path);
-        if (!file.exists())
+        if(type == InventoryType.INVENTORY)
         {
-            file.mkdir();
-        }
-
-        path += File.separator + player + ".enderchest." + fileVersion + ".xml";
-
-        file = new File(path);
-        if(!file.exists())
-        {
-            WorldInventories.logDebug("Making new Ender Chest for player: " + player);
+            armour = pc.getList("armour", null);
+            inventory = pc.getList("inventory", null);
             
-            ItemStack[] items = new ItemStack[27];
-            for (int i = 0; i < 27; i++)
+            if(armour == null)
             {
-                items[i] = new ItemStack(Material.AIR);
+                WorldInventories.logDebug("Player " + player.getName() + " will get new armour on next save (clearing now).");
+                player.getInventory().clear();                 
+
+                for (int i = 0; i < 4; i++)
+                {
+                    iArmour[i] = new ItemStack(Material.AIR);
+                }            
+            }
+            else
+            {
+                for(int i = 0; i < 4; i++)
+                {
+                    iArmour[i] = (ItemStack)armour.get(i);
+                }
             }
             
-            return new EnderChestHelper(items);            
-        }
-        else
-        {
-            playerInventory = (InventoriesLists) xstream.fromXML(file);
-        }
-
-        WorldInventories.logDebug("Loaded Ender Chest for player: " + player + " " + path);
-        
-        return new EnderChestHelper(playerInventory);        
-    }
-    
-    public PlayerInventoryHelper loadPlayerInventory(Player player, Group group)
-    {
-        InventoriesLists playerInventory = null;
-
-        String path = File.separator + group.getName();
-
-        path = this.getDataFolder().getAbsolutePath() + path;
-
-        File file = new File(path);
-        if (!file.exists())
-        {
-            file.mkdir();
-        }
-
-        path += File.separator + player.getName() + ".inventory." + fileVersion + ".xml";
-
-        file = new File(path);
-        if(!file.exists())
-        {
-            WorldInventories.logDebug("Player " + player.getName() + " will get a new item file on next save (clearing now).");
-            player.getInventory().clear();
-            ItemStack[] armour = new ItemStack[4];
-            for (int i = 0; i < 4; i++)
+            iInventory = new ItemStack[36];
+            if(inventory == null)
             {
-                armour[i] = new ItemStack(Material.AIR);
-            }
+                WorldInventories.logDebug("Player " + player.getName() + " will get new items on next save (clearing now).");
+                player.getInventory().clear();            
 
-            player.getInventory().setArmorContents(armour);
-            
-            return new PlayerInventoryHelper(player.getInventory().getContents(), player.getInventory().getArmorContents());               
+                for (int i = 0; i < 36; i++)
+                {
+                    iInventory[i] = new ItemStack(Material.AIR);
+                }              
+            }
+            else
+            {
+                for (int i = 0; i < 36; i++)
+                {
+                    iInventory[i] = (ItemStack)inventory.get(i);
+                }  
+            }            
         }
-        else
+        else if(type == InventoryType.ENDERCHEST)
         {
-            playerInventory = (InventoriesLists) xstream.fromXML(file);         
+            inventory = pc.getList("enderchest", null);
+            iInventory = new ItemStack[27];
+            if(inventory == null)
+            {
+                
+                for (int i = 0; i < 27; i++)
+                {
+                    iInventory[i] = new ItemStack(Material.AIR);
+                }                  
+            }
+            else
+            {
+                for(int i = 0; i < 27; i++)
+                {
+                    iInventory[i] = (ItemStack)inventory.get(i);
+                }
+            }            
         }
         
-        WorldInventories.logDebug("Loaded inventory for player: " + player + " " + path);
+        InventoryHelper ret = new InventoryHelper();
+        ret.setArmour(iArmour);
+        ret.setInventory(iInventory);
+        
+        WorldInventories.logDebug("Loaded " + sType + " for player: " + player + " " + path);
 
-        return new PlayerInventoryHelper(playerInventory);
+        return ret;
     }
 
     public PlayerStats loadPlayerStats(Player player, Group group)
@@ -486,7 +497,11 @@ public class WorldInventories extends JavaPlugin
                     ItemStack[] armour = MultiInvImportHelper.MIItemStacktoItemStack(minventory.getArmorContents());
                     ItemStack[] inventory = MultiInvImportHelper.MIItemStacktoItemStack(minventory.getInventoryContents());
                     
-                    savePlayerInventory(player.getName(), findFirstGroupThenDefault(world.getName()), new PlayerInventoryHelper(inventory, armour));
+                    InventoryHelper helper = new InventoryHelper();
+                    helper.setArmour(armour);
+                    helper.setInventory(inventory);
+                    
+                    savePlayerInventory(player.getName(), findFirstGroupThenDefault(world.getName()), InventoryType.INVENTORY, helper);
                     importedinventories++;
                 }
             }
@@ -543,10 +558,18 @@ public class WorldInventories extends JavaPlugin
                     continue;
                 }
                 
-                this.savePlayerStats(player, group);
-                this.savePlayerInventory(player.getName(), group, getPlayerInventory(player));            
+                savePlayerStats(player, group);
+                
+                InventoryHelper helper = new InventoryHelper();
+                helper.setArmour(player.getInventory().getArmorContents());
+                helper.setInventory(player.getInventory().getContents());
+                
+                savePlayerInventory(player.getName(), group, InventoryType.INVENTORY, helper);
+                
+                helper.setArmour(null);
+                helper.setInventory(((HumanEntity)player).getEnderChest().getContents());
 
-                this.savePlayerEnderChest(player.getName(), group, new EnderChestHelper(((HumanEntity)player).getEnderChest().getContents()));
+                this.savePlayerInventory(player.getName(), group, InventoryType.ENDERCHEST, helper);
                 
                 imported++;
             }
@@ -556,7 +579,7 @@ public class WorldInventories extends JavaPlugin
         return (failed <= 0);
     }
    
-    public boolean import78Data()
+    /*public boolean import78Data()
     {
         boolean allImported = true;
         int groupsFound = 0;
@@ -587,7 +610,7 @@ public class WorldInventories extends JavaPlugin
                             }
                             else
                             {
-                                savePlayerInventory(fInventory.getName().split("\\.")[0], new Group(fGroup.getName()), new PlayerInventoryHelper(oldinventory.getItems(), oldinventory.getArmour()));
+                                savePlayerInventory(fInventory.getName().split("\\.")[0], new Group(fGroup.getName()), new PlayerInventoryHelperOld(oldinventory.getItems(), oldinventory.getArmour()));
                             }
                         }
                     }
@@ -598,9 +621,9 @@ public class WorldInventories extends JavaPlugin
         WorldInventories.logStandard("Attempted conversion of " + Integer.toString(groupsFound) + " groups and " + Integer.toString(inventoriesFound) + " associated inventories");
         
         return allImported;
-    }    
+    }    */
     
-    public boolean import141Data()
+    /*public boolean import141Data()
     {
         boolean allImported = true;
         int groupsFound = 0;
@@ -625,7 +648,7 @@ public class WorldInventories extends JavaPlugin
                         {
                             inventoriesFound++;
                             
-                            PlayerInventoryHelper oldinventory = Import141Helper.load141PlayerInventory(fFile);
+                            PlayerInventoryHelperOld oldinventory = Import141Helper.load141PlayerInventory(fFile);
                             if(oldinventory == null)
                             {
                                 WorldInventories.logError("Failed to convert " + fFile.getName() + " in group " + fGroup.getName());
@@ -678,7 +701,7 @@ public class WorldInventories extends JavaPlugin
         WorldInventories.logStandard("Attempted conversion of " + Integer.toString(groupsFound) + " groups including: " + Integer.toString(inventoriesFound) + " inventories, " + Integer.toString(enderChestsFound) + " Ender Chests and " + Integer.toString(statsFound) + " player stats.");
         
         return allImported;
-    }
+    }*/
 
     // NetBeans complains about these log lines but message formatting breaks for me
     public static void logStandard(String line)
@@ -804,9 +827,9 @@ public class WorldInventories extends JavaPlugin
         xstream.alias("potioneffecttype", org.bukkit.craftbukkit.v1_4_5.potion.CraftPotionEffectType.class);
         xstream.alias("playerstats", me.drayshak.WorldInventories.PlayerStats.class);
         xstream.alias("inventorieslists", me.drayshak.WorldInventories.InventoriesLists.class);
-        xstream.alias("potioneffect", org.bukkit.potion.PotionEffect.class);
+        xstream.alias("potioneffect", org.bukkit.potion.PotionEffect.class);    
         
-        xstream.aliasPackage("cb", "org.bukkit.craftbukkit.v1__4__5");
+        xstream.aliasPackage("org.bukkit.craftbukkit", "org.bukkit.craftbukkit.v1__4__5");
     }
 
     @Override
@@ -857,7 +880,7 @@ public class WorldInventories extends JavaPlugin
                 }                
             }
             
-            if(getConfig().getBoolean("do78import") || !getConfig().getBoolean("auto78updated"))
+            /*if(getConfig().getBoolean("do78import") || !getConfig().getBoolean("auto78updated"))
             {
                 if(!getConfig().getBoolean("auto78updated"))
                 {
@@ -875,9 +898,9 @@ public class WorldInventories extends JavaPlugin
                     getConfig().set("auto78updated", true);
                     this.saveConfig();
                 }
-            }
+            }*/
 
-            if(getConfig().getBoolean("do141import") || !getConfig().getBoolean("auto141updated"))
+            /*if(getConfig().getBoolean("do141import") || !getConfig().getBoolean("auto141updated"))
             {
                 if(!getConfig().getBoolean("auto141updated"))
                 {
@@ -895,7 +918,7 @@ public class WorldInventories extends JavaPlugin
                     getConfig().set("auto141updated", true);
                     this.saveConfig();
                 }
-            }            
+            } */           
             
             if (getConfig().getBoolean("domiimport"))
             {

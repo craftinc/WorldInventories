@@ -1,32 +1,34 @@
 package me.drayshak.WorldInventories;
 
-import java.util.List;
-import java.util.Map;
+import java.util.HashMap;
 import org.bukkit.inventory.ItemStack;
 
 public class InventoryHelper
 {
-    public static int ITEMS = 0;
-    
-    protected InventoriesLists inventories;
-       
-    public InventoriesLists getSerializable()
+    private HashMap<String, ItemStack[]> itemstacks;
+
+    public InventoryHelper()
     {
-        return this.inventories;
+        this.itemstacks = new HashMap();
     }
     
-    public void setItems(ItemStack[] items)
+    public ItemStack[] getArmour()
     {
-        inventories.setItemStack(ITEMS, items);
-    }    
+        return itemstacks.get("armour");
+    }
     
-    public ItemStack[] getItems()
+    public ItemStack[] getInventory()
     {
-        return inventories.getItemStack(ITEMS);
-    }    
+        return itemstacks.get("inventory");
+    }
     
-    public List<Map<String, Object>> getItemsList()
+    public void setArmour(ItemStack[] armour)
     {
-        return inventories.getItemStackList(ITEMS);
+        itemstacks.put("armour", armour);
+    }
+    
+    public void setInventory(ItemStack[] inventory)
+    {
+        itemstacks.put("inventory", inventory);
     }
 }

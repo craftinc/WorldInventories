@@ -4,21 +4,21 @@ import java.util.List;
 import java.util.Map;
 import org.bukkit.inventory.ItemStack;
 
-public class PlayerInventoryHelper extends InventoryHelper
+public class PlayerInventoryHelperOld extends InventoryHelperOld
 {
     public static int ARMOUR = 1;
     
-    public PlayerInventoryHelper(ItemStack[] tPlayerItems, ItemStack[] tPlayerArmour)
+    public PlayerInventoryHelperOld(ItemStack[] tPlayerItems, ItemStack[] tPlayerArmour)
     {
         inventories = new InventoriesLists(ItemStackHelper.formSerializedMap(tPlayerItems), ItemStackHelper.formSerializedMap(tPlayerArmour));
     }
  
-    public PlayerInventoryHelper(List<Map<String, Object>> tPlayerItems, List<Map<String, Object>> tPlayerArmour)
+    public PlayerInventoryHelperOld(List<Map<String, Object>> tPlayerItems, List<Map<String, Object>> tPlayerArmour)
     {
         inventories = new InventoriesLists(tPlayerItems, tPlayerArmour);
     }
     
-    public PlayerInventoryHelper(InventoriesLists inventories)
+    public PlayerInventoryHelperOld(InventoriesLists inventories)
     {
         this.inventories = inventories;
     }

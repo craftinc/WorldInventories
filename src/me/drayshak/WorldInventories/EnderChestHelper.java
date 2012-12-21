@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import org.bukkit.inventory.ItemStack;
 
-public class EnderChestHelper extends InventoryHelper
+public class EnderChestHelper extends InventoryHelperOld
 {
     public EnderChestHelper(ItemStack[] items)
     {

@@ -36,7 +36,10 @@ public class EntityListener implements Listener
             WorldInventories.logDebug("Player " + player.getName() + " died in world " + world + ", emptying inventory for group: " + togroup.getName());
 
             // Make the saved inventory blank so players can't duplicate by switching worlds and picking items back up
-            plugin.savePlayerInventory(player.getName(), togroup, new PlayerInventoryHelper(new ItemStack[36], new ItemStack[4]));
+            InventoryHelper helper = new InventoryHelper();
+            helper.setArmour(new ItemStack[4]);
+            helper.setInventory(new ItemStack[36]);
+            plugin.savePlayerInventory(player.getName(), togroup, InventoryType.INVENTORY, helper);;
             
             if(plugin.getConfig().getBoolean("dostats"))
             {

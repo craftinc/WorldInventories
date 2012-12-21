@@ -35,7 +35,10 @@ public class PlayerListener implements Listener
         
         Group group = WorldInventories.findFirstGroupThenDefault(player.getWorld().getName());
         
-        plugin.savePlayerInventory(player.getName(), group, new PlayerInventoryHelper(new ItemStack[36], new ItemStack[4]));
+        InventoryHelper helper = new InventoryHelper();
+        helper.setArmour(new ItemStack[4]);
+        helper.setInventory(new ItemStack[36]);
+        plugin.savePlayerInventory(player.getName(), group, me.drayshak.WorldInventories.InventoryType.INVENTORY, helper);
         if (plugin.getConfig().getBoolean("dostats"))
         {
             plugin.savePlayerStats(player.getName(), group, new PlayerStats(20, 20, 0, 0, 0, 0F, null));
@@ -68,7 +71,11 @@ public class PlayerListener implements Listener
             Group fromgroup = WorldInventories.findFirstGroupThenDefault(fromworld);
             Group togroup = WorldInventories.findFirstGroupThenDefault(toworld);
             
-            plugin.savePlayerInventory(player.getName(), fromgroup, plugin.getPlayerInventory(player));
+            InventoryHelper helper = new InventoryHelper();
+            helper.setArmour(player.getInventory().getArmorContents());
+            helper.setInventory(player.getInventory().getContents());
+            plugin.savePlayerInventory(player.getName(), fromgroup, me.drayshak.WorldInventories.InventoryType.INVENTORY, helper);
+            
             if (plugin.getConfig().getBoolean("dostats"))
             {
                 plugin.savePlayerStats(player, fromgroup);
@@ -76,7 +83,7 @@ public class PlayerListener implements Listener
             
             if (!fromgroup.getName().equals(togroup.getName()))
             {
-                plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player, togroup));
+                plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player, togroup, me.drayshak.WorldInventories.InventoryType.INVENTORY));
                 if (plugin.getConfig().getBoolean("dostats"))
                 {
                     plugin.setPlayerStats(player, plugin.loadPlayerStats(player, togroup));
@@ -123,7 +130,12 @@ public class PlayerListener implements Listener
         //if (tGroup != null)
         //{            
             WorldInventories.logDebug("Saving inventory of " + player.getName());
-            plugin.savePlayerInventory(player.getName(), tGroup, plugin.getPlayerInventory(player));
+            
+            InventoryHelper helper = new InventoryHelper();
+            helper.setArmour(player.getInventory().getArmorContents());
+            helper.setInventory(player.getInventory().getContents());
+            
+            plugin.savePlayerInventory(player.getName(), tGroup, me.drayshak.WorldInventories.InventoryType.INVENTORY, helper);
             
             if (plugin.getConfig().getBoolean("dostats"))
             {
@@ -134,7 +146,10 @@ public class PlayerListener implements Listener
         // Save the Ender Chest contents
         if(player.getOpenInventory().getType() == InventoryType.ENDER_CHEST)
         {
-            plugin.savePlayerEnderChest(player.getName(), tGroup, new EnderChestHelper(player.getOpenInventory().getTopInventory().getContents()));
+            helper.setArmour(null);
+            helper.setInventory(player.getOpenInventory().getTopInventory().getContents());
+            
+            plugin.savePlayerInventory(player.getName(), tGroup, me.drayshak.WorldInventories.InventoryType.ENDERCHEST, helper);
         }
     }
     
@@ -157,7 +172,7 @@ public class PlayerListener implements Listener
             Group tGroup = WorldInventories.findFirstGroupThenDefault(world);
             
             //WorldInventories.logDebug("Loading inventory of " + player.getName());
-            plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player, tGroup));            
+            plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player, tGroup, me.drayshak.WorldInventories.InventoryType.INVENTORY));            
             
             if (plugin.getConfig().getBoolean("dostats"))
             {
