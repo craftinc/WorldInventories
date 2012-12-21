@@ -47,28 +47,6 @@ public class WorldInventories extends JavaPlugin
     public static Timer saveTimer = new Timer();
     public static String statsFileVersion = "v5";
     public static String inventoryFileVersion = "v5";
-    private XStream xstream = new XStream()
-    {
-        // Taken from XStream test class
-        //  Ignores and wipes any unrecognised fields instead of throwing an exception
-        @Override
-        protected MapperWrapper wrapMapper(MapperWrapper next)
-        {
-            return new MapperWrapper(next)
-            {
-                @Override
-                public boolean shouldSerializeMember(Class definedIn, String fieldName)
-                {
-                    if (definedIn == Object.class)
-                    {
-                        return false;
-                    }
-                    
-                    return super.shouldSerializeMember(definedIn, fieldName);
-                }
-            };
-        }
-    };
 
     public void setPlayerInventory(Player player, InventoryHelper playerInventory)
     {
@@ -681,6 +659,122 @@ public class WorldInventories extends JavaPlugin
         
         return allImported;
     }*/
+    
+    public boolean import15Data()
+    {
+        boolean allImported = true;
+        int groupsFound = 0;
+        int inventoriesFound = 0;
+        int statsFound = 0;
+        int enderChestsFound = 0;
+        
+        WorldInventories.logStandard("Starting pre 15 build inventory import...");
+        
+        XStream xstream = new XStream()
+        {
+            // Taken from XStream test class
+            //  Ignores and wipes any unrecognised fields instead of throwing an exception
+            @Override
+            protected MapperWrapper wrapMapper(MapperWrapper next)
+            {
+                return new MapperWrapper(next)
+                {
+                    @Override
+                    public boolean shouldSerializeMember(Class definedIn, String fieldName)
+                    {
+                        if (definedIn == Object.class)
+                        {
+                            return false;
+                        }
+
+                        return super.shouldSerializeMember(definedIn, fieldName);
+                    }
+                };
+            }
+        };
+        
+        //xstream.alias("potioneffecttype", org.bukkit.craftbukkit.v1_4_5.potion.CraftPotionEffectType.class);
+        xstream.alias("playerstats", me.drayshak.WorldInventories.PlayerStats.class);
+        xstream.alias("inventorieslists", me.drayshak.WorldInventories.InventoriesListsOld.class);
+        xstream.alias("potioneffect", org.bukkit.potion.PotionEffect.class);    
+        
+        //xstream.aliasPackage("org.bukkit.craftbukkit", "org.bukkit.craftbukkit.v1__4__5");        
+        
+        for(File fGroup : this.getDataFolder().listFiles())
+        {
+            if(fGroup.isDirectory() && fGroup.exists())
+            {
+                groupsFound++;
+                
+                for(File fFile : new File(this.getDataFolder(), fGroup.getName()).listFiles())
+                {
+                    if(fFile.isFile())
+                    {
+                        boolean is141Inventory = fFile.getName().endsWith(".inventory.v4.xml");
+                        if(is141Inventory)
+                        {
+                            inventoriesFound++;
+                            
+                            PlayerInventoryHelperOld oldinventory = Import15Helper.load15PlayerInventory(fFile, xstream);
+                            if(oldinventory == null)
+                            {
+                                WorldInventories.logError("Failed to convert " + fFile.getName() + " in group " + fGroup.getName());
+                                allImported = false;
+                            }
+                            else
+                            {
+                                InventoryHelper helper = new InventoryHelper();
+                                helper.setArmour(oldinventory.getArmour());
+                                helper.setInventory(oldinventory.getItems());
+                                savePlayerInventory(fFile.getName().split("\\.")[0], new Group(fGroup.getName()), InventoryType.INVENTORY, helper);
+                            }
+                        }
+                        
+                        boolean is141EnderChest = fFile.getName().endsWith(".enderchest.v4.xml");
+                        if(is141EnderChest)
+                        {
+                            enderChestsFound++;
+                            
+                            EnderChestHelperOld oldinventory = Import15Helper.load15PlayerEnderChest(fFile, xstream);
+                            if(oldinventory == null)
+                            {
+                                WorldInventories.logError("Failed to convert " + fFile.getName() + " in group " + fGroup.getName());
+                                allImported = false;
+                            }
+                            else
+                            {
+                                InventoryHelper helper = new InventoryHelper();
+                                helper.setArmour(null);
+                                helper.setInventory(oldinventory.getItems());
+                                savePlayerInventory(fFile.getName().split("\\.")[0], new Group(fGroup.getName()), InventoryType.ENDERCHEST, helper);
+                            }
+                        }
+                        
+                        boolean is141Stats = fFile.getName().endsWith(".stats.v4.xml");
+                        if(is141Stats)
+                        {
+                            statsFound++;
+                            
+                            PlayerStats oldstats = Import15Helper.load15PlayerStats(fFile, xstream);
+                            if(oldstats == null)
+                            {
+                                WorldInventories.logError("Failed to convert " + fFile.getName() + " in group " + fGroup.getName());
+                                allImported = false;
+                            }
+                            else
+                            {
+                                savePlayerStats(fFile.getName().split("\\.")[0], new Group(fGroup.getName()), oldstats);
+                            }
+                        }                        
+                    }
+                }                
+            }            
+        }
+        
+        WorldInventories.logStandard("Attempted conversion of " + Integer.toString(groupsFound) + " groups including: " + Integer.toString(inventoriesFound) + " inventories, " + Integer.toString(enderChestsFound) + " Ender Chests and " + Integer.toString(statsFound) + " player stats.");
+        
+        return allImported;
+    }    
 
     // NetBeans complains about these log lines but message formatting breaks for me
     public static void logStandard(String line)
@@ -799,17 +893,6 @@ public class WorldInventories extends JavaPlugin
 
         return groups.get(0);
     }
-    
-    // If using externally you must call this before loading any inventories
-    /*public void setXStreamAliases()
-    {
-        xstream.alias("potioneffecttype", org.bukkit.craftbukkit.v1_4_5.potion.CraftPotionEffectType.class);
-        xstream.alias("playerstats", me.drayshak.WorldInventories.PlayerStats.class);
-        xstream.alias("inventorieslists", me.drayshak.WorldInventories.InventoriesLists.class);
-        xstream.alias("potioneffect", org.bukkit.potion.PotionEffect.class);    
-        
-        xstream.aliasPackage("org.bukkit.craftbukkit", "org.bukkit.craftbukkit.v1__4__5");
-    }*/
 
     @Override
     public void onEnable()
@@ -898,6 +981,26 @@ public class WorldInventories extends JavaPlugin
                     this.saveConfig();
                 }
             } */           
+            
+            if(getConfig().getBoolean("do15import") || !getConfig().getBoolean("auto15updated"))
+            {
+                if(!getConfig().getBoolean("auto15updated"))
+                {
+                    WorldInventories.logStandard("This appears to be the first time you've run WorldInventories after version 1.5, automatically trying to import version 1.5 data.");
+                }
+                
+                boolean bSuccess = this.import15Data();
+                
+                this.getConfig().set("do15import", false);
+                this.saveConfig();
+                
+                if(bSuccess)
+                {
+                    WorldInventories.logStandard("Pre 1.5 build saves import was a success!");
+                    getConfig().set("auto15updated", true);
+                    this.saveConfig();
+                }
+            }            
             
             if (getConfig().getBoolean("domiimport"))
             {
