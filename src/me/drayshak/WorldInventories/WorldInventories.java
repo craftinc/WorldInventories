@@ -1,6 +1,7 @@
 package me.drayshak.WorldInventories;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -672,8 +673,6 @@ public class WorldInventories extends JavaPlugin
         
         XStream xstream = new XStream()
         {
-            // Taken from XStream test class
-            //  Ignores and wipes any unrecognised fields instead of throwing an exception
             @Override
             protected MapperWrapper wrapMapper(MapperWrapper next)
             {
@@ -686,7 +685,6 @@ public class WorldInventories extends JavaPlugin
                         {
                             return false;
                         }
-
                         return super.shouldSerializeMember(definedIn, fieldName);
                     }
                 };
