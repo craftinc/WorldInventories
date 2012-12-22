@@ -771,7 +771,7 @@ public class WorldInventories extends JavaPlugin
         }
         
         WorldInventories.logStandard("Attempted conversion of " + Integer.toString(groupsFound) + " groups including: " + Integer.toString(inventoriesFound) + " inventories, " + Integer.toString(enderChestsFound) + " Ender Chests and " + Integer.toString(statsFound) + " player stats.");
-        
+
         return allImported;
     }    
 
@@ -996,9 +996,14 @@ public class WorldInventories extends JavaPlugin
                 if(bSuccess)
                 {
                     WorldInventories.logStandard("Pre 1.5 build saves import was a success!");
-                    getConfig().set("auto15updated", true);
-                    this.saveConfig();
                 }
+                else
+                {
+                    WorldInventories.logStandard("There were problems whilst importing. Check them and set do15import to true to reimport.");
+                }
+                
+                getConfig().set("auto15updated", true);
+                this.saveConfig();                
             }            
             
             if (getConfig().getBoolean("domiimport"))
