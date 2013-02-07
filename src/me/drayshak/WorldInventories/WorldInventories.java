@@ -1066,6 +1066,7 @@ public class WorldInventories extends JavaPlugin
                 {
                     WorldInventories.logStandard("Reloading configuration...");
                     reloadConfig();
+                    loadConfiguration();
                     sender.sendMessage(ChatColor.GREEN + "Reloaded WorldInventories configuration successfully");
                 }
             }

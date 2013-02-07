@@ -2,6 +2,22 @@
 #  In this example there are two groups, a creative and a survival group
 #  Each group has an overworld and a nether, which will share an inventory
 
+# groups:
+#    creativegroup:
+#    - creative_overworld
+#    - creative_nether
+#    survivalgroup:
+#    - survival_overworld
+#    - survival_nether
+#    - survival_end
+
+# Add a player to the "exempt" collection to make this plugin ignore them completely
+#  No saves, loads or anything else done by this plugin will apply to them until you remove them from the list
+
+# exempt:
+#   - exampleplayer
+#   - exampleplayer2
+
 # Inventory switching examples
 # Scenarios when the inventory will not switch:
 #  creative_overworld to creative_nether
@@ -10,9 +26,6 @@
 # Scenarios when the inventory will switch:
 #   creative_overworld to survival_end
 #   survival_nether to creative_nether
-
-# Add a player to the "exempt" collection to make this plugin ignore them completely
-#  No saves, loads or anything else done by this plugin will apply to them until you remove them from the list
 
 # If "donotifications" is set to false you won't get inventory switching notifications in the console
 # Set "domiimport" to true to make WorldInventories attempt to import MultiInv data
@@ -33,23 +46,10 @@
 # Set "dogamemodeswitch" to true and add groups to gamemodes as per the example to enforce gamemodes
 #  SURVIVAL, CREATIVE or HARDCORE at the time of writing (follows Bukkit's names)
 
-groups:
-#    creativegroup:
-#    - creative_overworld
-#    - creative_nether
-#    survivalgroup:
-#    - survival_overworld
-#    - survival_nether
-#    - survival_end
-    
-gamemodes:
-#  default: SURVIVAL
-#  creativegroup: CREATIVE
-#  survivalgroup: SURVIVAL    
-    
-exempt:
-#  - exampleplayer
-#  - exampleplayer2
+# gamemodes:
+#   default: SURVIVAL
+#   creativegroup: CREATIVE
+#   survivalgroup: SURVIVAL
 
 dogamemodeswitch: false
 donotifications: true
