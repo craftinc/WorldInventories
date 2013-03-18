@@ -153,7 +153,7 @@ public class PlayerListener implements Listener
         }
     }
     
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event)
     {
         if (plugin.getConfig().getBoolean("loadinvonlogin"))
