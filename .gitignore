@@ -22,3 +22,4 @@ build.xml
 /beanreg.dll
 /WorldInventories.iws
 /.git-rewrite/
+dependency-reduced-pom.xml
