@@ -55,7 +55,7 @@ dogamemodeswitch: false
 donotifications: true
 domiimport: false
 miimportmode: 0
-dostats: false
+dostats: true
 outputtimertoconsole: true
 saveinterval: 0
 loadinvonlogin: true
