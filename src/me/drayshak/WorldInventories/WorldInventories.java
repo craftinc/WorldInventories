@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,7 +44,7 @@ public class WorldInventories extends JavaPlugin
     public static String statsFileVersion = "v5";
     public static String inventoryFileVersion = "v5";
 
-    public void setPlayerInventory(Player player, ArrayList<ItemStack[]> playerInventory)
+    public void setPlayerInventory(Player player, HashMap<Integer, ItemStack[]> playerInventory)
     {
         if (playerInventory != null)
         {
@@ -86,12 +87,12 @@ public class WorldInventories extends JavaPlugin
             String world = player.getLocation().getWorld().getName();
             Group tGroup = findGroup(world);
             
-            ArrayList<ItemStack[]> tosave = new ArrayList();
+            HashMap<Integer, ItemStack[]> tosave = new HashMap();
             // Don't save if we don't care where we are (default group)
             if (!"default".equals(tGroup.getName()))
             {
-                tosave.set(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
-                tosave.set(InventoryStoredType.INVENTORY, player.getInventory().getContents());
+                tosave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
+                tosave.put(InventoryStoredType.INVENTORY, player.getInventory().getContents());
                 
                 savePlayerInventory(player.getName(), findGroup(world), InventoryLoadType.INVENTORY, tosave);
                 
@@ -108,7 +109,7 @@ public class WorldInventories extends JavaPlugin
         }
     }
 
-    public void savePlayerInventory(String player, Group group, InventoryLoadType type, ArrayList<ItemStack[]> inventory)
+    public void savePlayerInventory(String player, Group group, InventoryLoadType type, HashMap<Integer, ItemStack[]> inventory)
     {
         if (!this.getDataFolder().exists())
         {
@@ -164,7 +165,7 @@ public class WorldInventories extends JavaPlugin
         logDebug("Saved " + sType + " for player: " + player + " " + path);
     }
     
-    public ArrayList<ItemStack[]> loadPlayerInventory(String player, Group group, InventoryLoadType type)
+    public HashMap<Integer, ItemStack[]> loadPlayerInventory(String player, Group group, InventoryLoadType type)
     {
         String path = File.separator + group.getName();
 
@@ -267,9 +268,9 @@ public class WorldInventories extends JavaPlugin
             }            
         }
         
-        ArrayList<ItemStack[]> ret = new ArrayList();
-        ret.set(InventoryStoredType.ARMOUR, iArmour);
-        ret.set(InventoryStoredType.INVENTORY, iInventory);
+        HashMap<Integer, ItemStack[]> ret = new HashMap();
+        ret.put(InventoryStoredType.ARMOUR, iArmour);
+        ret.put(InventoryStoredType.INVENTORY, iInventory);
         
         logDebug("Loaded " + sType + " for player: " + player + " " + path);
 
@@ -427,14 +428,14 @@ public class WorldInventories extends JavaPlugin
             {
                 savePlayerStats(player, group);
                 
-                ArrayList<ItemStack[]> tosave = new ArrayList();
-                tosave.set(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
-                tosave.set(InventoryStoredType.INVENTORY, player.getInventory().getContents());
+                HashMap<Integer, ItemStack[]> tosave = new HashMap();
+                tosave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
+                tosave.put(InventoryStoredType.INVENTORY, player.getInventory().getContents());
                 
                 savePlayerInventory(player.getName(), group, InventoryLoadType.INVENTORY, tosave);
                 
-                tosave.set(InventoryStoredType.ARMOUR, null);
-                tosave.set(InventoryStoredType.INVENTORY, ((HumanEntity)player).getEnderChest().getContents());
+                tosave.put(InventoryStoredType.ARMOUR, null);
+                tosave.put(InventoryStoredType.INVENTORY, ((HumanEntity)player).getEnderChest().getContents());
 
                 this.savePlayerInventory(player.getName(), group, InventoryLoadType.ENDERCHEST, tosave);
                 

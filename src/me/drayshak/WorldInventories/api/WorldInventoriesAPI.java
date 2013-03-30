@@ -2,6 +2,7 @@ package me.drayshak.WorldInventories.api;
 
 import me.drayshak.WorldInventories.InventoryLoadType;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import me.drayshak.WorldInventories.Group;
 import me.drayshak.WorldInventories.PlayerStats;
@@ -30,7 +31,7 @@ public class WorldInventoriesAPI {
      * Type and locations are defined in InventoryStoredType.
      * Loading an Enderchest stores it in type INVENTORY
      */
-    public ArrayList<ItemStack[]> getPlayerInventory(String player, Group group, InventoryLoadType type)
+    public HashMap<Integer, ItemStack[]> getPlayerInventory(String player, Group group, InventoryLoadType type)
     {
         return plugin.loadPlayerInventory(player, group, type);
     }

@@ -1,6 +1,7 @@
 package me.drayshak.WorldInventories.listener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import me.drayshak.WorldInventories.Group;
 import me.drayshak.WorldInventories.InventoryStoredType;
 import me.drayshak.WorldInventories.WorldInventories;
@@ -66,9 +67,9 @@ public class InventoryListener implements Listener
             
             WorldInventories.logDebug("Ender Chest closed by " + player + " in world " + world + ", group " + worldgroup);
             
-            ArrayList<ItemStack[]> tosave = new ArrayList();
-            tosave.set(InventoryStoredType.ARMOUR, null);
-            tosave.set(InventoryStoredType.INVENTORY, inventory.getContents());
+            HashMap<Integer, ItemStack[]> tosave = new HashMap();
+            tosave.put(InventoryStoredType.ARMOUR, null);
+            tosave.put(InventoryStoredType.INVENTORY, inventory.getContents());
             
             plugin.savePlayerInventory(player, worldgroup, me.drayshak.WorldInventories.InventoryLoadType.ENDERCHEST, tosave);
         }        

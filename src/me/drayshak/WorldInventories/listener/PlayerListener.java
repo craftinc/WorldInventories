@@ -1,6 +1,7 @@
 package me.drayshak.WorldInventories.listener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import me.drayshak.WorldInventories.Group;
 import me.drayshak.WorldInventories.InventoryStoredType;
 import me.drayshak.WorldInventories.PlayerStats;
@@ -41,9 +42,9 @@ public class PlayerListener implements Listener
         
         Group group = WorldInventories.findGroup(player.getWorld().getName());
         
-        ArrayList<ItemStack[]> tosave = new ArrayList();
-        tosave.set(InventoryStoredType.ARMOUR, new ItemStack[4]);
-        tosave.set(InventoryStoredType.INVENTORY, new ItemStack[36]);
+        HashMap<Integer, ItemStack[]> tosave = new HashMap();
+        tosave.put(InventoryStoredType.ARMOUR, new ItemStack[4]);
+        tosave.put(InventoryStoredType.INVENTORY, new ItemStack[36]);
             
         plugin.savePlayerInventory(player.getName(), group, InventoryLoadType.INVENTORY, tosave);
         if (plugin.getConfig().getBoolean("dostats"))
@@ -78,9 +79,9 @@ public class PlayerListener implements Listener
             Group fromgroup = WorldInventories.findGroup(fromworld);
             Group togroup = WorldInventories.findGroup(toworld);
             
-            ArrayList<ItemStack[]> tosave = new ArrayList();
-            tosave.set(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
-            tosave.set(InventoryStoredType.INVENTORY, player.getInventory().getContents());            
+            HashMap<Integer, ItemStack[]> tosave = new HashMap();
+            tosave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
+            tosave.put(InventoryStoredType.INVENTORY, player.getInventory().getContents());            
             
             plugin.savePlayerInventory(player.getName(), fromgroup, me.drayshak.WorldInventories.InventoryLoadType.INVENTORY, tosave);
             
@@ -139,9 +140,9 @@ public class PlayerListener implements Listener
         //{            
             WorldInventories.logDebug("Saving inventory of " + player.getName());
             
-            ArrayList<ItemStack[]> tosave = new ArrayList();
-            tosave.set(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
-            tosave.set(InventoryStoredType.INVENTORY, player.getInventory().getContents());                      
+            HashMap<Integer, ItemStack[]> tosave = new HashMap();
+            tosave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
+            tosave.put(InventoryStoredType.INVENTORY, player.getInventory().getContents());                      
             
             plugin.savePlayerInventory(player.getName(), tGroup, me.drayshak.WorldInventories.InventoryLoadType.INVENTORY, tosave);
             
@@ -154,8 +155,8 @@ public class PlayerListener implements Listener
         // Save the Ender Chest contents
         if(player.getOpenInventory().getType() == InventoryType.ENDER_CHEST)
         {
-            tosave.set(InventoryStoredType.ARMOUR, null);
-            tosave.set(InventoryStoredType.INVENTORY, player.getOpenInventory().getTopInventory().getContents());                      
+            tosave.put(InventoryStoredType.ARMOUR, null);
+            tosave.put(InventoryStoredType.INVENTORY, player.getOpenInventory().getTopInventory().getContents());                      
 
             plugin.savePlayerInventory(player.getName(), tGroup, me.drayshak.WorldInventories.InventoryLoadType.ENDERCHEST, tosave);
         }

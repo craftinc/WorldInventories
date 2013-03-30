@@ -1,6 +1,7 @@
 package me.drayshak.WorldInventories.listener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import me.drayshak.WorldInventories.Group;
 import me.drayshak.WorldInventories.InventoryStoredType;
 import me.drayshak.WorldInventories.InventoryLoadType;
@@ -42,9 +43,9 @@ public class EntityListener implements Listener
             WorldInventories.logDebug("Player " + player.getName() + " died in world " + world + ", emptying inventory for group: " + togroup.getName());
 
             // Make the saved inventory blank so players can't duplicate by switching worlds and picking items back up
-            ArrayList<ItemStack[]> tosave = new ArrayList();
-            tosave.set(InventoryStoredType.ARMOUR, new ItemStack[4]);
-            tosave.set(InventoryStoredType.INVENTORY, new ItemStack[36]);
+            HashMap<Integer, ItemStack[]> tosave = new HashMap();
+            tosave.put(InventoryStoredType.ARMOUR, new ItemStack[4]);
+            tosave.put(InventoryStoredType.INVENTORY, new ItemStack[36]);
             
             plugin.savePlayerInventory(player.getName(), togroup, InventoryLoadType.INVENTORY, tosave);
             
