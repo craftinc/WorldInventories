@@ -3,7 +3,7 @@ package me.drayshak.WorldInventories.listener;
 import me.drayshak.WorldInventories.Group;
 import me.drayshak.WorldInventories.helper.InventoryHelper;
 import me.drayshak.WorldInventories.helper.InventoryTypeHelper;
-import me.drayshak.WorldInventories.PlayerData;
+import me.drayshak.WorldInventories.PlayerStats;
 import me.drayshak.WorldInventories.WorldInventories;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -48,7 +48,7 @@ public class EntityListener implements Listener
             
             if(plugin.getConfig().getBoolean("dostats"))
             {
-                plugin.savePlayerStats(player.getName(), togroup, new PlayerData(20, 20, 0, 0, 0, 0F, null));
+                plugin.savePlayerStats(player.getName(), togroup, new PlayerStats(20, 20, 0, 0, 0, 0F, null));
             }
         }
     }

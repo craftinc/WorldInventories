@@ -54,7 +54,7 @@ public class WorldInventories extends JavaPlugin
         }
     }
 
-    public void setPlayerStats(Player player, PlayerData playerstats)
+    public void setPlayerStats(Player player, PlayerStats playerstats)
     {
         // Never kill a player - must be a bug if it was 0
         player.setHealth(Math.max(playerstats.getHealth(), 1));
@@ -166,7 +166,7 @@ public class WorldInventories extends JavaPlugin
         logDebug("Saved " + sType + " for player: " + player + " " + path);
     }
     
-    public InventoryHelper loadPlayerInventory(Player player, Group group, InventoryTypeHelper type)
+    public InventoryHelper loadPlayerInventory(String player, Group group, InventoryTypeHelper type)
     {
         String path = File.separator + group.getName();
 
@@ -188,7 +188,7 @@ public class WorldInventories extends JavaPlugin
             sType = "enderchest";
         }
 
-        path += File.separator + player.getName() + "." + sType + "." + inventoryFileVersion + ".yml";       
+        path += File.separator + player + "." + sType + "." + inventoryFileVersion + ".yml";       
         
         file = new File(path);
         FileConfiguration pc = null;
@@ -215,8 +215,7 @@ public class WorldInventories extends JavaPlugin
             
             if(armour == null)
             {
-                logDebug("Player " + player.getName() + " will get new armour on next save (clearing now).");
-                player.getInventory().clear();                 
+                logDebug("Player " + player + " will get new armour on next save (clearing now).");              
 
                 for (int i = 0; i < 4; i++)
                 {
@@ -234,8 +233,7 @@ public class WorldInventories extends JavaPlugin
             iInventory = new ItemStack[36];
             if(inventory == null)
             {
-                logDebug("Player " + player.getName() + " will get new items on next save (clearing now).");
-                player.getInventory().clear();            
+                logDebug("Player " + player + " will get new items on next save (clearing now).");           
 
                 for (int i = 0; i < 36; i++)
                 {
@@ -280,7 +278,7 @@ public class WorldInventories extends JavaPlugin
         return ret;
     }
 
-    public PlayerData loadPlayerStats(Player player, Group group)
+    public PlayerStats loadPlayerStats(String player, Group group)
     {
         String path = File.separator + group.getName();
 
@@ -292,7 +290,7 @@ public class WorldInventories extends JavaPlugin
             file.mkdir();
         }         
 
-        path += File.separator + player.getName() + ".stats." + statsFileVersion + ".yml";      
+        path += File.separator + player + ".stats." + statsFileVersion + ".yml";      
         
         file = new File(path);
         FileConfiguration pc = null;
@@ -322,18 +320,19 @@ public class WorldInventories extends JavaPlugin
         exp = pc.getDouble("exp", 0);
         potioneffects = (List<PotionEffect>) pc.getList("potioneffects", null);
         
-        PlayerData playerstats = new PlayerData(20, 20, 0, 0, 0, 0F, null);
+        PlayerStats playerstats = new PlayerStats(20, 20, 0, 0, 0, 0F, null);
         
         if(health == -1)
         {
-            logDebug("Player " + player.getName() + " will get a new stats file on next save (clearing now).");           
+            logDebug("Player " + player + " will get a new stats file on next save (clearing now).");           
         }
         else
         {
-            playerstats = new PlayerData(health, foodlevel, (float)exhaustion, (float)saturation, level, (float)exp, potioneffects);
+            playerstats = new PlayerStats(health, foodlevel, (float)exhaustion, (float)saturation, level, (float)exp, potioneffects);
         }
         
-        this.setPlayerStats(player, playerstats);  
+        
+        this.setPlayerStats(bukkitServer.getPlayer(player), playerstats);  
         
         logDebug("Loaded stats for player: " + player + " " + path);
 
@@ -342,10 +341,10 @@ public class WorldInventories extends JavaPlugin
 
     public void savePlayerStats(Player player, Group group)
     {
-        savePlayerStats(player.getName(), group, new PlayerData(player.getHealth(), player.getFoodLevel(), player.getExhaustion(), player.getSaturation(), player.getLevel(), player.getExp(), player.getActivePotionEffects()));
+        savePlayerStats(player.getName(), group, new PlayerStats(player.getHealth(), player.getFoodLevel(), player.getExhaustion(), player.getSaturation(), player.getLevel(), player.getExp(), player.getActivePotionEffects()));
     }
     
-    public void savePlayerStats(String player, Group group, PlayerData playerstats)
+    public void savePlayerStats(String player, Group group, PlayerStats playerstats)
     {
         if (!this.getDataFolder().exists())
         {
@@ -491,11 +490,6 @@ public class WorldInventories extends JavaPlugin
         saveConfig();
         
         return true;        
-    }
-
-    public List<Group> getGroups()
-    {
-        return groups;
     }
 
     private boolean loadConfiguration()

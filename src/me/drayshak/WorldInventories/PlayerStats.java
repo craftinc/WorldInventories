@@ -3,7 +3,7 @@ package me.drayshak.WorldInventories;
 import java.util.Collection;
 import org.bukkit.potion.PotionEffect;
 
-public class PlayerData
+public class PlayerStats
 {
     private int health;
     private int foodlevel;
@@ -15,7 +15,7 @@ public class PlayerData
     
     private Collection<PotionEffect> potioneffects;
     
-    public PlayerData(int health, int foodlevel, float exhaustion, float saturation, int level, float exp, Collection<PotionEffect> potioneffects)
+    public PlayerStats(int health, int foodlevel, float exhaustion, float saturation, int level, float exp, Collection<PotionEffect> potioneffects)
     {
         this.health = health;
         this.foodlevel = foodlevel;

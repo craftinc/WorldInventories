@@ -2,7 +2,7 @@ package me.drayshak.WorldInventories.listener;
 
 import me.drayshak.WorldInventories.Group;
 import me.drayshak.WorldInventories.helper.InventoryHelper;
-import me.drayshak.WorldInventories.PlayerData;
+import me.drayshak.WorldInventories.PlayerStats;
 import me.drayshak.WorldInventories.WorldInventories;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -45,7 +45,7 @@ public class PlayerListener implements Listener
         plugin.savePlayerInventory(player.getName(), group, me.drayshak.WorldInventories.helper.InventoryTypeHelper.INVENTORY, helper);
         if (plugin.getConfig().getBoolean("dostats"))
         {
-            plugin.savePlayerStats(player.getName(), group, new PlayerData(20, 20, 0, 0, 0, 0F, null));
+            plugin.savePlayerStats(player.getName(), group, new PlayerStats(20, 20, 0, 0, 0, 0F, null));
         }   
 
         if (plugin.getConfig().getBoolean("donotifications"))
@@ -87,10 +87,10 @@ public class PlayerListener implements Listener
             
             if (!fromgroup.getName().equals(togroup.getName()))
             {
-                plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player, togroup, me.drayshak.WorldInventories.helper.InventoryTypeHelper.INVENTORY));
+                plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player.getName(), togroup, me.drayshak.WorldInventories.helper.InventoryTypeHelper.INVENTORY));
                 if (plugin.getConfig().getBoolean("dostats"))
                 {
-                    plugin.setPlayerStats(player, plugin.loadPlayerStats(player, togroup));
+                    plugin.setPlayerStats(player, plugin.loadPlayerStats(player.getName(), togroup));
                 }
                 
                 if(plugin.getConfig().getBoolean("dogamemodeswitch"))
@@ -176,11 +176,11 @@ public class PlayerListener implements Listener
             Group tGroup = WorldInventories.findGroup(world);
             
             //WorldInventories.logDebug("Loading inventory of " + player.getName());
-            plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player, tGroup, me.drayshak.WorldInventories.helper.InventoryTypeHelper.INVENTORY));            
+            plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player.getName(), tGroup, me.drayshak.WorldInventories.helper.InventoryTypeHelper.INVENTORY));            
             
             if (plugin.getConfig().getBoolean("dostats"))
             {
-                plugin.setPlayerStats(player, plugin.loadPlayerStats(player, tGroup));
+                plugin.setPlayerStats(player, plugin.loadPlayerStats(player.getName(), tGroup));
             }
             
             if(plugin.getConfig().getBoolean("dogamemodeswitch"))

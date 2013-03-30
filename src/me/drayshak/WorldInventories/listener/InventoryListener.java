@@ -40,7 +40,7 @@ public class InventoryListener implements Listener
             Group worldgroup = WorldInventories.findGroup(world);
             
             WorldInventories.logDebug("Ender Chest opened by " + player + " in world " + world + ", group " + worldgroup);
-            inventory.setContents(plugin.loadPlayerInventory((Player)event.getPlayer(), worldgroup, me.drayshak.WorldInventories.helper.InventoryTypeHelper.ENDERCHEST).getInventory());
+            inventory.setContents(plugin.loadPlayerInventory(((Player)event.getPlayer()).getName(), worldgroup, me.drayshak.WorldInventories.helper.InventoryTypeHelper.ENDERCHEST).getInventory());
         }
     }
     
