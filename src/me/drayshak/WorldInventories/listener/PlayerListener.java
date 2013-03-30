@@ -1,5 +1,9 @@
-package me.drayshak.WorldInventories;
+package me.drayshak.WorldInventories.listener;
 
+import me.drayshak.WorldInventories.Group;
+import me.drayshak.WorldInventories.helper.InventoryHelper;
+import me.drayshak.WorldInventories.PlayerData;
+import me.drayshak.WorldInventories.WorldInventories;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,7 +21,7 @@ public class PlayerListener implements Listener
 
     private final WorldInventories plugin;
     
-    PlayerListener(final WorldInventories plugin)
+    public PlayerListener(final WorldInventories plugin)
     {
         this.plugin = plugin;
     }
@@ -33,15 +37,15 @@ public class PlayerListener implements Listener
             return;
         }
         
-        Group group = WorldInventories.findFirstGroupThenDefault(player.getWorld().getName());
+        Group group = WorldInventories.findGroup(player.getWorld().getName());
         
         InventoryHelper helper = new InventoryHelper();
         helper.setArmour(new ItemStack[4]);
         helper.setInventory(new ItemStack[36]);
-        plugin.savePlayerInventory(player.getName(), group, me.drayshak.WorldInventories.InventoryType.INVENTORY, helper);
+        plugin.savePlayerInventory(player.getName(), group, me.drayshak.WorldInventories.helper.InventoryTypeHelper.INVENTORY, helper);
         if (plugin.getConfig().getBoolean("dostats"))
         {
-            plugin.savePlayerStats(player.getName(), group, new PlayerStats(20, 20, 0, 0, 0, 0F, null));
+            plugin.savePlayerStats(player.getName(), group, new PlayerData(20, 20, 0, 0, 0, 0F, null));
         }   
 
         if (plugin.getConfig().getBoolean("donotifications"))
@@ -68,13 +72,13 @@ public class PlayerListener implements Listener
         {
             WorldInventories.logDebug("Player " + player.getName() + " moved from world " + fromworld + " to " + toworld);            
             
-            Group fromgroup = WorldInventories.findFirstGroupThenDefault(fromworld);
-            Group togroup = WorldInventories.findFirstGroupThenDefault(toworld);
+            Group fromgroup = WorldInventories.findGroup(fromworld);
+            Group togroup = WorldInventories.findGroup(toworld);
             
             InventoryHelper helper = new InventoryHelper();
             helper.setArmour(player.getInventory().getArmorContents());
             helper.setInventory(player.getInventory().getContents());
-            plugin.savePlayerInventory(player.getName(), fromgroup, me.drayshak.WorldInventories.InventoryType.INVENTORY, helper);
+            plugin.savePlayerInventory(player.getName(), fromgroup, me.drayshak.WorldInventories.helper.InventoryTypeHelper.INVENTORY, helper);
             
             if (plugin.getConfig().getBoolean("dostats"))
             {
@@ -83,7 +87,7 @@ public class PlayerListener implements Listener
             
             if (!fromgroup.getName().equals(togroup.getName()))
             {
-                plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player, togroup, me.drayshak.WorldInventories.InventoryType.INVENTORY));
+                plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player, togroup, me.drayshak.WorldInventories.helper.InventoryTypeHelper.INVENTORY));
                 if (plugin.getConfig().getBoolean("dostats"))
                 {
                     plugin.setPlayerStats(player, plugin.loadPlayerStats(player, togroup));
@@ -124,7 +128,7 @@ public class PlayerListener implements Listener
             return;
         }           
         
-        Group tGroup = WorldInventories.findFirstGroupThenDefault(world);
+        Group tGroup = WorldInventories.findGroup(world);
 
         // Don't save if we don't care where we are (default group)
         //if (tGroup != null)
@@ -135,7 +139,7 @@ public class PlayerListener implements Listener
             helper.setArmour(player.getInventory().getArmorContents());
             helper.setInventory(player.getInventory().getContents());
             
-            plugin.savePlayerInventory(player.getName(), tGroup, me.drayshak.WorldInventories.InventoryType.INVENTORY, helper);
+            plugin.savePlayerInventory(player.getName(), tGroup, me.drayshak.WorldInventories.helper.InventoryTypeHelper.INVENTORY, helper);
             
             if (plugin.getConfig().getBoolean("dostats"))
             {
@@ -149,7 +153,7 @@ public class PlayerListener implements Listener
             helper.setArmour(null);
             helper.setInventory(player.getOpenInventory().getTopInventory().getContents());
             
-            plugin.savePlayerInventory(player.getName(), tGroup, me.drayshak.WorldInventories.InventoryType.ENDERCHEST, helper);
+            plugin.savePlayerInventory(player.getName(), tGroup, me.drayshak.WorldInventories.helper.InventoryTypeHelper.ENDERCHEST, helper);
         }
     }
     
@@ -169,10 +173,10 @@ public class PlayerListener implements Listener
                 return;
             }            
             
-            Group tGroup = WorldInventories.findFirstGroupThenDefault(world);
+            Group tGroup = WorldInventories.findGroup(world);
             
             //WorldInventories.logDebug("Loading inventory of " + player.getName());
-            plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player, tGroup, me.drayshak.WorldInventories.InventoryType.INVENTORY));            
+            plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player, tGroup, me.drayshak.WorldInventories.helper.InventoryTypeHelper.INVENTORY));            
             
             if (plugin.getConfig().getBoolean("dostats"))
             {

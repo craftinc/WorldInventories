@@ -1,5 +1,10 @@
-package me.drayshak.WorldInventories;
+package me.drayshak.WorldInventories.listener;
 
+import me.drayshak.WorldInventories.Group;
+import me.drayshak.WorldInventories.helper.InventoryHelper;
+import me.drayshak.WorldInventories.helper.InventoryTypeHelper;
+import me.drayshak.WorldInventories.PlayerData;
+import me.drayshak.WorldInventories.WorldInventories;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,7 +16,7 @@ public class EntityListener implements Listener
 {
     private final WorldInventories plugin;
     
-    EntityListener(final WorldInventories plugin)
+    public EntityListener(final WorldInventories plugin)
     {
        this.plugin = plugin;
     }
@@ -31,7 +36,7 @@ public class EntityListener implements Listener
                 return;
             }
             
-            Group togroup = WorldInventories.findFirstGroupThenDefault(world);       
+            Group togroup = WorldInventories.findGroup(world);       
 
             WorldInventories.logDebug("Player " + player.getName() + " died in world " + world + ", emptying inventory for group: " + togroup.getName());
 
@@ -39,11 +44,11 @@ public class EntityListener implements Listener
             InventoryHelper helper = new InventoryHelper();
             helper.setArmour(new ItemStack[4]);
             helper.setInventory(new ItemStack[36]);
-            plugin.savePlayerInventory(player.getName(), togroup, InventoryType.INVENTORY, helper);;
+            plugin.savePlayerInventory(player.getName(), togroup, InventoryTypeHelper.INVENTORY, helper);;
             
             if(plugin.getConfig().getBoolean("dostats"))
             {
-                plugin.savePlayerStats(player.getName(), togroup, new PlayerStats(20, 20, 0, 0, 0, 0F, null));
+                plugin.savePlayerStats(player.getName(), togroup, new PlayerData(20, 20, 0, 0, 0, 0F, null));
             }
         }
     }

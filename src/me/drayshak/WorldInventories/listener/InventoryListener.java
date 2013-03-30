@@ -1,5 +1,8 @@
-package me.drayshak.WorldInventories;
+package me.drayshak.WorldInventories.listener;
 
+import me.drayshak.WorldInventories.Group;
+import me.drayshak.WorldInventories.helper.InventoryHelper;
+import me.drayshak.WorldInventories.WorldInventories;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -13,7 +16,7 @@ public class InventoryListener implements Listener
 {
     private final WorldInventories plugin;
     
-    InventoryListener(final WorldInventories plugin)
+    public InventoryListener(final WorldInventories plugin)
     {
        this.plugin = plugin;
     }
@@ -34,10 +37,10 @@ public class InventoryListener implements Listener
                 return;
             }
             
-            Group worldgroup = WorldInventories.findFirstGroupThenDefault(world);
+            Group worldgroup = WorldInventories.findGroup(world);
             
             WorldInventories.logDebug("Ender Chest opened by " + player + " in world " + world + ", group " + worldgroup);
-            inventory.setContents(plugin.loadPlayerInventory((Player)event.getPlayer(), worldgroup, me.drayshak.WorldInventories.InventoryType.ENDERCHEST).getInventory());
+            inventory.setContents(plugin.loadPlayerInventory((Player)event.getPlayer(), worldgroup, me.drayshak.WorldInventories.helper.InventoryTypeHelper.ENDERCHEST).getInventory());
         }
     }
     
@@ -57,16 +60,15 @@ public class InventoryListener implements Listener
                 return;
             }            
             
-            Group worldgroup = WorldInventories.findFirstGroupThenDefault(world);
+            Group worldgroup = WorldInventories.findGroup(world);
             
             WorldInventories.logDebug("Ender Chest closed by " + player + " in world " + world + ", group " + worldgroup);
             
-            Player pplayer = (Player)event.getPlayer();
             InventoryHelper helper = new InventoryHelper();
             helper.setArmour(null);
             helper.setInventory(inventory.getContents());
             
-            plugin.savePlayerInventory(player, worldgroup, me.drayshak.WorldInventories.InventoryType.ENDERCHEST, helper);
+            plugin.savePlayerInventory(player, worldgroup, me.drayshak.WorldInventories.helper.InventoryTypeHelper.ENDERCHEST, helper);
         }        
     }
 }

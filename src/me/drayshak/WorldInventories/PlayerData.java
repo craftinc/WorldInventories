@@ -1,10 +1,10 @@
 package me.drayshak.WorldInventories;
 
-import java.io.Serializable;
+import java.util.Collection;
+import org.bukkit.potion.PotionEffect;
 
-public class WIPlayerStats implements Serializable
+public class PlayerData
 {
-    private static final long serialVersionUID = 1L;
     private int health;
     private int foodlevel;
     private float exhausation;
@@ -13,7 +13,9 @@ public class WIPlayerStats implements Serializable
     private int level;
     private float exp;
     
-    public WIPlayerStats(int health, int foodlevel, float exhaustion, float saturation, int level, float exp)
+    private Collection<PotionEffect> potioneffects;
+    
+    public PlayerData(int health, int foodlevel, float exhaustion, float saturation, int level, float exp, Collection<PotionEffect> potioneffects)
     {
         this.health = health;
         this.foodlevel = foodlevel;
@@ -21,6 +23,17 @@ public class WIPlayerStats implements Serializable
         this.saturation = saturation;
         this.level = level;
         this.exp = exp;
+        this.potioneffects = potioneffects;
+    }
+    
+    public Collection<PotionEffect> getPotionEffects()
+    {
+        return this.potioneffects;
+    }
+    
+    public void setPotionEffects(Collection<PotionEffect> potioneffects)
+    {
+        this.potioneffects = potioneffects;
     }
     
     public int getHealth()

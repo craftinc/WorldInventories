@@ -35,6 +35,10 @@
             <id>drayshak-maven</id>
             <url>http://maven.drayshak.co.uk</url>
         </repository>
+        <repository>
+            <id>Plugin Metrics</id>
+            <url>http://repo.mcstats.org/content/repositories/public</url>
+        </repository>        
     </repositories> 
     
     <dependencies>
@@ -45,27 +49,16 @@
             <type>jar</type>
         </dependency>   
         <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <version>1.4.3</version>
-        </dependency>
-        <dependency>
-            <artifactId>xmlpull</artifactId>
-            <groupId>xmlpull</groupId>
-            <type>jar</type>
-            <version>1.1.3.1</version>
-        </dependency>
-        <dependency>
-            <artifactId>xpp3_min</artifactId>
-            <groupId>xpp3</groupId>
-            <type>jar</type>
-            <version>1.1.4c</version>
-        </dependency>
-        <dependency>
             <groupId>uk.co.tggl.pluckerpluck.multiinv</groupId>
             <artifactId>MultiInv</artifactId>
             <version>3.1.3</version>
         </dependency>
+        <dependency>
+            <groupId>org.mcstats.bukkit</groupId>
+            <artifactId>metrics</artifactId>
+            <version>R6</version>
+            <scope>compile</scope>
+    </dependency>        
     </dependencies>        
     
     <build>
@@ -140,24 +133,6 @@
                                     <excludes>
                                         <exclude>**</exclude>
                                     </excludes>
-                                </filter>             
-                                <filter>
-                                    <artifact>com.thoughtworks.xstream</artifact>
-                                    <includes>
-                                        <include>com/thoughtworks/xstream/**</include>
-                                    </includes>                                    
-                                </filter>
-                                <filter>
-                                    <artifact>xmlpull</artifact>
-                                    <includes>
-                                        <include>**</include>
-                                    </includes>                                    
-                                </filter>
-                                <filter>
-                                    <artifact>xpp3</artifact>
-                                    <includes>
-                                        <include>**</include>
-                                    </includes>                                    
                                 </filter>
                             </filters>
                         </configuration>
