@@ -1,7 +1,5 @@
 package me.drayshak.WorldInventories;
 
-import me.drayshak.WorldInventories.helper.InventoryHelper;
-import me.drayshak.WorldInventories.helper.InventoryTypeHelper;
 import me.drayshak.WorldInventories.listener.InventoryListener;
 import me.drayshak.WorldInventories.listener.EntityListener;
 import me.drayshak.WorldInventories.listener.PlayerListener;
@@ -45,12 +43,12 @@ public class WorldInventories extends JavaPlugin
     public static String statsFileVersion = "v5";
     public static String inventoryFileVersion = "v5";
 
-    public void setPlayerInventory(Player player, InventoryHelper playerInventory)
+    public void setPlayerInventory(Player player, ArrayList<ItemStack[]> playerInventory)
     {
         if (playerInventory != null)
         {
-            player.getInventory().setContents(playerInventory.getInventory());
-            player.getInventory().setArmorContents(playerInventory.getArmour());
+            player.getInventory().setContents(playerInventory.get(InventoryStoredType.INVENTORY));
+            player.getInventory().setArmorContents(playerInventory.get(InventoryStoredType.ARMOUR));
         }
     }
 
@@ -87,15 +85,15 @@ public class WorldInventories extends JavaPlugin
         {
             String world = player.getLocation().getWorld().getName();
             Group tGroup = findGroup(world);
-
-            InventoryHelper helper = new InventoryHelper();
             
+            ArrayList<ItemStack[]> tosave = new ArrayList();
             // Don't save if we don't care where we are (default group)
             if (!"default".equals(tGroup.getName()))
             {
-                helper.setInventory(player.getInventory().getContents());
-                helper.setArmour(player.getInventory().getArmorContents());
-                savePlayerInventory(player.getName(), findGroup(world), InventoryTypeHelper.INVENTORY, helper);
+                tosave.set(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
+                tosave.set(InventoryStoredType.INVENTORY, player.getInventory().getContents());
+                
+                savePlayerInventory(player.getName(), findGroup(world), InventoryLoadType.INVENTORY, tosave);
                 
                 if (getConfig().getBoolean("dostats"))
                 {
@@ -110,7 +108,7 @@ public class WorldInventories extends JavaPlugin
         }
     }
 
-    public void savePlayerInventory(String player, Group group, InventoryTypeHelper type, InventoryHelper inventory)
+    public void savePlayerInventory(String player, Group group, InventoryLoadType type, ArrayList<ItemStack[]> inventory)
     {
         if (!this.getDataFolder().exists())
         {
@@ -128,11 +126,11 @@ public class WorldInventories extends JavaPlugin
         }      
         
         String sType = "unknown";
-        if(type == InventoryTypeHelper.INVENTORY)
+        if(type == InventoryLoadType.INVENTORY)
         {
             sType = "inventory";
         }
-        else if(type == InventoryTypeHelper.ENDERCHEST)
+        else if(type == InventoryLoadType.ENDERCHEST)
         {
             sType = "enderchest";
         }
@@ -146,14 +144,14 @@ public class WorldInventories extends JavaPlugin
             file.createNewFile();
             FileConfiguration pc = YamlConfiguration.loadConfiguration(new File(path));
             
-            if(type == InventoryTypeHelper.INVENTORY)
+            if(type == InventoryLoadType.INVENTORY)
             {
-                pc.set("armour", inventory.getArmour());
-                pc.set("inventory", inventory.getInventory());
+                pc.set("armour", inventory.get(InventoryStoredType.ARMOUR));
+                pc.set("inventory", inventory.get(InventoryStoredType.INVENTORY));
             }
-            else if(type == InventoryTypeHelper.ENDERCHEST)
+            else if(type == InventoryLoadType.ENDERCHEST)
             {
-                pc.set("enderchest", inventory.getInventory());
+                pc.set("enderchest", inventory.get(InventoryStoredType.INVENTORY));
             }
             
             pc.save(file);
@@ -166,7 +164,7 @@ public class WorldInventories extends JavaPlugin
         logDebug("Saved " + sType + " for player: " + player + " " + path);
     }
     
-    public InventoryHelper loadPlayerInventory(String player, Group group, InventoryTypeHelper type)
+    public ArrayList<ItemStack[]> loadPlayerInventory(String player, Group group, InventoryLoadType type)
     {
         String path = File.separator + group.getName();
 
@@ -179,11 +177,11 @@ public class WorldInventories extends JavaPlugin
         }         
         
         String sType = "unknown";
-        if(type == InventoryTypeHelper.INVENTORY)
+        if(type == InventoryLoadType.INVENTORY)
         {
             sType = "inventory";
         }
-        else if(type == InventoryTypeHelper.ENDERCHEST)
+        else if(type == InventoryLoadType.ENDERCHEST)
         {
             sType = "enderchest";
         }
@@ -208,7 +206,7 @@ public class WorldInventories extends JavaPlugin
         ItemStack[] iArmour = new ItemStack[4];
         ItemStack[] iInventory = null;
         
-        if(type == InventoryTypeHelper.INVENTORY)
+        if(type == InventoryLoadType.INVENTORY)
         {
             armour = pc.getList("armour", null);
             inventory = pc.getList("inventory", null);
@@ -248,7 +246,7 @@ public class WorldInventories extends JavaPlugin
                 }  
             }            
         }
-        else if(type == InventoryTypeHelper.ENDERCHEST)
+        else if(type == InventoryLoadType.ENDERCHEST)
         {
             inventory = pc.getList("enderchest", null);
             iInventory = new ItemStack[27];
@@ -269,9 +267,9 @@ public class WorldInventories extends JavaPlugin
             }            
         }
         
-        InventoryHelper ret = new InventoryHelper();
-        ret.setArmour(iArmour);
-        ret.setInventory(iInventory);
+        ArrayList<ItemStack[]> ret = new ArrayList();
+        ret.set(InventoryStoredType.ARMOUR, iArmour);
+        ret.set(InventoryStoredType.INVENTORY, iInventory);
         
         logDebug("Loaded " + sType + " for player: " + player + " " + path);
 
@@ -429,16 +427,16 @@ public class WorldInventories extends JavaPlugin
             {
                 savePlayerStats(player, group);
                 
-                InventoryHelper helper = new InventoryHelper();
-                helper.setArmour(player.getInventory().getArmorContents());
-                helper.setInventory(player.getInventory().getContents());
+                ArrayList<ItemStack[]> tosave = new ArrayList();
+                tosave.set(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
+                tosave.set(InventoryStoredType.INVENTORY, player.getInventory().getContents());
                 
-                savePlayerInventory(player.getName(), group, InventoryTypeHelper.INVENTORY, helper);
+                savePlayerInventory(player.getName(), group, InventoryLoadType.INVENTORY, tosave);
                 
-                helper.setArmour(null);
-                helper.setInventory(((HumanEntity)player).getEnderChest().getContents());
+                tosave.set(InventoryStoredType.ARMOUR, null);
+                tosave.set(InventoryStoredType.INVENTORY, ((HumanEntity)player).getEnderChest().getContents());
 
-                this.savePlayerInventory(player.getName(), group, InventoryTypeHelper.ENDERCHEST, helper);
+                this.savePlayerInventory(player.getName(), group, InventoryLoadType.ENDERCHEST, tosave);
                 
                 imported++;
             }
@@ -524,8 +522,6 @@ public class WorldInventories extends JavaPlugin
                 {
                     logDebug("Adding " + sgroup + ":" + world + ":" + group.getGameMode().toString());
                 }
-                
-                
             }
         }
 
@@ -628,13 +624,11 @@ public class WorldInventories extends JavaPlugin
             {
                 saveTimer.scheduleAtFixedRate(new SaveTask(this), getConfig().getInt("saveinterval") * 1000, getConfig().getInt("saveinterval") * 1000);
             }
-
         }
         else
         {
             logError("Failed to initialise.");
         }
-
     }
 
     @Override
