@@ -756,4 +756,15 @@ public class WorldInventories extends JavaPlugin
 
         return false;
     }
+    
+    /*
+     * Checks if the given message key is hidden or not, send if appropriate
+     */
+    public void sendMessage(String key, Player player, String message)
+    {
+        if(!this.getConfig().getBoolean("message-hidden." + key, false) && this.getConfig().getBoolean("donotifications" + key, true))
+        {
+            player.sendMessage(message);
+        }
+    }
 }

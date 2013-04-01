@@ -50,10 +50,7 @@ public class PlayerListener implements Listener
             plugin.savePlayerStats(player.getName(), group, new PlayerStats(20, 20, 0, 0, 0, 0F, null));
         }   
 
-        if (plugin.getConfig().getBoolean("donotifications"))
-        {
-            player.sendMessage(ChatColor.GREEN + WorldInventories.locale.get("died-message") + group.getName());
-        }     
+        plugin.sendMessage("died-message", player, ChatColor.GREEN + WorldInventories.locale.get("died-message") + group.getName());
     }
     
     @EventHandler
@@ -99,19 +96,13 @@ public class PlayerListener implements Listener
                 if(plugin.getConfig().getBoolean("dogamemodeswitch"))
                 {
                     player.setGameMode(togroup.getGameMode());
-                }                
-                
-                if (plugin.getConfig().getBoolean("donotifications"))
-                {
-                    player.sendMessage(ChatColor.GREEN + WorldInventories.locale.get("changed-message") + togroup.getName());
                 }
+                
+                plugin.sendMessage("changed-message", player, ChatColor.GREEN + WorldInventories.locale.get("changed-message") + togroup.getName());
             }
             else
             {
-                if (plugin.getConfig().getBoolean("donotifications"))
-                {
-                    player.sendMessage(ChatColor.GREEN + WorldInventories.locale.get("nochange-message") + togroup.getName());
-                }
+                plugin.sendMessage("nochange-message", player, ChatColor.GREEN + WorldInventories.locale.get("nochange-message") + togroup.getName());
             }
         }
     }
@@ -192,10 +183,7 @@ public class PlayerListener implements Listener
                 event.getPlayer().setGameMode(tGroup.getGameMode());
             }              
             
-            if(plugin.getConfig().getBoolean("donotifications"))
-            {
-                player.sendMessage(ChatColor.GREEN + WorldInventories.locale.get("loaded-message") + tGroup.getName());
-            }
+            plugin.sendMessage("loaded-message", player, ChatColor.GREEN + WorldInventories.locale.get("loaded-message") + tGroup.getName());
         }
     }
 }

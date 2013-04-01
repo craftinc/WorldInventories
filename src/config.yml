@@ -62,10 +62,9 @@ loadinvonlogin: true
 do78import: false
 do141import: false
 dovanillaimport: false
-donotifications: true
 language: en_GB
-#message-hidden:
-#  died-message: false
-#  changed-message: false
-#  nochange-message: false
-#  loaded-message: false 
+message-hidden:
+  died-message: false
+  changed-message: false
+  nochange-message: false
+  loaded-message: false 
