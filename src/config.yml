@@ -51,6 +51,7 @@
 #   survivalgroup: SURVIVAL
 
 # NOTE: donotifications has been deprecated, use message-hidden instead
+# donotifications still overrides everything else but don't use it!
 
 dogamemodeswitch: false
 domiimport: false
