@@ -27,7 +27,6 @@
 #   creative_overworld to survival_end
 #   survival_nether to creative_nether
 
-# If "donotifications" is set to false you won't get inventory switching notifications in the console
 # Set "domiimport" to true to make WorldInventories attempt to import MultiInv data
 #  Automatically sets itself to false when an attempt is made
 # Set "miimportmode" to the integer identifier of the mode WI should import from (eg, 0 for MI survival)
@@ -51,8 +50,9 @@
 #   creativegroup: CREATIVE
 #   survivalgroup: SURVIVAL
 
+# NOTE: donotifications has been deprecated, use message-hidden instead
+
 dogamemodeswitch: false
-donotifications: true
 domiimport: false
 miimportmode: 0
 dostats: true
@@ -62,3 +62,10 @@ loadinvonlogin: true
 do78import: false
 do141import: false
 dovanillaimport: false
+donotifications: true
+language: en_GB
+#message-hidden:
+#  died-message: false
+#  changed-message: false
+#  nochange-message: false
+#  loaded-message: false 

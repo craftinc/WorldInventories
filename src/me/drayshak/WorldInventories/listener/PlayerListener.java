@@ -1,6 +1,5 @@
 package me.drayshak.WorldInventories.listener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import me.drayshak.WorldInventories.Group;
 import me.drayshak.WorldInventories.InventoryStoredType;
@@ -21,7 +20,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class PlayerListener implements Listener
 {
-
     private final WorldInventories plugin;
     
     public PlayerListener(final WorldInventories plugin)
@@ -54,7 +52,7 @@ public class PlayerListener implements Listener
 
         if (plugin.getConfig().getBoolean("donotifications"))
         {
-            player.sendMessage(ChatColor.GREEN + "You died! Wiped inventory and stats for group: " + group.getName());
+            player.sendMessage(ChatColor.GREEN + WorldInventories.locale.get("died-message") + group.getName());
         }     
     }
     
@@ -105,14 +103,14 @@ public class PlayerListener implements Listener
                 
                 if (plugin.getConfig().getBoolean("donotifications"))
                 {
-                    player.sendMessage(ChatColor.GREEN + "Changed player information to match group: " + togroup.getName());
+                    player.sendMessage(ChatColor.GREEN + WorldInventories.locale.get("changed-message") + togroup.getName());
                 }
             }
             else
             {
                 if (plugin.getConfig().getBoolean("donotifications"))
                 {
-                    player.sendMessage(ChatColor.GREEN + "No player information change needed to match group: " + togroup.getName());
+                    player.sendMessage(ChatColor.GREEN + WorldInventories.locale.get("nochange-message") + togroup.getName());
                 }
             }
         }
@@ -196,7 +194,7 @@ public class PlayerListener implements Listener
             
             if(plugin.getConfig().getBoolean("donotifications"))
             {
-                player.sendMessage(ChatColor.GREEN + "Player information loaded for group: " + tGroup.getName());
+                player.sendMessage(ChatColor.GREEN + WorldInventories.locale.get("loaded-message") + tGroup.getName());
             }
         }
     }

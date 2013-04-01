@@ -43,6 +43,7 @@ public class WorldInventories extends JavaPlugin
     public static Timer saveTimer = new Timer();
     public static String statsFileVersion = "v5";
     public static String inventoryFileVersion = "v5";
+    public static Language locale;
 
     public void setPlayerInventory(Player player, HashMap<Integer, ItemStack[]> playerInventory)
     {
@@ -562,6 +563,25 @@ public class WorldInventories extends JavaPlugin
         return groups.get(0);
     }
 
+    public boolean loadLanguage()
+    {
+        String sLanguage = this.getConfig().getString("language");
+        locale = new Language(this);
+
+        boolean bLanguage = locale.loadLanguages(sLanguage);
+
+        if(bLanguage)
+        {
+            logStandard("Loaded language " + sLanguage + " successfully");
+        }
+        else
+        {
+            logStandard("Problems encountered whilst loading language " + sLanguage + ", used defaults.");
+        }
+        
+        return bLanguage;
+    }
+    
     @Override
     public void onEnable()
     {
@@ -592,9 +612,11 @@ public class WorldInventories extends JavaPlugin
         {
             logStandard("Loaded configuration successfully");
         }
-
+        
         if (bInitialised)
         {
+            this.loadLanguage();
+            
             if(getConfig().getBoolean("dovanillaimport"))
             {
                 boolean bSuccess = this.importVanilla();
@@ -647,14 +669,37 @@ public class WorldInventories extends JavaPlugin
 
         if (command.equalsIgnoreCase("wireload"))
         {
-            if (args.length == 0)
+            if (sender.hasPermission("worldinventories.reload"))
             {
-                if (sender.hasPermission("worldinventories.reload"))
+                if(args.length != 1)
                 {
-                    logStandard("Reloading configuration...");
+                    sender.sendMessage(ChatColor.RED + "Wrong number of arguments given. Usage is /wireload <all/language>");
+                    return true;
+                }
+                
+                args[0] = args[0].toLowerCase();
+                
+                if(!"all".equals(args[0]) && !"language".equals(args[0]))
+                {
+                    sender.sendMessage(ChatColor.RED + "Invalid argument. Usage is /wireload <all/language>");
+                    return true;                    
+                }
+                
+                if("all".equals(args[0]))
+                {
+                    logStandard("Reloading all configuration...");
                     reloadConfig();
                     loadConfiguration();
-                    sender.sendMessage(ChatColor.GREEN + "Reloaded WorldInventories configuration successfully");
+                    sender.sendMessage(ChatColor.GREEN + "Reloaded all WorldInventories configuration successfully");                    
+                }
+                else if("language".equals(args[0]))
+                {
+                    logStandard("Reloading language...");
+                    reloadConfig();
+                    if(this.loadLanguage())
+                        sender.sendMessage(ChatColor.GREEN + "Reloaded WorldInventories language successfully");
+                    else
+                        sender.sendMessage(ChatColor.GREEN + "Problem occurred whilst reloading WorldInventories language, used defaults.");
                 }
             }
 
