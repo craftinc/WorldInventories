@@ -1,10 +1,10 @@
 package me.drayshak.WorldInventories.listener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import me.drayshak.WorldInventories.Group;
 import me.drayshak.WorldInventories.InventoryStoredType;
 import me.drayshak.WorldInventories.WorldInventories;
+import me.drayshak.WorldInventories.api.WorldInventoriesAPI;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -40,7 +40,7 @@ public class InventoryListener implements Listener
                 return;
             }
             
-            Group worldgroup = WorldInventories.findGroup(world);
+            Group worldgroup = WorldInventoriesAPI.findGroup(world);
             
             WorldInventories.logDebug("Ender Chest opened by " + player + " in world " + world + ", group " + worldgroup);
             inventory.setContents(plugin.loadPlayerInventory(((Player)event.getPlayer()).getName(), worldgroup, me.drayshak.WorldInventories.InventoryLoadType.ENDERCHEST).get(InventoryStoredType.INVENTORY));
@@ -63,7 +63,7 @@ public class InventoryListener implements Listener
                 return;
             }            
             
-            Group worldgroup = WorldInventories.findGroup(world);
+            Group worldgroup = WorldInventoriesAPI.findGroup(world);
             
             WorldInventories.logDebug("Ender Chest closed by " + player + " in world " + world + ", group " + worldgroup);
             

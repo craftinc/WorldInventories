@@ -1,7 +1,6 @@
 package me.drayshak.WorldInventories.api;
 
 import me.drayshak.WorldInventories.InventoryLoadType;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import me.drayshak.WorldInventories.Group;
@@ -13,11 +12,18 @@ import org.bukkit.inventory.ItemStack;
 public class WorldInventoriesAPI {
     private final WorldInventories plugin;
     
+    /*
+     * Returns the first group associated with a world, otherwise the default
+     */
+    public static Group findGroup(String world)
+    {
+        return WorldInventories.findGroup(world);
+    }    
+    
     public WorldInventoriesAPI(final WorldInventories plugin)
     {
        this.plugin = plugin;
-    }    
-    
+    }
     /*
      * Returns a list of groups currently loaded
      */

@@ -6,6 +6,7 @@ import me.drayshak.WorldInventories.InventoryStoredType;
 import me.drayshak.WorldInventories.PlayerStats;
 import me.drayshak.WorldInventories.WorldInventories;
 import me.drayshak.WorldInventories.InventoryLoadType;
+import me.drayshak.WorldInventories.api.WorldInventoriesAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,7 +39,7 @@ public class PlayerListener implements Listener
             return;
         }
         
-        Group group = WorldInventories.findGroup(player.getWorld().getName());
+        Group group = WorldInventoriesAPI.findGroup(player.getWorld().getName());
         
         HashMap<Integer, ItemStack[]> tosave = new HashMap();
         tosave.put(InventoryStoredType.ARMOUR, new ItemStack[4]);
@@ -71,8 +72,8 @@ public class PlayerListener implements Listener
         {
             WorldInventories.logDebug("Player " + player.getName() + " moved from world " + fromworld + " to " + toworld);            
             
-            Group fromgroup = WorldInventories.findGroup(fromworld);
-            Group togroup = WorldInventories.findGroup(toworld);
+            Group fromgroup = WorldInventoriesAPI.findGroup(fromworld);
+            Group togroup = WorldInventoriesAPI.findGroup(toworld);
             
             HashMap<Integer, ItemStack[]> tosave = new HashMap();
             tosave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
@@ -122,7 +123,7 @@ public class PlayerListener implements Listener
             return;
         }           
         
-        Group tGroup = WorldInventories.findGroup(world);
+        Group tGroup = WorldInventoriesAPI.findGroup(world);
 
         // Don't save if we don't care where we are (default group)
         //if (tGroup != null)
@@ -167,7 +168,7 @@ public class PlayerListener implements Listener
                 return;
             }            
             
-            Group tGroup = WorldInventories.findGroup(world);
+            Group tGroup = WorldInventoriesAPI.findGroup(world);
             
             //WorldInventories.logDebug("Loading inventory of " + player.getName());
             plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player.getName(), tGroup, me.drayshak.WorldInventories.InventoryLoadType.INVENTORY));            

@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import me.drayshak.WorldInventories.api.WorldInventoriesAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -45,6 +46,19 @@ public class WorldInventories extends JavaPlugin
     public static String inventoryFileVersion = "v5";
     public static Language locale;
 
+    public static Group findGroup(String world)
+    {
+        for (Group tGroup : groups)
+        {
+            int index = tGroup.getWorlds().indexOf(world);
+            if(index != -1)
+            {
+                return tGroup;
+            }
+        }
+
+        return groups.get(0);
+    }
     public void setPlayerInventory(Player player, HashMap<Integer, ItemStack[]> playerInventory)
     {
         if (playerInventory != null)
@@ -86,7 +100,7 @@ public class WorldInventories extends JavaPlugin
         for (Player player : bukkitServer.getOnlinePlayers())
         {
             String world = player.getLocation().getWorld().getName();
-            Group tGroup = findGroup(world);
+            Group tGroup = WorldInventoriesAPI.findGroup(world);
             
             HashMap<Integer, ItemStack[]> tosave = new HashMap();
             // Don't save if we don't care where we are (default group)
@@ -95,11 +109,11 @@ public class WorldInventories extends JavaPlugin
                 tosave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
                 tosave.put(InventoryStoredType.INVENTORY, player.getInventory().getContents());
                 
-                savePlayerInventory(player.getName(), findGroup(world), InventoryLoadType.INVENTORY, tosave);
+                savePlayerInventory(player.getName(), WorldInventoriesAPI.findGroup(world), InventoryLoadType.INVENTORY, tosave);
                 
                 if (getConfig().getBoolean("dostats"))
                 {
-                    savePlayerStats(player, findGroup(world));
+                    savePlayerStats(player, WorldInventoriesAPI.findGroup(world));
                 }
             }
         }
@@ -395,7 +409,7 @@ public class WorldInventories extends JavaPlugin
         
         logStandard("Starting vanilla players import...");
         
-        Group group = findGroup(getConfig().getString("vanillatogroup"));
+        Group group = WorldInventoriesAPI.findGroup(getConfig().getString("vanillatogroup"));
         if(group == null)
         {
             logStandard("Warning: importing from vanilla in to the default group (does the group specified exist?)");
@@ -544,23 +558,6 @@ public class WorldInventories extends JavaPlugin
         logStandard("Loaded " + Integer.toString(exempts.size()) + " player exemptions.");
         
         return true;
-    }
-
-    /*
-     * Returns the first group associated with a world, otherwise the default
-     */
-    public static Group findGroup(String world)
-    {
-        for (Group tGroup : groups)
-        {
-            int index = tGroup.getWorlds().indexOf(world);
-            if(index != -1)
-            {
-                return tGroup;
-            }
-        }
-
-        return groups.get(0);
     }
 
     public boolean loadLanguage()

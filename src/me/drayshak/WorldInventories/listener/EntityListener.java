@@ -1,12 +1,12 @@
 package me.drayshak.WorldInventories.listener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import me.drayshak.WorldInventories.Group;
 import me.drayshak.WorldInventories.InventoryStoredType;
 import me.drayshak.WorldInventories.InventoryLoadType;
 import me.drayshak.WorldInventories.PlayerStats;
 import me.drayshak.WorldInventories.WorldInventories;
+import me.drayshak.WorldInventories.api.WorldInventoriesAPI;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,7 +38,7 @@ public class EntityListener implements Listener
                 return;
             }
             
-            Group togroup = WorldInventories.findGroup(world);       
+            Group togroup = WorldInventoriesAPI.findGroup(world);       
 
             WorldInventories.logDebug("Player " + player.getName() + " died in world " + world + ", emptying inventory for group: " + togroup.getName());
 
