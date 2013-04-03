@@ -7,7 +7,7 @@ commands:
   wireload:
     description: Reload WorldInventories configuration
     permission: worldinventories.reload
-    usage: /<command>
+    usage: /<command> [language/all]
   wiexempt:
     description: Manage exempt players
     permission: worldinventories.exempt
