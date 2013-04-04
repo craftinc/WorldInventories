@@ -116,6 +116,12 @@
                         </goals>
                         <configuration>
                             <minimizeJar>true</minimizeJar>
+                            <relocations>
+                                    <relocation>
+                                            <pattern>org.mcstats</pattern>
+                                            <shadedPattern>me.drayshak.WorldInventories.org.mcstats</shadedPattern>
+                                    </relocation>
+                            </relocations>                           
                             <filters>
                                 <filter>
                                     <artifact>org.bukkit:bukkit</artifact>
