@@ -429,10 +429,11 @@ public class WorldInventories extends JavaPlugin
             try
             {
                 player = (Player) offlineplayer;
+
             }
             catch(Exception e)
             {
-                logError("  (Warning) Couldn't convert a player.");
+                logError("  (Warning) Couldn't convert a player: " + e.getMessage());
             }
             
             if(player == null)
