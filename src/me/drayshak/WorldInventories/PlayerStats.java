@@ -5,7 +5,7 @@ import org.bukkit.potion.PotionEffect;
 
 public class PlayerStats
 {
-    private int health;
+    private double health;
     private int foodlevel;
     private float exhausation;
     private float saturation;
@@ -15,7 +15,7 @@ public class PlayerStats
     
     private Collection<PotionEffect> potioneffects;
     
-    public PlayerStats(int health, int foodlevel, float exhaustion, float saturation, int level, float exp, Collection<PotionEffect> potioneffects)
+    public PlayerStats(double health, int foodlevel, float exhaustion, float saturation, int level, float exp, Collection<PotionEffect> potioneffects)
     {
         this.health = health;
         this.foodlevel = foodlevel;
@@ -36,12 +36,12 @@ public class PlayerStats
         this.potioneffects = potioneffects;
     }
     
-    public int getHealth()
+    public double getHealth()
     {
         return this.health;
     }
     
-    public void setHealth(int health)
+    public void setHealth(double health)
     {
         this.health = health;
     }
