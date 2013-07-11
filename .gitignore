@@ -1,20 +1,37 @@
-# Eclipse
+# Eclipse stuff
 /.classpath
 /.project
 /.settings
 
 # netbeans
 /nbproject
+
+# intelliJ
+.idea/
+*.iml
+
+# maven
+target/
+
+# vim
 .*.sw[a-p]
 
+# various other potential build files
 /build
-/bin
+/bin/
 /dist
-/manifest.mf
-/target
-build.xml
+/localexport.jardesc
 
-/.DS_Store
+# osx noise
+.DS_Store
+profile
+
+# bukkit
+bukkit/
+
+# bukkit test-server
+bukkit-testserver/
+
 
 /lib
 /WorldInventories.iml
