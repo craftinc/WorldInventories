@@ -33,21 +33,20 @@ public class PlayerListener implements Listener
     {
         Player player = event.getEntity().getPlayer();
         
-        if(WorldInventories.exempts.contains(player.getName().toLowerCase()))
-        {
+        if (WorldInventories.exempts.contains(player.getName().toLowerCase())) {
             WorldInventories.logDebug("Ignoring exempt player death: " + player.getName());
             return;
         }
         
         Group group = WorldInventoriesAPI.findGroup(player.getWorld().getName());
         
-        HashMap<Integer, ItemStack[]> tosave = new HashMap();
+        HashMap<Integer, ItemStack[]> tosave = new HashMap<Integer, ItemStack[]>();
         tosave.put(InventoryStoredType.ARMOUR, new ItemStack[4]);
         tosave.put(InventoryStoredType.INVENTORY, new ItemStack[36]);
             
         plugin.savePlayerInventory(player.getName(), group, InventoryLoadType.INVENTORY, tosave);
-        if (plugin.getConfig().getBoolean("dostats"))
-        {
+
+        if (plugin.getConfig().getBoolean("dostats")) {
             plugin.savePlayerStats(player.getName(), group, new PlayerStats(20, 20, 0, 0, 0, 0F, null));
         }   
 
@@ -59,8 +58,8 @@ public class PlayerListener implements Listener
     {
         Player player = event.getPlayer();
         
-        String fromworld = event.getFrom().getName();
-        String toworld = player.getLocation().getWorld().getName();
+        String fromWorldName = event.getFrom().getName();
+        String toWorldName = player.getLocation().getWorld().getName();
         
         if(WorldInventories.exempts.contains(player.getName().toLowerCase()))
         {
@@ -68,21 +67,21 @@ public class PlayerListener implements Listener
             return;
         }           
         
-        if (!fromworld.equals(toworld))
+        if (!fromWorldName.equals(toWorldName)) // FIXME: shouldn't this always be true?
         {
-            WorldInventories.logDebug("Player " + player.getName() + " moved from world " + fromworld + " to " + toworld);            
+            WorldInventories.logDebug("Player " + player.getName() + " moved from world " + fromWorldName + " to " + toWorldName);
             
-            Group fromgroup = WorldInventoriesAPI.findGroup(fromworld);
-            Group togroup = WorldInventoriesAPI.findGroup(toworld);
+            Group fromgroup = WorldInventoriesAPI.findGroup(fromWorldName);
+            Group togroup = WorldInventoriesAPI.findGroup(toWorldName);
             
-            HashMap<Integer, ItemStack[]> tosave = new HashMap();
+            HashMap<Integer, ItemStack[]> tosave = new HashMap<Integer, ItemStack[]>();
             tosave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
             tosave.put(InventoryStoredType.INVENTORY, player.getInventory().getContents());            
             
             plugin.savePlayerInventory(player.getName(), fromgroup, me.drayshak.WorldInventories.InventoryLoadType.INVENTORY, tosave);
-            
-            if (plugin.getConfig().getBoolean("dostats"))
-            {
+
+            // TODO: global config string class
+            if (plugin.getConfig().getBoolean("dostats")) {
                 plugin.savePlayerStats(player, fromgroup);
             }    
             
@@ -130,7 +129,7 @@ public class PlayerListener implements Listener
         //{            
             WorldInventories.logDebug("Saving inventory of " + player.getName());
             
-            HashMap<Integer, ItemStack[]> tosave = new HashMap();
+            HashMap<Integer, ItemStack[]> tosave = new HashMap<Integer, ItemStack[]>();
             tosave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
             tosave.put(InventoryStoredType.INVENTORY, player.getInventory().getContents());                      
             
@@ -155,6 +154,8 @@ public class PlayerListener implements Listener
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event)
     {
+        // FIXME: typo? Remove the 'v'?
+        // TODO: global config string class
         if (plugin.getConfig().getBoolean("loadinvonlogin"))
         {
             Player player = event.getPlayer();
