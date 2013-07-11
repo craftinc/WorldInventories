@@ -27,20 +27,20 @@ public class EntityListener implements Listener
     public void onEntityDeath(EntityDeathEvent event)
     {
         Entity entity = event.getEntity();
-        if(entity instanceof Player)
-        {
-            Player player = (Player)event.getEntity();
-            String world = player.getWorld().getName();
+
+        if (entity instanceof Player) {
+            Player player = (Player)entity;
+            String worldName = player.getWorld().getName();
             
-            if(WorldInventories.exempts.contains(player.getName().toLowerCase()))
+            if (WorldInventories.exempts.contains(player.getName().toLowerCase()))
             {
                 WorldInventories.logDebug("Ignoring exempt player death: " + player.getName());
                 return;
             }
             
-            Group togroup = WorldInventoriesAPI.findGroup(world);       
+            Group togroup = WorldInventoriesAPI.findGroup(worldName);
 
-            WorldInventories.logDebug("Player " + player.getName() + " died in world " + world + ", emptying inventory for group: " + togroup.getName());
+            WorldInventories.logDebug("Player " + player.getName() + " died in world " + worldName + ", emptying inventory for group: " + togroup.getName());
 
             // Make the saved inventory blank so players can't duplicate by switching worlds and picking items back up
             HashMap<Integer, ItemStack[]> tosave = new HashMap<Integer, ItemStack[]>();
@@ -49,8 +49,7 @@ public class EntityListener implements Listener
             
             plugin.savePlayerInventory(player.getName(), togroup, InventoryLoadType.INVENTORY, tosave);
             
-            if(plugin.getConfig().getBoolean("dostats"))
-            {
+            if(plugin.getConfig().getBoolean("dostats")) {
                 plugin.savePlayerStats(player.getName(), togroup, new PlayerStats(20, 20, 0, 0, 0, 0F, null));
             }
         }
