@@ -43,7 +43,7 @@ public class EntityListener implements Listener
             WorldInventories.logDebug("Player " + player.getName() + " died in world " + world + ", emptying inventory for group: " + togroup.getName());
 
             // Make the saved inventory blank so players can't duplicate by switching worlds and picking items back up
-            HashMap<Integer, ItemStack[]> tosave = new HashMap();
+            HashMap<Integer, ItemStack[]> tosave = new HashMap<Integer, ItemStack[]>();
             tosave.put(InventoryStoredType.ARMOUR, new ItemStack[4]);
             tosave.put(InventoryStoredType.INVENTORY, new ItemStack[36]);
             
