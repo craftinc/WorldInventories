@@ -9,10 +9,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public class Language
 {
-    private static String died_message_default = "You died! Wiped inventory and stats for group: ";
-    private static String changed_message_default = "Changed player information to match group: ";
-    private static String nochange_message_default = "No player information change needed to match group: ";
-    private static String loaded_message_default = "Player information loaded for group: ";
+    private final static String diedMessageDefault = "You died! Wiped inventory and stats for group: ";
+    private final static String changedMessageDefault = "Changed player information to match group: ";
+    private final static String noChangeMessageDefault = "No player information change needed to match group: ";
+    private final static String loadedMessageDefault = "Player information loaded for group: ";
     
     private final WorldInventories plugin;
     private HashMap<String, String> messages;
@@ -20,7 +20,7 @@ public class Language
     public Language(WorldInventories plugin)
     {
         this.plugin = plugin;
-        this.messages = new HashMap();
+        this.messages = new HashMap<String, String>();
     }
     
     public String get(String key)
@@ -44,11 +44,11 @@ public class Language
         {
             logError("Failed to load languages, using defaults: " + e.getMessage());
         }
-        
-        messages.put("died-message", died_message_default);
-        messages.put("changed-message", changed_message_default);
-        messages.put("nochange-message", nochange_message_default);
-        messages.put("loaded-message", loaded_message_default);        
+
+        messages.put("died-message", diedMessageDefault);
+        messages.put("changed-message", changedMessageDefault);
+        messages.put("nochange-message", noChangeMessageDefault);
+        messages.put("loaded-message", loadedMessageDefault);
         
         try
         {
