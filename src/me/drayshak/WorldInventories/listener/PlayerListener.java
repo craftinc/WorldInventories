@@ -1,12 +1,10 @@
 package me.drayshak.WorldInventories.listener;
 
 import java.util.HashMap;
-import me.drayshak.WorldInventories.Group;
-import me.drayshak.WorldInventories.InventoryStoredType;
-import me.drayshak.WorldInventories.PlayerStats;
-import me.drayshak.WorldInventories.WorldInventories;
-import me.drayshak.WorldInventories.InventoryLoadType;
+
+import me.drayshak.WorldInventories.*;
 import me.drayshak.WorldInventories.api.WorldInventoriesAPI;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,11 +38,11 @@ public class PlayerListener implements Listener
         
         Group group = WorldInventoriesAPI.findGroup(player.getWorld().getName());
         
-        HashMap<Integer, ItemStack[]> tosave = new HashMap<Integer, ItemStack[]>();
-        tosave.put(InventoryStoredType.ARMOUR, new ItemStack[4]);
-        tosave.put(InventoryStoredType.INVENTORY, new ItemStack[36]);
+        HashMap<Integer, ItemStack[]> toSave = new HashMap<Integer, ItemStack[]>();
+        toSave.put(InventoryStoredType.ARMOUR, new ItemStack[4]);
+        toSave.put(InventoryStoredType.INVENTORY, new ItemStack[36]);
             
-        plugin.savePlayerInventory(player.getName(), group, InventoryLoadType.INVENTORY, tosave);
+        plugin.savePlayerInventory(player.getName(), group, InventoryLoadType.INVENTORY, toSave);
 
         if (plugin.getConfig().getBoolean("dostats")) {
             plugin.savePlayerStats(player.getName(), group, new PlayerStats(20, 20, 0, 0, 0, 0F, null));
@@ -58,52 +56,45 @@ public class PlayerListener implements Listener
     {
         Player player = event.getPlayer();
         
-        String fromWorldName = event.getFrom().getName();
-        String toWorldName = player.getLocation().getWorld().getName();
-        
-        if(WorldInventories.exempts.contains(player.getName().toLowerCase()))
-        {
+        if (WorldInventories.exempts.contains(player.getName().toLowerCase())) {
             WorldInventories.logDebug("Ignoring exempt player world switch: " + player.getName());
             return;
-        }           
-        
-        if (!fromWorldName.equals(toWorldName)) // FIXME: shouldn't this always be true?
-        {
-            WorldInventories.logDebug("Player " + player.getName() + " moved from world " + fromWorldName + " to " + toWorldName);
-            
-            Group fromgroup = WorldInventoriesAPI.findGroup(fromWorldName);
-            Group togroup = WorldInventoriesAPI.findGroup(toWorldName);
-            
-            HashMap<Integer, ItemStack[]> tosave = new HashMap<Integer, ItemStack[]>();
-            tosave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
-            tosave.put(InventoryStoredType.INVENTORY, player.getInventory().getContents());            
-            
-            plugin.savePlayerInventory(player.getName(), fromgroup, me.drayshak.WorldInventories.InventoryLoadType.INVENTORY, tosave);
+        }
 
-            // TODO: global config string class
-            if (plugin.getConfig().getBoolean("dostats")) {
-                plugin.savePlayerStats(player, fromgroup);
-            }    
-            
-            if (!fromgroup.getName().equals(togroup.getName()))
+        String fromWorldName = event.getFrom().getName();
+        String toWorldName = player.getLocation().getWorld().getName();
+
+        Group fromGroup = WorldInventoriesAPI.findGroup(fromWorldName);
+        Group toGroup = WorldInventoriesAPI.findGroup(toWorldName);
+
+        WorldInventories.logDebug("Player " + player.getName() + " moved from world " + fromWorldName + " to " + toWorldName);
+
+        HashMap<Integer, ItemStack[]> toSave = new HashMap<Integer, ItemStack[]>();
+        toSave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
+        toSave.put(InventoryStoredType.INVENTORY, player.getInventory().getContents());
+
+        plugin.savePlayerInventory(player.getName(), fromGroup, me.drayshak.WorldInventories.InventoryLoadType.INVENTORY, toSave);
+
+        // TODO: global config string class
+        if (plugin.getConfig().getBoolean("dostats")) {
+            plugin.savePlayerStats(player, fromGroup);
+        }
+
+        if (!fromGroup.getName().equals(toGroup.getName())) {
+            plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player.getName(), toGroup, me.drayshak.WorldInventories.InventoryLoadType.INVENTORY));
+            if (plugin.getConfig().getBoolean("dostats"))
             {
-                plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player.getName(), togroup, me.drayshak.WorldInventories.InventoryLoadType.INVENTORY));
-                if (plugin.getConfig().getBoolean("dostats"))
-                {
-                    plugin.setPlayerStats(player, plugin.loadPlayerStats(player.getName(), togroup));
-                }
-                
-                if(plugin.getConfig().getBoolean("dogamemodeswitch"))
-                {
-                    player.setGameMode(togroup.getGameMode());
-                }
-                
-                plugin.sendMessage("changed-message", player, ChatColor.GREEN + WorldInventories.locale.get("changed-message") + togroup.getName());
+                plugin.setPlayerStats(player, plugin.loadPlayerStats(player.getName(), toGroup));
             }
-            else
-            {
-                plugin.sendMessage("nochange-message", player, ChatColor.GREEN + WorldInventories.locale.get("nochange-message") + togroup.getName());
+
+            if (plugin.getConfig().getBoolean("dogamemodeswitch")) {
+                player.setGameMode(toGroup.getGameMode());
             }
+
+            plugin.sendMessage("changed-message", player, ChatColor.GREEN + WorldInventories.locale.get("changed-message") + toGroup.getName());
+        }
+        else {
+            plugin.sendMessage("nochange-message", player, ChatColor.GREEN + WorldInventories.locale.get("nochange-message") + toGroup.getName());
         }
     }
     
@@ -111,18 +102,16 @@ public class PlayerListener implements Listener
     public void onPlayerQuit(PlayerQuitEvent event)
     {
         Player player = event.getPlayer();
-        
         String world = player.getLocation().getWorld().getName();
         
         WorldInventories.logDebug("Player " + player.getName() + " quit from world: " + world);
         
-        if(WorldInventories.exempts.contains(player.getName().toLowerCase()))
-        {
+        if (WorldInventories.exempts.contains(player.getName().toLowerCase())) {
             WorldInventories.logDebug("Ignoring exempt player logout: " + player.getName());
             return;
         }           
         
-        Group tGroup = WorldInventoriesAPI.findGroup(world);
+        Group toGroup = WorldInventoriesAPI.findGroup(world);
 
         // Don't save if we don't care where we are (default group)
         //if (tGroup != null)
@@ -133,59 +122,53 @@ public class PlayerListener implements Listener
             tosave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
             tosave.put(InventoryStoredType.INVENTORY, player.getInventory().getContents());                      
             
-            plugin.savePlayerInventory(player.getName(), tGroup, me.drayshak.WorldInventories.InventoryLoadType.INVENTORY, tosave);
+            plugin.savePlayerInventory(player.getName(), toGroup, me.drayshak.WorldInventories.InventoryLoadType.INVENTORY, tosave);
             
             if (plugin.getConfig().getBoolean("dostats"))
             {
-                plugin.savePlayerStats(player, tGroup);
+                plugin.savePlayerStats(player, toGroup);
             }
         //}
         
         // Save the Ender Chest contents
-        if(player.getOpenInventory().getType() == InventoryType.ENDER_CHEST)
-        {
+        if (player.getOpenInventory().getType() == InventoryType.ENDER_CHEST) {
             tosave.put(InventoryStoredType.ARMOUR, null);
             tosave.put(InventoryStoredType.INVENTORY, player.getOpenInventory().getTopInventory().getContents());                      
 
-            plugin.savePlayerInventory(player.getName(), tGroup, me.drayshak.WorldInventories.InventoryLoadType.ENDERCHEST, tosave);
+            plugin.savePlayerInventory(player.getName(), toGroup, me.drayshak.WorldInventories.InventoryLoadType.ENDERCHEST, tosave);
         }
     }
     
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event)
     {
-        // FIXME: typo? Remove the 'v'?
         // TODO: global config string class
-        if (plugin.getConfig().getBoolean("loadinvonlogin"))
-        {
+        if (plugin.getConfig().getBoolean("loadinvonlogin")) {
             Player player = event.getPlayer();
             String world = player.getLocation().getWorld().getName();
             
             WorldInventories.logDebug("Player " + player.getName() + " join world: " + world);
             
-            if(WorldInventories.exempts.contains(player.getName().toLowerCase()))
-            {
+            if (WorldInventories.exempts.contains(player.getName().toLowerCase())) {
                 WorldInventories.logDebug("Ignoring exempt player join: " + player.getName());
                 return;
             }            
             
-            Group tGroup = WorldInventoriesAPI.findGroup(world);
+            Group toGroup = WorldInventoriesAPI.findGroup(world);
             
             //WorldInventories.logDebug("Loading inventory of " + player.getName());
-            plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player.getName(), tGroup, me.drayshak.WorldInventories.InventoryLoadType.INVENTORY));            
+            plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player.getName(), toGroup, me.drayshak.WorldInventories.InventoryLoadType.INVENTORY));
             
-            if (plugin.getConfig().getBoolean("dostats"))
-            {
-                plugin.setPlayerStats(player, plugin.loadPlayerStats(player.getName(), tGroup));
+            if (plugin.getConfig().getBoolean("dostats")) {
+                plugin.setPlayerStats(player, plugin.loadPlayerStats(player.getName(), toGroup));
             }
             
-            if(plugin.getConfig().getBoolean("dogamemodeswitch"))
-            {
+            if (plugin.getConfig().getBoolean("dogamemodeswitch")) {
                 //WorldInventories.logDebug("Should change gamemode to " + tGroup.getGameMode().toString() + " for " + player.getName());
-                event.getPlayer().setGameMode(tGroup.getGameMode());
+                event.getPlayer().setGameMode(toGroup.getGameMode());
             }              
             
-            plugin.sendMessage("loaded-message", player, ChatColor.GREEN + WorldInventories.locale.get("loaded-message") + tGroup.getName());
+            plugin.sendMessage("loaded-message", player, ChatColor.GREEN + WorldInventories.locale.get("loaded-message") + toGroup.getName());
         }
     }
 }
