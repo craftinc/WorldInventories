@@ -9,11 +9,18 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public class Language
 {
+    public final static String diedMessageKey = "diedMessage";
     private final static String diedMessageDefault = "You died! Wiped inventory and stats for group: ";
+
+    public final static String changedMessageKey = "changedMessage";
     private final static String changedMessageDefault = "Changed player information to match group: ";
+
+    public final static String noChangeMessageKey = "noChangeMessage";
     private final static String noChangeMessageDefault = "No player information change needed to match group: ";
+
+    public final static String loadedMessageKey = "loadedMessage";
     private final static String loadedMessageDefault = "Player information loaded for group: ";
-    
+
     private final WorldInventories plugin;
     private HashMap<String, String> messages;
     
@@ -32,45 +39,40 @@ public class Language
     {
         YamlConfiguration config = new YamlConfiguration();
         
-        try
-        {    
+        try {
             config.load(new File(plugin.getDataFolder().getPath(), "lang.yml"));            
         }
-        catch(FileNotFoundException e)
-        {
+        catch(FileNotFoundException e) {
             plugin.saveResource("lang.yml", true);
         }
-        catch(Exception e)
-        {
+        catch(Exception e) {
             logError("Failed to load languages, using defaults: " + e.getMessage());
         }
 
-        messages.put("died-message", diedMessageDefault);
-        messages.put("changed-message", changedMessageDefault);
-        messages.put("nochange-message", noChangeMessageDefault);
-        messages.put("loaded-message", loadedMessageDefault);
+        messages.put(diedMessageKey, diedMessageDefault);
+        messages.put(changedMessageKey, changedMessageDefault);
+        messages.put(noChangeMessageKey, noChangeMessageDefault);
+        messages.put(loadedMessageKey, loadedMessageDefault);
         
-        try
-        {
-            boolean langexists = config.isConfigurationSection(locale);
-            if(!langexists) throw new Exception("Language not found!");
-            ConfigurationSection langs = config.getConfigurationSection(locale);
+        try {
+            boolean langExists = config.isConfigurationSection(locale);
+
+            if (!langExists) {
+                throw new Exception("Language not found!");
+            }
+
+            ConfigurationSection language = config.getConfigurationSection(locale);
             
-            for(String key : messages.keySet())
-            {
-                try
-                {
-                    messages.put(key, langs.getString(key));
+            for(String key : messages.keySet()) {
+                try {
+                    messages.put(key, language.getString(key));
                 }
-                catch(Exception e)
-                {
+                catch(Exception e) {
                     logError("Failed to load language key, using default: " + key);
-                    return false;
                 }
             }
         }
-        catch(Exception e)
-        {
+        catch(Exception e) {
             logError("Failed to load language '" + locale + "', using defaults: " + e.getMessage());
             return false;
         }
