@@ -1,22 +1,14 @@
 package me.drayshak.WorldInventories;
 
-import me.drayshak.WorldInventories.listener.InventoryListener;
-import me.drayshak.WorldInventories.listener.EntityListener;
-import me.drayshak.WorldInventories.listener.PlayerListener;
+import me.drayshak.WorldInventories.listener.*;
+import me.drayshak.WorldInventories.api.WorldInventoriesAPI;
+
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Timer;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import me.drayshak.WorldInventories.api.WorldInventoriesAPI;
+
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -26,12 +18,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
+
 import org.mcstats.Metrics;
 
 public class WorldInventories extends JavaPlugin
@@ -59,6 +51,7 @@ public class WorldInventories extends JavaPlugin
 
         return groups.get(0);
     }
+
     public void setPlayerInventory(Player player, HashMap<Integer, ItemStack[]> playerInventory)
     {
         if (playerInventory != null)
@@ -78,12 +71,13 @@ public class WorldInventories extends JavaPlugin
         player.setLevel(playerstats.getLevel());
         player.setExp(playerstats.getExp());
         
-	for (PotionEffect effect : player.getActivePotionEffects())
+	    for (PotionEffect effect : player.getActivePotionEffects())
         {
             player.removePotionEffect(effect.getType());
         }
         
         Collection<PotionEffect> potioneffects = playerstats.getPotionEffects();
+
         if(potioneffects != null)
         {
             player.addPotionEffects(playerstats.getPotionEffects());
@@ -92,17 +86,15 @@ public class WorldInventories extends JavaPlugin
 
     public void savePlayers(boolean outputtoconsole)
     {
-        if(outputtoconsole)
-        {
+        if(outputtoconsole) {
             logStandard("Saving player information...");
         }
 
-        for (Player player : bukkitServer.getOnlinePlayers())
-        {
+        for (Player player : bukkitServer.getOnlinePlayers()) {
             String world = player.getLocation().getWorld().getName();
             Group tGroup = WorldInventoriesAPI.findGroup(world);
             
-            HashMap<Integer, ItemStack[]> tosave = new HashMap();
+            HashMap<Integer, ItemStack[]> tosave = new HashMap<Integer, ItemStack[]>();
             // Don't save if we don't care where we are (default group)
             if (!"default".equals(tGroup.getName()))
             {
@@ -111,23 +103,20 @@ public class WorldInventories extends JavaPlugin
                 
                 savePlayerInventory(player.getName(), WorldInventoriesAPI.findGroup(world), InventoryLoadType.INVENTORY, tosave);
                 
-                if (getConfig().getBoolean("dostats"))
-                {
+                if (getConfig().getBoolean("dostats")) {
                     savePlayerStats(player, WorldInventoriesAPI.findGroup(world));
                 }
             }
         }
 
-        if(outputtoconsole)
-        {
+        if (outputtoconsole) {
             logStandard("Done.");
         }
     }
 
     public void savePlayerInventory(String player, Group group, InventoryLoadType type, HashMap<Integer, ItemStack[]> inventory)
     {
-        if (!this.getDataFolder().exists())
-        {
+        if (!this.getDataFolder().exists()) {
             this.getDataFolder().mkdir();
         }
 
@@ -136,8 +125,7 @@ public class WorldInventories extends JavaPlugin
         path = this.getDataFolder().getAbsolutePath() + path;
 
         File file = new File(path);
-        if (!file.exists())
-        {
+        if (!file.exists()) {
             file.mkdir();
         }      
         
@@ -206,13 +194,12 @@ public class WorldInventories extends JavaPlugin
         
         file = new File(path);
         FileConfiguration pc = null;
-        try
-        {
+
+        try {
             file.createNewFile();
             pc = YamlConfiguration.loadConfiguration(new File(path));        
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             logError("Failed to load " + sType + " for player: " + player + ": " + e.getMessage());
         }    
 
@@ -222,68 +209,67 @@ public class WorldInventories extends JavaPlugin
         ItemStack[] iArmour = new ItemStack[4];
         ItemStack[] iInventory = null;
         
-        if(type == InventoryLoadType.INVENTORY)
-        {
-            armour = pc.getList("armour", null);
-            inventory = pc.getList("inventory", null);
+        if (type == InventoryLoadType.INVENTORY) {
+
+            if (pc != null) {
+                armour = pc.getList("armour", null);
+                inventory = pc.getList("inventory", null);
+            }
+
             
-            if(armour == null)
-            {
+            if (armour == null) {
                 logDebug("Player " + player + " will get new armour on next save (clearing now).");              
 
-                for (int i = 0; i < 4; i++)
-                {
+                for (int i = 0; i < 4; i++) {
                     iArmour[i] = new ItemStack(Material.AIR);
                 }            
             }
-            else
-            {
-                for(int i = 0; i < 4; i++)
-                {
+            else {
+
+                for(int i = 0; i < 4; i++) {
                     iArmour[i] = (ItemStack)armour.get(i);
                 }
             }
             
             iInventory = new ItemStack[36];
-            if(inventory == null)
-            {
+
+            if (inventory == null) {
                 logDebug("Player " + player + " will get new items on next save (clearing now).");           
 
-                for (int i = 0; i < 36; i++)
-                {
+                for (int i = 0; i < 36; i++) {
                     iInventory[i] = new ItemStack(Material.AIR);
                 }              
             }
-            else
-            {
-                for (int i = 0; i < 36; i++)
-                {
+            else {
+
+                for (int i = 0; i < 36; i++) {
                     iInventory[i] = (ItemStack)inventory.get(i);
                 }  
             }            
         }
-        else if(type == InventoryLoadType.ENDERCHEST)
-        {
-            inventory = pc.getList("enderchest", null);
+        else if (type == InventoryLoadType.ENDERCHEST) {
+
+            if (pc != null) {
+                inventory = pc.getList("enderchest", null);
+            }
+
             iInventory = new ItemStack[27];
-            if(inventory == null)
-            {
+
+            if (inventory == null) {
                 
-                for (int i = 0; i < 27; i++)
-                {
+                for (int i = 0; i < 27; i++) {
                     iInventory[i] = new ItemStack(Material.AIR);
                 }                  
             }
-            else
-            {
-                for(int i = 0; i < 27; i++)
-                {
+            else {
+
+                for(int i = 0; i < 27; i++) {
                     iInventory[i] = (ItemStack)inventory.get(i);
                 }
             }            
         }
         
-        HashMap<Integer, ItemStack[]> ret = new HashMap();
+        HashMap<Integer, ItemStack[]> ret = new HashMap<Integer, ItemStack[]>();
         ret.put(InventoryStoredType.ARMOUR, iArmour);
         ret.put(InventoryStoredType.INVENTORY, iInventory);
         
@@ -295,56 +281,52 @@ public class WorldInventories extends JavaPlugin
     public PlayerStats loadPlayerStats(String player, Group group)
     {
         String path = File.separator + group.getName();
-
         path = this.getDataFolder().getAbsolutePath() + path;
 
         File file = new File(path);
-        if (!file.exists())
-        {
+
+        if (!file.exists()) {
             file.mkdir();
         }         
 
         path += File.separator + player + ".stats." + statsFileVersion + ".yml";      
         
         file = new File(path);
-        FileConfiguration pc = null;
-        try
-        {
+        FileConfiguration pc;
+
+        try {
             file.createNewFile();
             pc = YamlConfiguration.loadConfiguration(new File(path));        
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             logError("Failed to load stats for player: " + player + ": " + e.getMessage());
+            return null;
         }
         
         int health;
-        int foodlevel;
+        int foodLevel;
         double exhaustion;
         double saturation;
         int level;
         double exp;
-        List<PotionEffect> potioneffects;
-        
+        List<PotionEffect> potionEffects;
+
         health = pc.getInt("health", -1);
-        foodlevel = pc.getInt("foodlevel", 20);
+        foodLevel = pc.getInt("foodlevel", 20);
         exhaustion = pc.getDouble("exhaustion", 0);
         saturation = pc.getDouble("saturation", 0);
         level = pc.getInt("level", 0);
         exp = pc.getDouble("exp", 0);
-        potioneffects = (List<PotionEffect>) pc.getList("potioneffects", null);
+        potionEffects = (List<PotionEffect>) pc.getList("potioneffects", null);
         
         PlayerStats playerstats = new PlayerStats(20, 20, 0, 0, 0, 0F, null);
         
-        if(health == -1)
-        {
+        if(health == -1) {
             logDebug("Player " + player + " will get a new stats file on next save (clearing now).");           
         }
-        else
-        {
-            playerstats = new PlayerStats(health, foodlevel, (float)exhaustion, (float)saturation, level, (float)exp, potioneffects);
+        else {
+            playerstats = new PlayerStats(health, foodLevel, (float)exhaustion, (float)saturation, level, (float)exp, potionEffects);
         }
-        
         
         this.setPlayerStats(bukkitServer.getPlayer(player), playerstats);  
         
@@ -360,18 +342,15 @@ public class WorldInventories extends JavaPlugin
     
     public void savePlayerStats(String player, Group group, PlayerStats playerstats)
     {
-        if (!this.getDataFolder().exists())
-        {
+        if (!this.getDataFolder().exists()) {
             this.getDataFolder().mkdir();
         }
 
         String path = File.separator + group.getName();
-
         path = this.getDataFolder().getAbsolutePath() + path;
 
         File file = new File(path);
-        if (!file.exists())
-        {
+        if (!file.exists()) {
             file.mkdir();
         }      
 
@@ -379,8 +358,7 @@ public class WorldInventories extends JavaPlugin
 
         file = new File(path);
 
-        try
-        {
+        try {
             file.createNewFile();
             FileConfiguration pc = YamlConfiguration.loadConfiguration(file);
 
@@ -394,8 +372,7 @@ public class WorldInventories extends JavaPlugin
             
             pc.save(file);
         }    
-        catch (Exception e)
-        {
+        catch (Exception e) {
             logError("Failed to save stats for player: " + player + ": " + e.getMessage());
         }
         
@@ -410,57 +387,62 @@ public class WorldInventories extends JavaPlugin
         logStandard("Starting vanilla players import...");
         
         Group group = WorldInventoriesAPI.findGroup(getConfig().getString("vanillatogroup"));
+
         if(group == null)
         {
             logStandard("Warning: importing from vanilla in to the default group (does the group specified exist?)");
         }
         
-        OfflinePlayer[] offlineplayers = getServer().getOfflinePlayers();
+        OfflinePlayer[] offlinePlayers = getServer().getOfflinePlayers();
 
-        if(offlineplayers.length <= 0)
-        {
+        if(offlinePlayers.length <= 0) {
             logStandard("Found no offline players to import!");
             return false;
         }
         
-        for(OfflinePlayer offlineplayer : offlineplayers)
-        {
+        for (OfflinePlayer offlineplayer : offlinePlayers) {
             Player player = null;
-            try
-            {
-                player = (Player) offlineplayer;
 
+            try {
+                player = (Player) offlineplayer;
             }
-            catch(Exception e)
-            {
+            catch(Exception e) {
                 logError("  (Warning) Couldn't convert a player: " + e.getMessage());
             }
-            
-            if(player == null)
-            {
-                logStandard("Failed to import " + offlineplayer.getName() + ", couldn't create EntityPlayer.");
-            }
-            else
-            {
-                savePlayerStats(player, group);
-                
-                HashMap<Integer, ItemStack[]> tosave = new HashMap();
-                tosave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
-                tosave.put(InventoryStoredType.INVENTORY, player.getInventory().getContents());
-                
-                savePlayerInventory(player.getName(), group, InventoryLoadType.INVENTORY, tosave);
-                
-                tosave.put(InventoryStoredType.ARMOUR, null);
-                tosave.put(InventoryStoredType.INVENTORY, ((HumanEntity)player).getEnderChest().getContents());
 
-                this.savePlayerInventory(player.getName(), group, InventoryLoadType.ENDERCHEST, tosave);
-                
-                imported++;
+            if (player == null) {
+
+                String playerName = "unknown";
+
+                if (offlineplayer != null) {
+                    playerName = offlineplayer.getName();
+                }
+
+                logStandard("Failed to import '" + playerName + "', couldn't create EntityPlayer.");
+                failed++;
+
+                continue;
             }
+
+            savePlayerStats(player, group);
+
+            HashMap<Integer, ItemStack[]> toSave = new HashMap<Integer, ItemStack[]>();
+            toSave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
+            toSave.put(InventoryStoredType.INVENTORY, player.getInventory().getContents());
+
+            savePlayerInventory(player.getName(), group, InventoryLoadType.INVENTORY, toSave);
+
+            toSave.put(InventoryStoredType.ARMOUR, null);
+            toSave.put(InventoryStoredType.INVENTORY, player.getEnderChest().getContents());
+
+            this.savePlayerInventory(player.getName(), group, InventoryLoadType.ENDERCHEST, toSave);
+
+            imported++;
         }
         
-        logStandard("Imported " + Integer.toString(imported) + "/" + Integer.toString(offlineplayers.length) + " (" + Integer.toString(failed) + " failures).");
-        return (failed <= 0);
+        logStandard("Imported " + Integer.toString(imported) + "/" + Integer.toString(offlinePlayers.length) + " (" + Integer.toString(failed) + " failures).");
+
+        return (failed < offlinePlayers.length);
     }
     
     public static void logStandard(String line)
@@ -478,34 +460,34 @@ public class WorldInventories extends JavaPlugin
         log.log(Level.FINE, "[WorldInventories] {0}", line);
     }
 
-    private boolean loadConfig(boolean createDefaults)
-    {
-        try
-        {
-            YamlConfiguration config = new YamlConfiguration();
-            config.load(new File(this.getDataFolder().getPath(), "config.yml"));            
-        }
-        catch(FileNotFoundException e)
-        {
-            if(createDefaults)
-            {   
-                saveDefaultConfig();
-                return true;
-            }
-            else return false;
-        }
-        catch(Exception e)
-        {
-            logError("Failed to load configuration: " + e.getMessage());
-
-            return false;
-        }
-        
-        getConfig().options().copyDefaults(true);
-        saveConfig();
-        
-        return true;        
-    }
+//    private boolean loadConfig(boolean createDefaults)
+//    {
+//        try
+//        {
+//            YamlConfiguration config = new YamlConfiguration();
+//            config.load(new File(this.getDataFolder().getPath(), "config.yml"));
+//        }
+//        catch(FileNotFoundException e)
+//        {
+//            if(createDefaults)
+//            {
+//                saveDefaultConfig();
+//                return true;
+//            }
+//            else return false;
+//        }
+//        catch(Exception e)
+//        {
+//            logError("Failed to load configuration: " + e.getMessage());
+//
+//            return false;
+//        }
+//
+//        getConfig().options().copyDefaults(true);
+//        saveConfig();
+//
+//        return true;
+//    }
 
     private boolean loadConfiguration()
     {
@@ -513,7 +495,7 @@ public class WorldInventories extends JavaPlugin
 
         String defaultmode = getConfig().getString("gamemodes.default", "SURVIVAL");
         
-        Set<String> nodes = null;
+        Set<String> nodes;
         try
         {
             nodes = getConfig().getConfigurationSection("groups").getKeys(false);
@@ -591,13 +573,14 @@ public class WorldInventories extends JavaPlugin
         pluginManager = bukkitServer.getPluginManager();
 
         logStandard("Loading configuration...");
-        boolean loaded = this.loadConfig(true);
-        if(!loaded)
-        {
-            logError("Failed to load configuration! See the message above for details.");
-            pluginManager.disablePlugin(this);
-            return;
-        }
+//        boolean loaded = this.loadConfig(true);
+        this.saveDefaultConfig();
+
+//        if (!loaded) {
+//            logError("Failed to load configuration! See the message above for details.");
+//            pluginManager.disablePlugin(this);
+//            return;
+//        }
 
         boolean bConfiguration = this.loadConfiguration();
 
