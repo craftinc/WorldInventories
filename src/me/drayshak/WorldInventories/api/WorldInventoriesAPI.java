@@ -9,7 +9,8 @@ import me.drayshak.WorldInventories.WorldInventories;
 import static me.drayshak.WorldInventories.WorldInventories.groups;
 import org.bukkit.inventory.ItemStack;
 
-public class WorldInventoriesAPI {
+public class WorldInventoriesAPI
+{
     private final WorldInventories plugin;
     
     /*
