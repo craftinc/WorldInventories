@@ -17,12 +17,12 @@ import org.bukkit.inventory.ItemStack;
 public class InventoryListener implements Listener
 {
     private final WorldInventories plugin;
-    
+
     public InventoryListener(final WorldInventories plugin)
     {
        this.plugin = plugin;
     }
-    
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInventoryOpen(InventoryOpenEvent event)
     {
@@ -40,16 +40,16 @@ public class InventoryListener implements Listener
             return;
         }
 
-        Group worldgroup = WorldInventoriesAPI.findGroup(world);
+        Group worldGroup = WorldInventoriesAPI.findGroup(world);
 
-        WorldInventories.logDebug("Ender Chest opened by " + playerName + " in world " + world + ", group " + worldgroup);
+        WorldInventories.logDebug("Ender Chest opened by " + playerName + " in world " + world + ", group " + worldGroup);
 
-        HashMap<Integer, ItemStack[]> playerIventoryMap = plugin.loadPlayerInventory(playerName,
-                                                                                     worldgroup,
+        HashMap<Integer, ItemStack[]> playerInventoryMap = plugin.loadPlayerInventory(playerName,
+                                                                                     worldGroup,
                                                                                      me.drayshak.WorldInventories.InventoryLoadType.ENDERCHEST);
-        inventory.setContents(playerIventoryMap.get(InventoryStoredType.INVENTORY));
+        inventory.setContents(playerInventoryMap.get(InventoryStoredType.INVENTORY));
     }
-    
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInventoryClosed(InventoryCloseEvent event)
     {
@@ -67,14 +67,14 @@ public class InventoryListener implements Listener
             return;
         }
 
-        Group worldgroup = WorldInventoriesAPI.findGroup(worldName);
+        Group worldGroup = WorldInventoriesAPI.findGroup(worldName);
 
-        WorldInventories.logDebug("Ender Chest closed by " + playerName + " in world " + worldName + ", group " + worldgroup);
+        WorldInventories.logDebug("Ender Chest closed by " + playerName + " in world " + worldName + ", group " + worldGroup);
 
-        HashMap<Integer, ItemStack[]> tosave = new HashMap<Integer, ItemStack[]>();
-        tosave.put(InventoryStoredType.ARMOUR, null);
-        tosave.put(InventoryStoredType.INVENTORY, inventory.getContents());
+        HashMap<Integer, ItemStack[]> toSave = new HashMap<Integer, ItemStack[]>();
+        toSave.put(InventoryStoredType.ARMOUR, null);
+        toSave.put(InventoryStoredType.INVENTORY, inventory.getContents());
 
-        plugin.savePlayerInventory(playerName, worldgroup, me.drayshak.WorldInventories.InventoryLoadType.ENDERCHEST, tosave);
+        plugin.savePlayerInventory(playerName, worldGroup, me.drayshak.WorldInventories.InventoryLoadType.ENDERCHEST, toSave);
     }
 }
