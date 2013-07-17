@@ -1,10 +1,10 @@
 en_GB:  
-    died-message: 'You died! Wiped inventory and stats for group: '
-    changed-message: 'Changed player information to match group: '
-    nochange-message: 'No player information change needed to match group: '
-    loaded-message: 'Player information loaded for group: '
+    diedMessage: 'You died! Wiped inventory and stats for group: '
+    changedMessage: 'Changed player information to match group: '
+    noChangeMessage: 'No player information change needed to match group: '
+    loadedMessage: 'Player information loaded for group: '
 en_PR:
-    died-message: 'Arr, slain by a scallywag! Booty be wiped for group: '
-    changed-message: 'Arr, booty be changed to match group: '
-    nochange-message: 'Arr, booty need not be changed to match group: '
-    loaded-message: 'Arr, booty be loaded for group: '
+    diedMessage: 'Arr, slain by a scallywag! Booty be wiped for group: '
+    changedMessage: 'Arr, booty be changed to match group: '
+    noChangeMessage: 'Arr, booty need not be changed to match group: '
+    loadedMessage: 'Arr, booty be loaded for group: '
