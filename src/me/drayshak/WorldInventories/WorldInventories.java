@@ -86,8 +86,7 @@ public class WorldInventories extends JavaPlugin
 
     public void setPlayerInventory(Player player, HashMap<Integer, ItemStack[]> playerInventory)
     {
-        if (playerInventory != null)
-        {
+        if (playerInventory != null) {
             player.getInventory().setContents(playerInventory.get(InventoryStoredType.INVENTORY));
             player.getInventory().setArmorContents(playerInventory.get(InventoryStoredType.ARMOUR));
         }
@@ -527,12 +526,11 @@ public class WorldInventories extends JavaPlugin
         String defaultmode = getConfig().getString("gamemodes.default", "SURVIVAL");
         
         Set<String> nodes;
-        try
-        {
+
+        try {
             nodes = getConfig().getConfigurationSection("groups").getKeys(false);
         }
-        catch(NullPointerException e)
-        {
+        catch(NullPointerException e) {
             nodes = new HashSet<String>();
             logError("Warning: No groups found. Everything will be in the 'default' group.");
         }
@@ -581,12 +579,10 @@ public class WorldInventories extends JavaPlugin
 
         boolean bLanguage = locale.loadLanguages(sLanguage);
 
-        if(bLanguage)
-        {
+        if (bLanguage) {
             logStandard("Loaded language " + sLanguage + " successfully");
         }
-        else
-        {
+        else {
             logStandard("Problems encountered whilst loading language " + sLanguage + ", used defaults.");
         }
         
@@ -602,9 +598,6 @@ public class WorldInventories extends JavaPlugin
 
         boolean bInitialised = true;
 
-//        bukkitServer = this.getServer();
-//        pluginManager = bukkitServer.getPluginManager();
-
         logStandard("Loading configuration...");
 //        boolean loaded = this.loadConfig(true);
         this.saveDefaultConfig();
@@ -617,53 +610,52 @@ public class WorldInventories extends JavaPlugin
 
         boolean bConfiguration = this.loadConfiguration();
 
-        if (!bConfiguration)
-        {
+        if (!bConfiguration) {
             logError("Failed to load configuration.");
             bInitialised = false;
         }
-        else
-        {
+        else {
             logStandard("Loaded configuration successfully");
         }
         
-        if (bInitialised)
-        {
+        if (bInitialised) {
             this.loadLanguage();
             
-            if(getConfig().getBoolean("dovanillaimport"))
-            {
+            if (getConfig().getBoolean("dovanillaimport")) {
                 boolean bSuccess = this.importVanilla();
                 
                 this.getConfig().set("dovanillaimport", false);
                 this.saveConfig();
                 
-                if(bSuccess)
-                {
+                if (bSuccess) {
                     logStandard("Vanilla saves import was a success!");
                 }                
             }
-            
+
+            // setup listeners
             getServer().getPluginManager().registerEvents(new EntityListener(this), this);
             getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
             getServer().getPluginManager().registerEvents(new InventoryListener(this), this);
 
+
+            // setup metrics
             try {
                 Metrics metrics = new Metrics(this);
                 metrics.start();
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 logDebug("Failed to submit Metrics statistics.");
             }            
             
-            logStandard("Initialised successfully!");
-
-            if (getConfig().getInt("saveinterval") >= 30)
-            {
-                saveTimer.scheduleAtFixedRate(new SaveTask(this), getConfig().getInt("saveinterval") * 1000, getConfig().getInt("saveinterval") * 1000);
+            // start timed saving
+            if (getConfig().getInt("saveinterval") >= 30) {
+                int interval = getConfig().getInt("saveinterval") * 1000;
+                saveTimer.scheduleAtFixedRate(new SaveTask(this), interval, interval);
             }
+
+            logStandard("Initialised successfully!");
         }
-        else
-        {
+        else {
             logError("Failed to initialise.");
         }
     }
