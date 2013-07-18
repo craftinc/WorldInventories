@@ -1,8 +1,10 @@
-name: WorldInventories
-main: me.drayshak.WorldInventories.WorldInventories
-version: 1.7.0-dev4
-author: drayshak
+name: ${project.name}
+version: ${project.version}
 description: Automatic inventory switching for groups of worlds
+main: de.craftinc.inventories.WorldInventories
+author: tomco, s1m0ne
+authors: [drayshak, s1m0ne, tomco]
+
 commands:
   wireload:
     description: Reload WorldInventories configuration
@@ -12,9 +14,15 @@ commands:
     description: Manage exempt players
     permission: worldinventories.exempt
     usage: /<command> [add/remove] [player]
+
 permissions:
-  worldinventories.*:
+  craftincinventories.*:
+    description: Gives access to all Craft Inc. Inventories commands.
     children:
-      worldinventories.reload: true
-      worldinventories.exempt: true
+      craftincinventories.reload: true
+      craftincinventories.exempt: true
     default: op
+  craftincinventories.reload:
+    description: Allows reloading of configurations and languages.
+  craftincinventories.exempt:
+    description: Allows adding and removing players to/from the exemption list.
