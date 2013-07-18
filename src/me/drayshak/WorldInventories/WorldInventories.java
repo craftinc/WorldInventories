@@ -38,6 +38,9 @@ public class WorldInventories extends JavaPlugin
     public static String inventoryFileVersion = "v5";
     public static Language locale;
 
+    private CommandHandler commandHandler;
+
+
     public static Group findGroup(String world)
     {
         for (Group tGroup : groups)
@@ -489,7 +492,7 @@ public class WorldInventories extends JavaPlugin
 //        return true;
 //    }
 
-    private boolean loadConfiguration()
+    public boolean loadConfiguration()
     {
         groups = new ArrayList<Group>();
 
@@ -567,6 +570,8 @@ public class WorldInventories extends JavaPlugin
     {
         logStandard("Initialising...");
 
+        this.commandHandler = new CommandHandler(this);
+
         boolean bInitialised = true;
 
         bukkitServer = this.getServer();
@@ -639,103 +644,13 @@ public class WorldInventories extends JavaPlugin
     public void onDisable()
     {
         savePlayers(true);
-
         logStandard("Plugin disabled");
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
     {
-        String command = cmd.getName();
-
-        if (command.equalsIgnoreCase("wireload"))
-        {
-            if (sender.hasPermission("worldinventories.reload"))
-            {
-                if(args.length != 1)
-                {
-                    sender.sendMessage(ChatColor.RED + "Wrong number of arguments given. Usage is /wireload <all/language>");
-                    return true;
-                }
-                
-                args[0] = args[0].toLowerCase();
-                
-                if(!"all".equals(args[0]) && !"language".equals(args[0]))
-                {
-                    sender.sendMessage(ChatColor.RED + "Invalid argument. Usage is /wireload <all/language>");
-                    return true;                    
-                }
-                
-                if("all".equals(args[0]))
-                {
-                    logStandard("Reloading all configuration...");
-                    reloadConfig();
-                    loadConfiguration();
-                    sender.sendMessage(ChatColor.GREEN + "Reloaded all WorldInventories configuration successfully");                    
-                }
-                else if("language".equals(args[0]))
-                {
-                    logStandard("Reloading language...");
-                    reloadConfig();
-                    if(this.loadLanguage())
-                        sender.sendMessage(ChatColor.GREEN + "Reloaded WorldInventories language successfully");
-                    else
-                        sender.sendMessage(ChatColor.GREEN + "Problem occurred whilst reloading WorldInventories language, used defaults.");
-                }
-            }
-
-            return true;
-        }
-        else if (command.equalsIgnoreCase("wiexempt"))
-        {
-            if(sender.hasPermission("worldinventories.exempt"))
-            {
-                if(args.length != 2)
-                {
-                    sender.sendMessage(ChatColor.RED + "Wrong number of arguments given. Usage is /wiexempt <add/remove> <player>");
-                    return true;
-                }
-                
-                args[1] = args[1].toLowerCase();
-                
-                if(args[0].equalsIgnoreCase("add"))
-                {
-                    if(exempts.contains(args[1]))
-                    {
-                        sender.sendMessage(ChatColor.RED + "That player is already in the exemption list.");
-                    }
-                    else
-                    {
-                        exempts.add(args[1]);
-                        sender.sendMessage(ChatColor.GREEN + "Added " + args[1] + " to the exemption list successfully.");
-                        getConfig().set("exempt", exempts);
-                        saveConfig();
-                    }
-                }
-                else if(args[0].equalsIgnoreCase("remove"))
-                {
-                    if(!exempts.contains(args[1].toLowerCase()))
-                    {
-                        sender.sendMessage(ChatColor.RED + "That player isn't in the exemption list.");
-                    }
-                    else
-                    {
-                        exempts.remove(args[1]);
-                        sender.sendMessage(ChatColor.GREEN + "Removed " + args[1] + " from the exemption list successfully.");
-                        getConfig().set("exempt", exempts);
-                        saveConfig();
-                    }
-                }
-                else
-                {
-                    sender.sendMessage(ChatColor.RED + "Argument invalid. Usage is /wiexempt <add/remove> <player>");
-                }
-                
-                return true;
-            }
-        }
-
-        return false;
+        return this.commandHandler.onCommand(sender, cmd, commandLabel, args);
     }
     
     /*
