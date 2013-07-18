@@ -12,14 +12,12 @@ import java.util.logging.Logger;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 
@@ -27,32 +25,64 @@ import org.mcstats.Metrics;
 
 public class WorldInventories extends JavaPlugin
 {
-    public static final Logger log = Logger.getLogger("Minecraft");
-    public static PluginManager pluginManager = null;
-    public static Server bukkitServer = null;
-    public static ArrayList<Group> groups = null;
-    public static List<String> exempts = null;
-    public static Timer saveTimer = new Timer();
-    public static String statsFileVersion = "v5";
-    public static String inventoryFileVersion = "v5";
-    public static Language locale;
+    protected ArrayList<Group> groups = null;
+    protected List<String> exempts = null;
+    protected Timer saveTimer = new Timer();
 
-    private CommandHandler commandHandler;
+    public static final String statsFileVersion = "v5";
+    public static final String inventoryFileVersion = "v5";
+
+    protected Language locale;
+    protected CommandHandler commandHandler;
 
 
-    public static Group findGroup(String world)
+    public Group findGroup(String world)
     {
-        for (Group tGroup : groups)
-        {
+        for (Group tGroup : groups) {
             int index = tGroup.getWorlds().indexOf(world);
-            if(index != -1)
-            {
+
+            if(index != -1) {
                 return tGroup;
             }
         }
 
         return groups.get(0);
     }
+
+
+    public ArrayList<Group> getAllGroups()
+    {
+        return groups;
+    }
+
+
+    public Language getLocale()
+    {
+        return locale;
+    }
+
+
+    public void addPlayerToExemptList(String playerName)
+    {
+        this.exempts.add(playerName.toLowerCase());
+        this.getConfig().set("exempt", this.exempts);
+        this.saveConfig();
+    }
+
+
+    public boolean isPlayerOnExemptList(String playerName)
+    {
+        return this.exempts.contains(playerName.toLowerCase());
+    }
+
+
+    public void removePlayerFromExemptList(String playerName)
+    {
+        this.exempts.remove(playerName.toLowerCase());
+        this.getConfig().set("exempt", this.exempts);
+        this.saveConfig();
+    }
+
 
     public void setPlayerInventory(Player player, HashMap<Integer, ItemStack[]> playerInventory)
     {
@@ -92,9 +122,9 @@ public class WorldInventories extends JavaPlugin
             logStandard("Saving player information...");
         }
 
-        for (Player player : bukkitServer.getOnlinePlayers()) {
+        for (Player player : this.getServer().getOnlinePlayers()) {
             String world = player.getLocation().getWorld().getName();
-            Group tGroup = WorldInventoriesAPI.findGroup(world);
+            Group tGroup = this.findGroup(world);
             
             HashMap<Integer, ItemStack[]> tosave = new HashMap<Integer, ItemStack[]>();
             // Don't save if we don't care where we are (default group)
@@ -103,10 +133,10 @@ public class WorldInventories extends JavaPlugin
                 tosave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
                 tosave.put(InventoryStoredType.INVENTORY, player.getInventory().getContents());
                 
-                savePlayerInventory(player.getName(), WorldInventoriesAPI.findGroup(world), InventoryLoadType.INVENTORY, tosave);
+                savePlayerInventory(player.getName(), this.findGroup(world), InventoryLoadType.INVENTORY, tosave);
                 
                 if (getConfig().getBoolean("dostats")) {
-                    savePlayerStats(player, WorldInventoriesAPI.findGroup(world));
+                    savePlayerStats(player, this.findGroup(world));
                 }
             }
         }
@@ -330,7 +360,7 @@ public class WorldInventories extends JavaPlugin
             playerstats = new PlayerStats(health, foodLevel, (float)exhaustion, (float)saturation, level, (float)exp, potionEffects);
         }
         
-        this.setPlayerStats(bukkitServer.getPlayer(player), playerstats);  
+        this.setPlayerStats(this.getServer().getPlayer(player), playerstats);
         
         logDebug("Loaded stats for player: " + player + " " + path);
 
@@ -388,16 +418,15 @@ public class WorldInventories extends JavaPlugin
         
         logStandard("Starting vanilla players import...");
         
-        Group group = WorldInventoriesAPI.findGroup(getConfig().getString("vanillatogroup"));
+        Group group = this.findGroup(getConfig().getString("vanillatogroup"));
 
-        if(group == null)
-        {
+        if (group == null) {
             logStandard("Warning: importing from vanilla in to the default group (does the group specified exist?)");
         }
         
         OfflinePlayer[] offlinePlayers = getServer().getOfflinePlayers();
 
-        if(offlinePlayers.length <= 0) {
+        if (offlinePlayers.length <= 0) {
             logStandard("Found no offline players to import!");
             return false;
         }
@@ -449,17 +478,17 @@ public class WorldInventories extends JavaPlugin
     
     public static void logStandard(String line)
     {
-        log.log(Level.INFO, "[WorldInventories] {0}", line);
+        Logger.getLogger("Minecraft").log(Level.INFO, "[WorldInventories] {0}", line);
     }
 
     public static void logError(String line)
     {
-        log.log(Level.SEVERE, "[WorldInventories] {0}", line);
+        Logger.getLogger("Minecraft").log(Level.SEVERE, "[WorldInventories] {0}", line);
     }
 
     public static void logDebug(String line)
     {
-        log.log(Level.FINE, "[WorldInventories] {0}", line);
+        Logger.getLogger("Minecraft").log(Level.FINE, "[WorldInventories] {0}", line);
     }
 
 //    private boolean loadConfig(boolean createDefaults)
@@ -573,8 +602,8 @@ public class WorldInventories extends JavaPlugin
 
         boolean bInitialised = true;
 
-        bukkitServer = this.getServer();
-        pluginManager = bukkitServer.getPluginManager();
+//        bukkitServer = this.getServer();
+//        pluginManager = bukkitServer.getPluginManager();
 
         logStandard("Loading configuration...");
 //        boolean loaded = this.loadConfig(true);

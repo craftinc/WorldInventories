@@ -31,12 +31,12 @@ public class PlayerListener implements Listener
     {
         Player player = event.getEntity().getPlayer();
         
-        if (WorldInventories.exempts.contains(player.getName().toLowerCase())) {
+        if (plugin.isPlayerOnExemptList(player.getName())) {
             WorldInventories.logDebug("Ignoring exempt player death: " + player.getName());
             return;
         }
         
-        Group group = WorldInventoriesAPI.findGroup(player.getWorld().getName());
+        Group group = plugin.findGroup(player.getWorld().getName());
         
         HashMap<Integer, ItemStack[]> toSave = new HashMap<Integer, ItemStack[]>();
         toSave.put(InventoryStoredType.ARMOUR, new ItemStack[4]);
@@ -50,7 +50,7 @@ public class PlayerListener implements Listener
 
         plugin.sendMessage(Language.diedMessageKey,
                            player,
-                           ChatColor.GREEN + WorldInventories.locale.get(Language.diedMessageKey) + group.getName());
+                           ChatColor.GREEN + plugin.getLocale().get(Language.diedMessageKey) + group.getName());
     }
     
     @EventHandler
@@ -58,7 +58,7 @@ public class PlayerListener implements Listener
     {
         Player player = event.getPlayer();
         
-        if (WorldInventories.exempts.contains(player.getName().toLowerCase())) {
+        if (plugin.isPlayerOnExemptList(player.getName())) {
             WorldInventories.logDebug("Ignoring exempt player world switch: " + player.getName());
             return;
         }
@@ -66,8 +66,8 @@ public class PlayerListener implements Listener
         String fromWorldName = event.getFrom().getName();
         String toWorldName = player.getLocation().getWorld().getName();
 
-        Group fromGroup = WorldInventoriesAPI.findGroup(fromWorldName);
-        Group toGroup = WorldInventoriesAPI.findGroup(toWorldName);
+        Group fromGroup = plugin.findGroup(fromWorldName);
+        Group toGroup = plugin.findGroup(toWorldName);
 
         WorldInventories.logDebug("Player " + player.getName() + " moved from world " + fromWorldName + " to " + toWorldName);
 
@@ -95,12 +95,12 @@ public class PlayerListener implements Listener
 
             plugin.sendMessage(Language.changedMessageKey,
                                player,
-                               ChatColor.GREEN + WorldInventories.locale.get(Language.changedMessageKey) + toGroup.getName());
+                               ChatColor.GREEN + plugin.getLocale().get(Language.changedMessageKey) + toGroup.getName());
         }
         else {
             plugin.sendMessage(Language.noChangeMessageKey,
                                player,
-                               ChatColor.GREEN + WorldInventories.locale.get(Language.noChangeMessageKey) + toGroup.getName());
+                               ChatColor.GREEN + plugin.getLocale().get(Language.noChangeMessageKey) + toGroup.getName());
         }
     }
     
@@ -112,12 +112,12 @@ public class PlayerListener implements Listener
         
         WorldInventories.logDebug("Player " + player.getName() + " quit from world: " + world);
         
-        if (WorldInventories.exempts.contains(player.getName().toLowerCase())) {
+        if (plugin.isPlayerOnExemptList(player.getName())) {
             WorldInventories.logDebug("Ignoring exempt player logout: " + player.getName());
             return;
         }           
         
-        Group toGroup = WorldInventoriesAPI.findGroup(world);
+        Group toGroup = plugin.findGroup(world);
 
         // Don't save if we don't care where we are (default group)
         //if (tGroup != null)
@@ -154,12 +154,12 @@ public class PlayerListener implements Listener
             
             WorldInventories.logDebug("Player " + player.getName() + " join world: " + world);
             
-            if (WorldInventories.exempts.contains(player.getName().toLowerCase())) {
+            if (plugin.isPlayerOnExemptList(player.getName())) {
                 WorldInventories.logDebug("Ignoring exempt player join: " + player.getName());
                 return;
             }            
             
-            Group toGroup = WorldInventoriesAPI.findGroup(world);
+            Group toGroup = plugin.findGroup(world);
             
             //WorldInventories.logDebug("Loading inventory of " + player.getName());
             plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player.getName(), toGroup, me.drayshak.WorldInventories.InventoryLoadType.INVENTORY));
@@ -175,7 +175,7 @@ public class PlayerListener implements Listener
             
             plugin.sendMessage(Language.loadedMessageKey,
                                player,
-                               ChatColor.GREEN + WorldInventories.locale.get(Language.loadedMessageKey) + toGroup.getName());
+                               ChatColor.GREEN + plugin.getLocale().get(Language.loadedMessageKey) + toGroup.getName());
         }
     }
 }

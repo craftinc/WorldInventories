@@ -3,7 +3,6 @@ package me.drayshak.WorldInventories.listener;
 import java.util.HashMap;
 
 import me.drayshak.WorldInventories.*;
-import me.drayshak.WorldInventories.api.WorldInventoriesAPI;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -33,12 +32,12 @@ public class EntityListener implements Listener
         String playerName = player.getName();
 
 
-        if (WorldInventories.exempts.contains(playerName.toLowerCase())) {
+        if (plugin.isPlayerOnExemptList(playerName)) {
             WorldInventories.logDebug("Ignoring exempt player death: " + playerName);
             return;
         }
 
-        Group toGroup = WorldInventoriesAPI.findGroup(worldName);
+        Group toGroup = plugin.findGroup(worldName);
 
         WorldInventories.logDebug("Player " + playerName + " died in world " + worldName + ", emptying inventory for group: " + toGroup.getName());
 

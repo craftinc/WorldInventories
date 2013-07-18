@@ -6,7 +6,6 @@ import java.util.List;
 import me.drayshak.WorldInventories.Group;
 import me.drayshak.WorldInventories.PlayerStats;
 import me.drayshak.WorldInventories.WorldInventories;
-import static me.drayshak.WorldInventories.WorldInventories.groups;
 import org.bukkit.inventory.ItemStack;
 
 public class WorldInventoriesAPI
@@ -16,9 +15,9 @@ public class WorldInventoriesAPI
     /*
      * Returns the first group associated with a world, otherwise the default
      */
-    public static Group findGroup(String world)
+    public Group findGroup(String world)
     {
-        return WorldInventories.findGroup(world);
+        return plugin.findGroup(world);
     }    
     
     public WorldInventoriesAPI(final WorldInventories plugin)
@@ -30,7 +29,7 @@ public class WorldInventoriesAPI
      */
     public List<Group> getGroups()
     {
-        return groups;
+        return plugin.getAllGroups();
     }
     
     /*

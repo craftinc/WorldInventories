@@ -83,26 +83,23 @@ public class CommandHandler
 
             if (args[0].equalsIgnoreCase("add")) {
 
-                if (WorldInventories.exempts.contains(args[1])) {
+                if (plugin.isPlayerOnExemptList(args[1])) {
                     sender.sendMessage(ChatColor.RED + "That player is already in the exemption list.");
                 }
                 else {
-                    WorldInventories.exempts.add(args[1]);
+                    plugin.addPlayerToExemptList(args[1]);
                     sender.sendMessage(ChatColor.GREEN + "Added " + args[1] + " to the exemption list successfully.");
-                    plugin.getConfig().set("exempt", WorldInventories.exempts);
-                    plugin.saveConfig();
+
                 }
             }
             else if(args[0].equalsIgnoreCase("remove")) {
 
-                if (!WorldInventories.exempts.contains(args[1].toLowerCase())) {
+                if (!plugin.isPlayerOnExemptList(args[1])) {
                     sender.sendMessage(ChatColor.RED + "That player isn't in the exemption list.");
                 }
                 else {
-                    WorldInventories.exempts.remove(args[1]);
+                    plugin.removePlayerFromExemptList(args[1]);
                     sender.sendMessage(ChatColor.GREEN + "Removed " + args[1] + " from the exemption list successfully.");
-                    plugin.getConfig().set("exempt", WorldInventories.exempts);
-                    plugin.saveConfig();
                 }
             }
             else {

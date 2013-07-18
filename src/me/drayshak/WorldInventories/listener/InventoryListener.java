@@ -4,7 +4,6 @@ import java.util.HashMap;
 import me.drayshak.WorldInventories.Group;
 import me.drayshak.WorldInventories.InventoryStoredType;
 import me.drayshak.WorldInventories.WorldInventories;
-import me.drayshak.WorldInventories.api.WorldInventoriesAPI;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -35,12 +34,12 @@ public class InventoryListener implements Listener
         String playerName = event.getPlayer().getName();
         String world = event.getPlayer().getWorld().getName();
 
-        if (WorldInventories.exempts.contains(playerName.toLowerCase())) {
+        if (plugin.isPlayerOnExemptList(playerName)) {
             WorldInventories.logDebug("Ignoring exempt player Ender Chest open: " + playerName);
             return;
         }
 
-        Group worldGroup = WorldInventoriesAPI.findGroup(world);
+        Group worldGroup = plugin.findGroup(world);
 
         WorldInventories.logDebug("Ender Chest opened by " + playerName + " in world " + world + ", group " + worldGroup);
 
@@ -62,12 +61,12 @@ public class InventoryListener implements Listener
         String playerName = event.getPlayer().getName();
         String worldName = event.getPlayer().getWorld().getName();
 
-        if (WorldInventories.exempts.contains(playerName.toLowerCase())) {
+        if (plugin.isPlayerOnExemptList(playerName)) {
             WorldInventories.logDebug("Ignoring exempt player Ender Chest close: " + playerName);
             return;
         }
 
-        Group worldGroup = WorldInventoriesAPI.findGroup(worldName);
+        Group worldGroup = plugin.findGroup(worldName);
 
         WorldInventories.logDebug("Ender Chest closed by " + playerName + " in world " + worldName + ", group " + worldGroup);
 
