@@ -9,7 +9,6 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -650,7 +649,7 @@ public class WorldInventories extends JavaPlugin
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
     {
-        return this.commandHandler.onCommand(sender, cmd, commandLabel, args);
+        return this.commandHandler.onCommand(sender, cmd, args);
     }
     
     /*

@@ -9,6 +9,8 @@ public class CommandHandler
 {
     private final WorldInventories plugin;
 
+    private static final String reloadCommand = "wireload";
+    private static final String exemptCommand = "wiexempt";
 
     public CommandHandler(WorldInventories plugin)
     {
@@ -16,22 +18,22 @@ public class CommandHandler
     }
 
 
-    public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
+    public boolean onCommand(CommandSender sender, Command cmd, String[] args)
     {
-        String command = cmd.getName();
+        String command = cmd.getName().toLowerCase();
 
-        if (command.equalsIgnoreCase("wireload")) {
-            return this.handleReloadCommand(sender, cmd, commandLabel, args);
+        if (command.equals(reloadCommand)) {
+            return this.handleReloadCommand(sender, args);
         }
-        else if (command.equalsIgnoreCase("wiexempt")) {
-            return this.handleExemptCommand(sender, cmd, commandLabel, args);
+        else if (command.equals(exemptCommand)) {
+            return this.handleExemptCommand(sender, args);
         }
 
         return false;
     }
 
 
-    protected boolean handleReloadCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
+    protected boolean handleReloadCommand(CommandSender sender, String[] args)
     {
         if (sender.hasPermission("worldinventories.reload")) {
 
@@ -68,7 +70,7 @@ public class CommandHandler
     }
 
 
-    protected boolean handleExemptCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
+    protected boolean handleExemptCommand(CommandSender sender, String[] args)
     {
         if (sender.hasPermission("worldinventories.exempt")) {
 
