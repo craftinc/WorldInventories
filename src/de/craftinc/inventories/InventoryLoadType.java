@@ -1,4 +1,4 @@
-package me.drayshak.WorldInventories;
+package de.craftinc.inventories;
 
 public enum InventoryLoadType
 {

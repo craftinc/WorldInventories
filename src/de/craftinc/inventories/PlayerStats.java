@@ -1,4 +1,4 @@
-package me.drayshak.WorldInventories;
+package de.craftinc.inventories;
 
 import java.util.Collection;
 import org.bukkit.potion.PotionEffect;

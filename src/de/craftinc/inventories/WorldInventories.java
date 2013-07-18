@@ -1,7 +1,6 @@
-package me.drayshak.WorldInventories;
+package de.craftinc.inventories;
 
-import me.drayshak.WorldInventories.listener.*;
-import me.drayshak.WorldInventories.api.WorldInventoriesAPI;
+import de.craftinc.inventories.listener.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 
 import org.mcstats.Metrics;
+
 
 public class WorldInventories extends JavaPlugin
 {

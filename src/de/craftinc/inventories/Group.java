@@ -1,4 +1,4 @@
-package me.drayshak.WorldInventories;
+package de.craftinc.inventories;
 
 //import java.util.ArrayList;
 import java.util.List;

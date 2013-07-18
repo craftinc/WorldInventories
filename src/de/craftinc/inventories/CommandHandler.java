@@ -1,4 +1,4 @@
-package me.drayshak.WorldInventories;
+package de.craftinc.inventories;
 
 
 import org.bukkit.ChatColor;

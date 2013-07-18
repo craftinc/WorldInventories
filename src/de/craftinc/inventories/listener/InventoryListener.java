@@ -1,9 +1,11 @@
-package me.drayshak.WorldInventories.listener;
+package de.craftinc.inventories.listener;
 
 import java.util.HashMap;
-import me.drayshak.WorldInventories.Group;
-import me.drayshak.WorldInventories.InventoryStoredType;
-import me.drayshak.WorldInventories.WorldInventories;
+
+import de.craftinc.inventories.Group;
+import de.craftinc.inventories.InventoryStoredType;
+import de.craftinc.inventories.WorldInventories;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -44,8 +46,8 @@ public class InventoryListener implements Listener
         WorldInventories.logDebug("Ender Chest opened by " + playerName + " in world " + world + ", group " + worldGroup);
 
         HashMap<Integer, ItemStack[]> playerInventoryMap = plugin.loadPlayerInventory(playerName,
-                                                                                     worldGroup,
-                                                                                     me.drayshak.WorldInventories.InventoryLoadType.ENDERCHEST);
+                                                                                      worldGroup,
+                                                                                      de.craftinc.inventories.InventoryLoadType.ENDERCHEST);
         inventory.setContents(playerInventoryMap.get(InventoryStoredType.INVENTORY));
     }
 
@@ -74,6 +76,6 @@ public class InventoryListener implements Listener
         toSave.put(InventoryStoredType.ARMOUR, null);
         toSave.put(InventoryStoredType.INVENTORY, inventory.getContents());
 
-        plugin.savePlayerInventory(playerName, worldGroup, me.drayshak.WorldInventories.InventoryLoadType.ENDERCHEST, toSave);
+        plugin.savePlayerInventory(playerName, worldGroup, de.craftinc.inventories.InventoryLoadType.ENDERCHEST, toSave);
     }
 }

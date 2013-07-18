@@ -1,8 +1,8 @@
-package me.drayshak.WorldInventories.listener;
+package de.craftinc.inventories.listener;
 
 import java.util.HashMap;
 
-import me.drayshak.WorldInventories.*;
+import de.craftinc.inventories.*;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

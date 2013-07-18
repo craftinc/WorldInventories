@@ -1,9 +1,8 @@
-package me.drayshak.WorldInventories.listener;
+package de.craftinc.inventories.listener;
 
 import java.util.HashMap;
 
-import me.drayshak.WorldInventories.*;
-import me.drayshak.WorldInventories.api.WorldInventoriesAPI;
+import de.craftinc.inventories.*;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -75,7 +74,7 @@ public class PlayerListener implements Listener
         toSave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
         toSave.put(InventoryStoredType.INVENTORY, player.getInventory().getContents());
 
-        plugin.savePlayerInventory(player.getName(), fromGroup, me.drayshak.WorldInventories.InventoryLoadType.INVENTORY, toSave);
+        plugin.savePlayerInventory(player.getName(), fromGroup, de.craftinc.inventories.InventoryLoadType.INVENTORY, toSave);
 
         // TODO: global config string class
         if (plugin.getConfig().getBoolean("dostats")) {
@@ -83,7 +82,7 @@ public class PlayerListener implements Listener
         }
 
         if (!fromGroup.getName().equals(toGroup.getName())) {
-            plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player.getName(), toGroup, me.drayshak.WorldInventories.InventoryLoadType.INVENTORY));
+            plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player.getName(), toGroup, de.craftinc.inventories.InventoryLoadType.INVENTORY));
 
             if (plugin.getConfig().getBoolean("dostats")) {
                 plugin.setPlayerStats(player, plugin.loadPlayerStats(player.getName(), toGroup));
@@ -128,7 +127,7 @@ public class PlayerListener implements Listener
             toSave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
             toSave.put(InventoryStoredType.INVENTORY, player.getInventory().getContents());
             
-            plugin.savePlayerInventory(player.getName(), toGroup, me.drayshak.WorldInventories.InventoryLoadType.INVENTORY, toSave);
+            plugin.savePlayerInventory(player.getName(), toGroup, de.craftinc.inventories.InventoryLoadType.INVENTORY, toSave);
             
             if (plugin.getConfig().getBoolean("dostats")) {
                 plugin.savePlayerStats(player, toGroup);
@@ -140,7 +139,7 @@ public class PlayerListener implements Listener
             toSave.put(InventoryStoredType.ARMOUR, null);
             toSave.put(InventoryStoredType.INVENTORY, player.getOpenInventory().getTopInventory().getContents());
 
-            plugin.savePlayerInventory(player.getName(), toGroup, me.drayshak.WorldInventories.InventoryLoadType.ENDERCHEST, toSave);
+            plugin.savePlayerInventory(player.getName(), toGroup, de.craftinc.inventories.InventoryLoadType.ENDERCHEST, toSave);
         }
     }
     
@@ -162,7 +161,7 @@ public class PlayerListener implements Listener
             Group toGroup = plugin.findGroup(world);
             
             //WorldInventories.logDebug("Loading inventory of " + player.getName());
-            plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player.getName(), toGroup, me.drayshak.WorldInventories.InventoryLoadType.INVENTORY));
+            plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player.getName(), toGroup, de.craftinc.inventories.InventoryLoadType.INVENTORY));
             
             if (plugin.getConfig().getBoolean("dostats")) {
                 plugin.setPlayerStats(player, plugin.loadPlayerStats(player.getName(), toGroup));

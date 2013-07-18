@@ -1,12 +1,14 @@
-package me.drayshak.WorldInventories.api;
+package de.craftinc.inventories.api;
 
-import me.drayshak.WorldInventories.InventoryLoadType;
+import de.craftinc.inventories.InventoryLoadType;
+import de.craftinc.inventories.Group;
+import de.craftinc.inventories.PlayerStats;
+import de.craftinc.inventories.WorldInventories;
+
+import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.List;
-import me.drayshak.WorldInventories.Group;
-import me.drayshak.WorldInventories.PlayerStats;
-import me.drayshak.WorldInventories.WorldInventories;
-import org.bukkit.inventory.ItemStack;
+
 
 public class WorldInventoriesAPI
 {

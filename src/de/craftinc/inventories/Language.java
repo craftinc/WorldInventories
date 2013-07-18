@@ -1,9 +1,9 @@
-package me.drayshak.WorldInventories;
+package de.craftinc.inventories;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
-import static me.drayshak.WorldInventories.WorldInventories.logError;
+import static de.craftinc.inventories.WorldInventories.logError;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
