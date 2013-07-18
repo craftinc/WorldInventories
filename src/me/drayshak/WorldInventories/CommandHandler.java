@@ -79,8 +79,6 @@ public class CommandHandler
                 return true;
             }
 
-            args[1] = args[1].toLowerCase();
-
             if (args[0].equalsIgnoreCase("add")) {
 
                 if (plugin.isPlayerOnExemptList(args[1])) {
