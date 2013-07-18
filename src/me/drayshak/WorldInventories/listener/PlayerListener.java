@@ -48,7 +48,9 @@ public class PlayerListener implements Listener
             plugin.savePlayerStats(player.getName(), group, new PlayerStats(20, 20, 0, 0, 0, 0F, null));
         }   
 
-        plugin.sendMessage("died-message", player, ChatColor.GREEN + WorldInventories.locale.get("died-message") + group.getName());
+        plugin.sendMessage(Language.diedMessageKey,
+                           player,
+                           ChatColor.GREEN + WorldInventories.locale.get(Language.diedMessageKey) + group.getName());
     }
     
     @EventHandler
@@ -82,8 +84,8 @@ public class PlayerListener implements Listener
 
         if (!fromGroup.getName().equals(toGroup.getName())) {
             plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player.getName(), toGroup, me.drayshak.WorldInventories.InventoryLoadType.INVENTORY));
-            if (plugin.getConfig().getBoolean("dostats"))
-            {
+
+            if (plugin.getConfig().getBoolean("dostats")) {
                 plugin.setPlayerStats(player, plugin.loadPlayerStats(player.getName(), toGroup));
             }
 
@@ -91,10 +93,14 @@ public class PlayerListener implements Listener
                 player.setGameMode(toGroup.getGameMode());
             }
 
-            plugin.sendMessage("changed-message", player, ChatColor.GREEN + WorldInventories.locale.get("changed-message") + toGroup.getName());
+            plugin.sendMessage(Language.changedMessageKey,
+                               player,
+                               ChatColor.GREEN + WorldInventories.locale.get(Language.changedMessageKey) + toGroup.getName());
         }
         else {
-            plugin.sendMessage("nochange-message", player, ChatColor.GREEN + WorldInventories.locale.get("nochange-message") + toGroup.getName());
+            plugin.sendMessage(Language.noChangeMessageKey,
+                               player,
+                               ChatColor.GREEN + WorldInventories.locale.get(Language.noChangeMessageKey) + toGroup.getName());
         }
     }
     
@@ -118,24 +124,23 @@ public class PlayerListener implements Listener
         //{            
             WorldInventories.logDebug("Saving inventory of " + player.getName());
             
-            HashMap<Integer, ItemStack[]> tosave = new HashMap<Integer, ItemStack[]>();
-            tosave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
-            tosave.put(InventoryStoredType.INVENTORY, player.getInventory().getContents());                      
+            HashMap<Integer, ItemStack[]> toSave = new HashMap<Integer, ItemStack[]>();
+            toSave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
+            toSave.put(InventoryStoredType.INVENTORY, player.getInventory().getContents());
             
-            plugin.savePlayerInventory(player.getName(), toGroup, me.drayshak.WorldInventories.InventoryLoadType.INVENTORY, tosave);
+            plugin.savePlayerInventory(player.getName(), toGroup, me.drayshak.WorldInventories.InventoryLoadType.INVENTORY, toSave);
             
-            if (plugin.getConfig().getBoolean("dostats"))
-            {
+            if (plugin.getConfig().getBoolean("dostats")) {
                 plugin.savePlayerStats(player, toGroup);
             }
         //}
         
         // Save the Ender Chest contents
         if (player.getOpenInventory().getType() == InventoryType.ENDER_CHEST) {
-            tosave.put(InventoryStoredType.ARMOUR, null);
-            tosave.put(InventoryStoredType.INVENTORY, player.getOpenInventory().getTopInventory().getContents());                      
+            toSave.put(InventoryStoredType.ARMOUR, null);
+            toSave.put(InventoryStoredType.INVENTORY, player.getOpenInventory().getTopInventory().getContents());
 
-            plugin.savePlayerInventory(player.getName(), toGroup, me.drayshak.WorldInventories.InventoryLoadType.ENDERCHEST, tosave);
+            plugin.savePlayerInventory(player.getName(), toGroup, me.drayshak.WorldInventories.InventoryLoadType.ENDERCHEST, toSave);
         }
     }
     
@@ -168,7 +173,9 @@ public class PlayerListener implements Listener
                 event.getPlayer().setGameMode(toGroup.getGameMode());
             }              
             
-            plugin.sendMessage("loaded-message", player, ChatColor.GREEN + WorldInventories.locale.get("loaded-message") + toGroup.getName());
+            plugin.sendMessage(Language.loadedMessageKey,
+                               player,
+                               ChatColor.GREEN + WorldInventories.locale.get(Language.loadedMessageKey) + toGroup.getName());
         }
     }
 }
