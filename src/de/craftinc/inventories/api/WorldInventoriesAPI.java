@@ -31,7 +31,7 @@ public class WorldInventoriesAPI
     /**
      * Loads and returns inventories based on the InventoryLoadType given.
      * Type and locations are defined in InventoryStoredType.
-     * Loading an Enderchest stores it in type INVENTORY
+     * Loading an Ender Chest stores it in type INVENTORY
      */
     public static HashMap<Integer, ItemStack[]> getPlayerInventory(String player, Group group, InventoryLoadType type)
     {
