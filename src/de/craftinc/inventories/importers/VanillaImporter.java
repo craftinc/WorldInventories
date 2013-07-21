@@ -4,6 +4,7 @@ import de.craftinc.inventories.*;
 import de.craftinc.inventories.persistence.InventoryLoadType;
 import de.craftinc.inventories.persistence.InventoryPersistenceManager;
 import de.craftinc.inventories.persistence.InventoryStoredType;
+import de.craftinc.inventories.persistence.StatsPersistenceManager;
 import de.craftinc.inventories.utils.Logger;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -60,7 +61,7 @@ public class VanillaImporter
                 continue;
             }
 
-            plugin.savePlayerStats(player, group);
+            StatsPersistenceManager.savePlayerStats(player, group);
 
             HashMap<Integer, ItemStack[]> toSave = new HashMap<Integer, ItemStack[]>();
             toSave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());

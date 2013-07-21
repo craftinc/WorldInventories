@@ -15,6 +15,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
+
 public class InventoryPersistenceManager
 {
     protected static final String inventoryFileVersion = "v5";
@@ -41,7 +42,7 @@ public class InventoryPersistenceManager
                 savePlayerInventory(player.getName(), plugin.findGroup(world), InventoryLoadType.INVENTORY, toSave);
 
                 if (plugin.getConfig().getBoolean(ConfigurationKeys.doStatisticsKey)) {
-                    plugin.savePlayerStats(player, plugin.findGroup(world));
+                    StatsPersistenceManager.savePlayerStats(player, plugin.findGroup(world));
                 }
             }
         }

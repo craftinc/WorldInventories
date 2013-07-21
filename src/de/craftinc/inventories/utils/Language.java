@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.craftinc.inventories.WorldInventories;
-import de.craftinc.inventories.utils.Logger;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 

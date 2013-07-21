@@ -3,27 +3,18 @@ package de.craftinc.inventories;
 import de.craftinc.inventories.importers.VanillaImporter;
 import de.craftinc.inventories.listener.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import de.craftinc.inventories.persistence.InventoryLoadType;
 import de.craftinc.inventories.persistence.InventoryPersistenceManager;
-import de.craftinc.inventories.persistence.InventoryStoredType;
 import de.craftinc.inventories.persistence.SaveTask;
 import de.craftinc.inventories.utils.ConfigurationKeys;
 import de.craftinc.inventories.utils.Language;
 import de.craftinc.inventories.utils.Logger;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffect;
 
 import org.mcstats.Metrics;
 
@@ -34,10 +25,8 @@ public class WorldInventories extends JavaPlugin
 
     protected ArrayList<Group> groups = null;
     protected List<String> exempts = null;
+
     protected Timer saveTimer = new Timer();
-
-    public static final String statsFileVersion = "v5";
-
     protected Language locale;
 
 
@@ -98,131 +87,6 @@ public class WorldInventories extends JavaPlugin
         this.exempts.remove(playerName.toLowerCase());
         this.getConfig().set(ConfigurationKeys.exemptPlayersGroupKey, this.exempts);
         this.saveConfig();
-    }
-
-
-    public void setPlayerStats(Player player, PlayerStats playerstats)
-    {
-        // Never kill a player - must be a bug if it was 0
-        player.setHealth(Math.max(playerstats.getHealth(), 1));
-        player.setFoodLevel(playerstats.getFoodLevel());
-        player.setExhaustion(playerstats.getExhaustion());
-        player.setSaturation(playerstats.getSaturation());
-        player.setLevel(playerstats.getLevel());
-        player.setExp(playerstats.getExp());
-        
-	    for (PotionEffect effect : player.getActivePotionEffects())
-        {
-            player.removePotionEffect(effect.getType());
-        }
-        
-        Collection<PotionEffect> potioneffects = playerstats.getPotionEffects();
-
-        if(potioneffects != null)
-        {
-            player.addPotionEffects(playerstats.getPotionEffects());
-        }
-    }
-
-    public PlayerStats loadPlayerStats(String player, Group group)
-    {
-        String path = File.separator + group.getName();
-        path = this.getDataFolder().getAbsolutePath() + path;
-
-        File file = new File(path);
-
-        if (!file.exists()) {
-            file.mkdir();
-        }         
-
-        path += File.separator + player + ".stats." + statsFileVersion + ".yml";      
-        
-        file = new File(path);
-        FileConfiguration pc;
-
-        try {
-            file.createNewFile();
-            pc = YamlConfiguration.loadConfiguration(new File(path));        
-        }
-        catch (Exception e) {
-            Logger.logError("Failed to load stats for player: " + player + ": " + e.getMessage());
-            return null;
-        }
-        
-        int health;
-        int foodLevel;
-        double exhaustion;
-        double saturation;
-        int level;
-        double exp;
-        List<PotionEffect> potionEffects;
-
-        health = pc.getInt("health", -1);
-        foodLevel = pc.getInt("foodlevel", 20);
-        exhaustion = pc.getDouble("exhaustion", 0);
-        saturation = pc.getDouble("saturation", 0);
-        level = pc.getInt("level", 0);
-        exp = pc.getDouble("exp", 0);
-        potionEffects = (List<PotionEffect>) pc.getList("potioneffects", null);
-        
-        PlayerStats playerstats = new PlayerStats(20, 20, 0, 0, 0, 0F, null);
-        
-        if(health == -1) {
-            Logger.logDebug("Player " + player + " will get a new stats file on next save (clearing now).");
-        }
-        else {
-            playerstats = new PlayerStats(health, foodLevel, (float)exhaustion, (float)saturation, level, (float)exp, potionEffects);
-        }
-        
-        this.setPlayerStats(this.getServer().getPlayer(player), playerstats);
-
-        Logger.logDebug("Loaded stats for player: " + player + " " + path);
-
-        return playerstats;
-    }
-
-    public void savePlayerStats(Player player, Group group)
-    {
-        savePlayerStats(player.getName(), group, new PlayerStats(player.getHealth(), player.getFoodLevel(), player.getExhaustion(), player.getSaturation(), player.getLevel(), player.getExp(), player.getActivePotionEffects()));
-    }
-    
-    public void savePlayerStats(String player, Group group, PlayerStats playerstats)
-    {
-        if (!this.getDataFolder().exists()) {
-            this.getDataFolder().mkdir();
-        }
-
-        String path = File.separator + group.getName();
-        path = this.getDataFolder().getAbsolutePath() + path;
-
-        File file = new File(path);
-        if (!file.exists()) {
-            file.mkdir();
-        }      
-
-        path += File.separator + player + ".stats." + statsFileVersion + ".yml";
-
-        file = new File(path);
-
-        try {
-            file.createNewFile();
-            FileConfiguration pc = YamlConfiguration.loadConfiguration(file);
-
-            pc.set("health", playerstats.getHealth());
-            pc.set("foodlevel", playerstats.getFoodLevel());
-            pc.set("exhaustion", playerstats.getExhaustion());
-            pc.set("saturation", playerstats.getSaturation());
-            pc.set("level", playerstats.getLevel());
-            pc.set("exp", playerstats.getExp());
-            pc.set("potioneffects", playerstats.getPotionEffects());
-            
-            pc.save(file);
-        }    
-        catch (Exception e) {
-            Logger.logError("Failed to save stats for player: " + player + ": " + e.getMessage());
-        }
-
-        Logger.logDebug("Saved stats for player: " + player + " " + path);
     }
 
 

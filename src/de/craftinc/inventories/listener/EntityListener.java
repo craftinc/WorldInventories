@@ -7,6 +7,7 @@ import de.craftinc.inventories.*;
 import de.craftinc.inventories.persistence.InventoryLoadType;
 import de.craftinc.inventories.persistence.InventoryPersistenceManager;
 import de.craftinc.inventories.persistence.InventoryStoredType;
+import de.craftinc.inventories.persistence.StatsPersistenceManager;
 import de.craftinc.inventories.utils.ConfigurationKeys;
 import de.craftinc.inventories.utils.Logger;
 import org.bukkit.entity.Player;
@@ -48,7 +49,7 @@ public class EntityListener implements Listener
         InventoryPersistenceManager.savePlayerInventory(playerName, toGroup, InventoryLoadType.INVENTORY, toSave);
 
         if (plugin.getConfig().getBoolean(ConfigurationKeys.doStatisticsKey)) {
-            plugin.savePlayerStats(playerName, toGroup, new PlayerStats(20, 20, 0, 0, 0, 0F, null));
+            StatsPersistenceManager.savePlayerStats(playerName, toGroup, new PlayerStats(20, 20, 0, 0, 0, 0F, null));
         }
     }
 }

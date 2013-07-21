@@ -6,6 +6,7 @@ import de.craftinc.inventories.PlayerStats;
 import de.craftinc.inventories.WorldInventories;
 
 import de.craftinc.inventories.persistence.InventoryPersistenceManager;
+import de.craftinc.inventories.persistence.StatsPersistenceManager;
 import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +45,6 @@ public class WorldInventoriesAPI
      */
     public static PlayerStats getPlayerStats(String player, Group group)
     {
-        return WorldInventories.getSharedInstance().loadPlayerStats(player, group);
+        return StatsPersistenceManager.loadPlayerStats(player, group);
     }
 }

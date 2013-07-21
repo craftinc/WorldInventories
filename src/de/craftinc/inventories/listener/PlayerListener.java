@@ -7,6 +7,7 @@ import de.craftinc.inventories.*;
 import de.craftinc.inventories.persistence.InventoryLoadType;
 import de.craftinc.inventories.persistence.InventoryPersistenceManager;
 import de.craftinc.inventories.persistence.InventoryStoredType;
+import de.craftinc.inventories.persistence.StatsPersistenceManager;
 import de.craftinc.inventories.utils.ConfigurationKeys;
 import de.craftinc.inventories.utils.Language;
 import de.craftinc.inventories.utils.Logger;
@@ -44,7 +45,7 @@ public class PlayerListener implements Listener
         InventoryPersistenceManager.savePlayerInventory(player.getName(), group, InventoryLoadType.INVENTORY, toSave);
 
         if (plugin.getConfig().getBoolean(ConfigurationKeys.doStatisticsKey)) {
-            plugin.savePlayerStats(player.getName(), group, new PlayerStats(20, 20, 0, 0, 0, 0F, null));
+            StatsPersistenceManager.savePlayerStats(player.getName(), group, new PlayerStats(20, 20, 0, 0, 0, 0F, null));
         }   
 
         Logger.sendMessage(Language.diedMessageKey,
@@ -78,14 +79,14 @@ public class PlayerListener implements Listener
         InventoryPersistenceManager.savePlayerInventory(player.getName(), fromGroup, InventoryLoadType.INVENTORY, toSave);
 
         if (plugin.getConfig().getBoolean(ConfigurationKeys.doStatisticsKey)) {
-            plugin.savePlayerStats(player, fromGroup);
+            StatsPersistenceManager.savePlayerStats(player, fromGroup);
         }
 
         if (!fromGroup.getName().equals(toGroup.getName())) {
             InventoryPersistenceManager.setPlayerInventory(player, InventoryPersistenceManager.loadPlayerInventory(player.getName(), toGroup, InventoryLoadType.INVENTORY));
 
             if (plugin.getConfig().getBoolean(ConfigurationKeys.doStatisticsKey)) {
-                plugin.setPlayerStats(player, plugin.loadPlayerStats(player.getName(), toGroup));
+                StatsPersistenceManager.setPlayerStats(player, StatsPersistenceManager.loadPlayerStats(player.getName(), toGroup));
             }
 
             if (plugin.getConfig().getBoolean(ConfigurationKeys.doGameModeSwitchKey)) {
@@ -131,7 +132,7 @@ public class PlayerListener implements Listener
         InventoryPersistenceManager.savePlayerInventory(player.getName(), toGroup, InventoryLoadType.INVENTORY, toSave);
             
             if (plugin.getConfig().getBoolean(ConfigurationKeys.doStatisticsKey)) {
-                plugin.savePlayerStats(player, toGroup);
+                StatsPersistenceManager.savePlayerStats(player, toGroup);
             }
         //}
         
@@ -166,7 +167,7 @@ public class PlayerListener implements Listener
             InventoryPersistenceManager.setPlayerInventory(player, InventoryPersistenceManager.loadPlayerInventory(player.getName(), toGroup, InventoryLoadType.INVENTORY));
             
             if (plugin.getConfig().getBoolean(ConfigurationKeys.doStatisticsKey)) {
-                plugin.setPlayerStats(player, plugin.loadPlayerStats(player.getName(), toGroup));
+                StatsPersistenceManager.setPlayerStats(player, StatsPersistenceManager.loadPlayerStats(player.getName(), toGroup));
             }
             
             if (plugin.getConfig().getBoolean(ConfigurationKeys.doGameModeSwitchKey)) {
