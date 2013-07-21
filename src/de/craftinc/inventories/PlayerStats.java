@@ -31,68 +31,33 @@ public class PlayerStats
         return this.potionEffects;
     }
     
-//    public void setPotionEffects(Collection<PotionEffect> potionEffects)
-//    {
-//        this.potionEffects = potionEffects;
-//    }
-    
     public double getHealth()
     {
         return this.health;
     }
-    
-//    public void setHealth(double health)
-//    {
-//        this.health = health;
-//    }
-//
+
     public int getFoodLevel()
     {
         return this.foodLevel;
     }
-    
-//    public void setFoodLevel(int foodlevel)
-//    {
-//        this.foodLevel = foodlevel;
-//    }
     
     public float getExhaustion()
     {
         return this.exhaustion;
     }
     
-//    public void setExhaustion(float exhaustion)
-//    {
-//        this.exhaustion = exhaustion;
-//    }
-    
     public float getSaturation()
     {
         return this.saturation;
     }
-    
-//    public void setSaturation(float saturation)
-//    {
-//        this.saturation = saturation;
-//    }
     
     public int getLevel()
     {
         return this.level;
     }
     
-//    public void setLevel(int level)
-//    {
-//        this.level = level;
-//    }
-    
     public float getExp()
     {
         return this.exp;
     }
-    
-//    public void setExp(float exp)
-//    {
-//        this.exp = exp;
-//    }
 }
