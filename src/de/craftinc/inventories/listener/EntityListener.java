@@ -33,13 +33,13 @@ public class EntityListener implements Listener
 
 
         if (plugin.isPlayerOnExemptList(playerName)) {
-            WorldInventories.logDebug("Ignoring exempt player death: " + playerName);
+            InventoriesLogger.logDebug("Ignoring exempt player death: " + playerName);
             return;
         }
 
         Group toGroup = plugin.findGroup(worldName);
 
-        WorldInventories.logDebug("Player " + playerName + " died in world " + worldName + ", emptying inventory for group: " + toGroup.getName());
+        InventoriesLogger.logDebug("Player " + playerName + " died in world " + worldName + ", emptying inventory for group: " + toGroup.getName());
 
         // Make the saved inventory blank so players can't duplicate by switching worlds and picking items back up
         HashMap<Integer, ItemStack[]> toSave = new HashMap<Integer, ItemStack[]>();

@@ -1,6 +1,6 @@
 package de.craftinc.inventories;
 
-//import java.util.ArrayList;
+//importers java.util.ArrayList;
 import java.util.List;
 import org.bukkit.GameMode;
 

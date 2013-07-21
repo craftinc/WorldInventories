@@ -31,7 +31,7 @@ public class PlayerListener implements Listener
         Player player = event.getEntity().getPlayer();
         
         if (plugin.isPlayerOnExemptList(player.getName())) {
-            WorldInventories.logDebug("Ignoring exempt player death: " + player.getName());
+            InventoriesLogger.logDebug("Ignoring exempt player death: " + player.getName());
             return;
         }
         
@@ -47,9 +47,9 @@ public class PlayerListener implements Listener
             plugin.savePlayerStats(player.getName(), group, new PlayerStats(20, 20, 0, 0, 0, 0F, null));
         }   
 
-        plugin.sendMessage(Language.diedMessageKey,
-                           player,
-                           ChatColor.GREEN + plugin.getLocale().get(Language.diedMessageKey) + group.getName());
+        InventoriesLogger.sendMessage(Language.diedMessageKey,
+                                      player,
+                                      ChatColor.GREEN + plugin.getLocale().get(Language.diedMessageKey) + group.getName());
     }
     
     @EventHandler
@@ -58,7 +58,7 @@ public class PlayerListener implements Listener
         Player player = event.getPlayer();
         
         if (plugin.isPlayerOnExemptList(player.getName())) {
-            WorldInventories.logDebug("Ignoring exempt player world switch: " + player.getName());
+            InventoriesLogger.logDebug("Ignoring exempt player world switch: " + player.getName());
             return;
         }
 
@@ -68,7 +68,7 @@ public class PlayerListener implements Listener
         Group fromGroup = plugin.findGroup(fromWorldName);
         Group toGroup = plugin.findGroup(toWorldName);
 
-        WorldInventories.logDebug("Player " + player.getName() + " moved from world " + fromWorldName + " to " + toWorldName);
+        InventoriesLogger.logDebug("Player " + player.getName() + " moved from world " + fromWorldName + " to " + toWorldName);
 
         HashMap<Integer, ItemStack[]> toSave = new HashMap<Integer, ItemStack[]>();
         toSave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
@@ -92,14 +92,14 @@ public class PlayerListener implements Listener
                 player.setGameMode(toGroup.getGameMode());
             }
 
-            plugin.sendMessage(Language.changedMessageKey,
-                               player,
-                               ChatColor.GREEN + plugin.getLocale().get(Language.changedMessageKey) + toGroup.getName());
+            InventoriesLogger.sendMessage(Language.changedMessageKey,
+                                          player,
+                                          ChatColor.GREEN + plugin.getLocale().get(Language.changedMessageKey) + toGroup.getName());
         }
         else {
-            plugin.sendMessage(Language.noChangeMessageKey,
-                               player,
-                               ChatColor.GREEN + plugin.getLocale().get(Language.noChangeMessageKey) + toGroup.getName());
+            InventoriesLogger.sendMessage(Language.noChangeMessageKey,
+                                          player,
+                                          ChatColor.GREEN + plugin.getLocale().get(Language.noChangeMessageKey) + toGroup.getName());
         }
     }
     
@@ -108,11 +108,11 @@ public class PlayerListener implements Listener
     {
         Player player = event.getPlayer();
         String world = player.getLocation().getWorld().getName();
-        
-        WorldInventories.logDebug("Player " + player.getName() + " quit from world: " + world);
+
+        InventoriesLogger.logDebug("Player " + player.getName() + " quit from world: " + world);
         
         if (plugin.isPlayerOnExemptList(player.getName())) {
-            WorldInventories.logDebug("Ignoring exempt player logout: " + player.getName());
+            InventoriesLogger.logDebug("Ignoring exempt player logout: " + player.getName());
             return;
         }           
         
@@ -121,7 +121,7 @@ public class PlayerListener implements Listener
         // Don't save if we don't care where we are (default group)
         //if (tGroup != null)
         //{            
-            WorldInventories.logDebug("Saving inventory of " + player.getName());
+        InventoriesLogger.logDebug("Saving inventory of " + player.getName());
             
             HashMap<Integer, ItemStack[]> toSave = new HashMap<Integer, ItemStack[]>();
             toSave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
@@ -150,11 +150,11 @@ public class PlayerListener implements Listener
         if (plugin.getConfig().getBoolean("loadinvonlogin")) {
             Player player = event.getPlayer();
             String world = player.getLocation().getWorld().getName();
-            
-            WorldInventories.logDebug("Player " + player.getName() + " join world: " + world);
+
+            InventoriesLogger.logDebug("Player " + player.getName() + " join world: " + world);
             
             if (plugin.isPlayerOnExemptList(player.getName())) {
-                WorldInventories.logDebug("Ignoring exempt player join: " + player.getName());
+                InventoriesLogger.logDebug("Ignoring exempt player join: " + player.getName());
                 return;
             }            
             
@@ -170,11 +170,11 @@ public class PlayerListener implements Listener
             if (plugin.getConfig().getBoolean("dogamemodeswitch")) {
                 //WorldInventories.logDebug("Should change gamemode to " + tGroup.getGameMode().toString() + " for " + player.getName());
                 event.getPlayer().setGameMode(toGroup.getGameMode());
-            }              
-            
-            plugin.sendMessage(Language.loadedMessageKey,
-                               player,
-                               ChatColor.GREEN + plugin.getLocale().get(Language.loadedMessageKey) + toGroup.getName());
+            }
+
+            InventoriesLogger.sendMessage(Language.loadedMessageKey,
+                                          player,
+                                          ChatColor.GREEN + plugin.getLocale().get(Language.loadedMessageKey) + toGroup.getName());
         }
     }
 }

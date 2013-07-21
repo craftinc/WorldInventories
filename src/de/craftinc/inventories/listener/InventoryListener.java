@@ -3,6 +3,7 @@ package de.craftinc.inventories.listener;
 import java.util.HashMap;
 
 import de.craftinc.inventories.Group;
+import de.craftinc.inventories.InventoriesLogger;
 import de.craftinc.inventories.InventoryStoredType;
 import de.craftinc.inventories.WorldInventories;
 
@@ -37,13 +38,13 @@ public class InventoryListener implements Listener
         String world = event.getPlayer().getWorld().getName();
 
         if (plugin.isPlayerOnExemptList(playerName)) {
-            WorldInventories.logDebug("Ignoring exempt player Ender Chest open: " + playerName);
+            InventoriesLogger.logDebug("Ignoring exempt player Ender Chest open: " + playerName);
             return;
         }
 
         Group worldGroup = plugin.findGroup(world);
 
-        WorldInventories.logDebug("Ender Chest opened by " + playerName + " in world " + world + ", group " + worldGroup);
+        InventoriesLogger.logDebug("Ender Chest opened by " + playerName + " in world " + world + ", group " + worldGroup);
 
         HashMap<Integer, ItemStack[]> playerInventoryMap = plugin.loadPlayerInventory(playerName,
                                                                                       worldGroup,
@@ -64,13 +65,13 @@ public class InventoryListener implements Listener
         String worldName = event.getPlayer().getWorld().getName();
 
         if (plugin.isPlayerOnExemptList(playerName)) {
-            WorldInventories.logDebug("Ignoring exempt player Ender Chest close: " + playerName);
+            InventoriesLogger.logDebug("Ignoring exempt player Ender Chest close: " + playerName);
             return;
         }
 
         Group worldGroup = plugin.findGroup(worldName);
 
-        WorldInventories.logDebug("Ender Chest closed by " + playerName + " in world " + worldName + ", group " + worldGroup);
+        InventoriesLogger.logDebug("Ender Chest closed by " + playerName + " in world " + worldName + ", group " + worldGroup);
 
         HashMap<Integer, ItemStack[]> toSave = new HashMap<Integer, ItemStack[]>();
         toSave.put(InventoryStoredType.ARMOUR, null);

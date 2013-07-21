@@ -50,13 +50,13 @@ public class CommandHandler
             }
 
             if ("all".equals(args[0])) {
-                WorldInventories.logStandard("Reloading all configuration...");
+                InventoriesLogger.logStandard("Reloading all configuration...");
                 plugin.reloadConfig();
                 plugin.loadConfiguration();
                 sender.sendMessage(ChatColor.GREEN + "Reloaded all WorldInventories configuration successfully");
             }
             else if ("language".equals(args[0])) {
-                WorldInventories.logStandard("Reloading language...");
+                InventoriesLogger.logStandard("Reloading language...");
                 plugin.reloadConfig();
 
                 if(plugin.loadLanguage())

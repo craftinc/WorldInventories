@@ -1,12 +1,11 @@
 package de.craftinc.inventories;
 
+import de.craftinc.inventories.importers.VanillaImporter;
 import de.craftinc.inventories.listener.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -25,6 +24,8 @@ import org.mcstats.Metrics;
 
 public class WorldInventories extends JavaPlugin
 {
+    protected static WorldInventories sharedInstance;
+
     protected ArrayList<Group> groups = null;
     protected List<String> exempts = null;
     protected Timer saveTimer = new Timer();
@@ -34,6 +35,18 @@ public class WorldInventories extends JavaPlugin
 
     protected Language locale;
     protected CommandHandler commandHandler;
+
+
+    public WorldInventories()
+    {
+        sharedInstance = this;
+    }
+
+
+    public static WorldInventories getSharedInstance()
+    {
+        return sharedInstance;
+    }
 
 
     public Group findGroup(String world)
@@ -118,7 +131,7 @@ public class WorldInventories extends JavaPlugin
     public void savePlayers(boolean outputtoconsole)
     {
         if(outputtoconsole) {
-            logStandard("Saving player information...");
+            InventoriesLogger.logStandard("Saving player information...");
         }
 
         for (Player player : this.getServer().getOnlinePlayers()) {
@@ -141,7 +154,7 @@ public class WorldInventories extends JavaPlugin
         }
 
         if (outputtoconsole) {
-            logStandard("Done.");
+            InventoriesLogger.logStandard("Done.");
         }
     }
 
@@ -193,10 +206,10 @@ public class WorldInventories extends JavaPlugin
         }        
         catch (Exception e)
         {
-            logError("Failed to save " + sType + " for player: " + player + ": " + e.getMessage());
-        }    
-        
-        logDebug("Saved " + sType + " for player: " + player + " " + path);
+            InventoriesLogger.logError("Failed to save " + sType + " for player: " + player + ": " + e.getMessage());
+        }
+
+        InventoriesLogger.logDebug("Saved " + sType + " for player: " + player + " " + path);
     }
     
     public HashMap<Integer, ItemStack[]> loadPlayerInventory(String player, Group group, InventoryLoadType type)
@@ -231,7 +244,7 @@ public class WorldInventories extends JavaPlugin
             pc = YamlConfiguration.loadConfiguration(new File(path));        
         }
         catch (Exception e) {
-            logError("Failed to load " + sType + " for player: " + player + ": " + e.getMessage());
+            InventoriesLogger.logError("Failed to load " + sType + " for player: " + player + ": " + e.getMessage());
         }    
 
         List armour = null;
@@ -249,7 +262,7 @@ public class WorldInventories extends JavaPlugin
 
             
             if (armour == null) {
-                logDebug("Player " + player + " will get new armour on next save (clearing now).");              
+                InventoriesLogger.logDebug("Player " + player + " will get new armour on next save (clearing now).");
 
                 for (int i = 0; i < 4; i++) {
                     iArmour[i] = new ItemStack(Material.AIR);
@@ -265,7 +278,7 @@ public class WorldInventories extends JavaPlugin
             iInventory = new ItemStack[36];
 
             if (inventory == null) {
-                logDebug("Player " + player + " will get new items on next save (clearing now).");           
+                InventoriesLogger.logDebug("Player " + player + " will get new items on next save (clearing now).");
 
                 for (int i = 0; i < 36; i++) {
                     iInventory[i] = new ItemStack(Material.AIR);
@@ -303,8 +316,8 @@ public class WorldInventories extends JavaPlugin
         HashMap<Integer, ItemStack[]> ret = new HashMap<Integer, ItemStack[]>();
         ret.put(InventoryStoredType.ARMOUR, iArmour);
         ret.put(InventoryStoredType.INVENTORY, iInventory);
-        
-        logDebug("Loaded " + sType + " for player: " + player + " " + path);
+
+        InventoriesLogger.logDebug("Loaded " + sType + " for player: " + player + " " + path);
 
         return ret;
     }
@@ -330,7 +343,7 @@ public class WorldInventories extends JavaPlugin
             pc = YamlConfiguration.loadConfiguration(new File(path));        
         }
         catch (Exception e) {
-            logError("Failed to load stats for player: " + player + ": " + e.getMessage());
+            InventoriesLogger.logError("Failed to load stats for player: " + player + ": " + e.getMessage());
             return null;
         }
         
@@ -353,15 +366,15 @@ public class WorldInventories extends JavaPlugin
         PlayerStats playerstats = new PlayerStats(20, 20, 0, 0, 0, 0F, null);
         
         if(health == -1) {
-            logDebug("Player " + player + " will get a new stats file on next save (clearing now).");           
+            InventoriesLogger.logDebug("Player " + player + " will get a new stats file on next save (clearing now).");
         }
         else {
             playerstats = new PlayerStats(health, foodLevel, (float)exhaustion, (float)saturation, level, (float)exp, potionEffects);
         }
         
         this.setPlayerStats(this.getServer().getPlayer(player), playerstats);
-        
-        logDebug("Loaded stats for player: " + player + " " + path);
+
+        InventoriesLogger.logDebug("Loaded stats for player: " + player + " " + path);
 
         return playerstats;
     }
@@ -404,93 +417,14 @@ public class WorldInventories extends JavaPlugin
             pc.save(file);
         }    
         catch (Exception e) {
-            logError("Failed to save stats for player: " + player + ": " + e.getMessage());
+            InventoriesLogger.logError("Failed to save stats for player: " + player + ": " + e.getMessage());
         }
-        
-        logDebug("Saved stats for player: " + player + " " + path);
-    }
-    
-    public boolean importVanilla()
-    {
-        int imported = 0;
-        int failed = 0;
-        
-        logStandard("Starting vanilla players import...");
-        
-        Group group = this.findGroup(getConfig().getString("vanillatogroup"));
 
-        if (group == null) {
-            logStandard("Warning: importing from vanilla in to the default group (does the group specified exist?)");
-        }
-        
-        OfflinePlayer[] offlinePlayers = getServer().getOfflinePlayers();
-
-        if (offlinePlayers.length <= 0) {
-            logStandard("Found no offline players to import!");
-            return false;
-        }
-        
-        for (OfflinePlayer offlineplayer : offlinePlayers) {
-            Player player = null;
-
-            try {
-                player = (Player) offlineplayer;
-            }
-            catch(Exception e) {
-                logError("  (Warning) Couldn't convert a player: " + e.getMessage());
-            }
-
-            if (player == null) {
-
-                String playerName = "unknown";
-
-                if (offlineplayer != null) {
-                    playerName = offlineplayer.getName();
-                }
-
-                logStandard("Failed to import '" + playerName + "', couldn't create EntityPlayer.");
-                failed++;
-
-                continue;
-            }
-
-            savePlayerStats(player, group);
-
-            HashMap<Integer, ItemStack[]> toSave = new HashMap<Integer, ItemStack[]>();
-            toSave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
-            toSave.put(InventoryStoredType.INVENTORY, player.getInventory().getContents());
-
-            savePlayerInventory(player.getName(), group, InventoryLoadType.INVENTORY, toSave);
-
-            toSave.put(InventoryStoredType.ARMOUR, null);
-            toSave.put(InventoryStoredType.INVENTORY, player.getEnderChest().getContents());
-
-            this.savePlayerInventory(player.getName(), group, InventoryLoadType.ENDERCHEST, toSave);
-
-            imported++;
-        }
-        
-        logStandard("Imported " + Integer.toString(imported) + "/" + Integer.toString(offlinePlayers.length) + " (" + Integer.toString(failed) + " failures).");
-
-        return (failed < offlinePlayers.length);
-    }
-    
-    public static void logStandard(String line)
-    {
-        Logger.getLogger("Minecraft").log(Level.INFO, "[WorldInventories] {0}", line);
+        InventoriesLogger.logDebug("Saved stats for player: " + player + " " + path);
     }
 
-    public static void logError(String line)
-    {
-        Logger.getLogger("Minecraft").log(Level.SEVERE, "[WorldInventories] {0}", line);
-    }
 
-    public static void logDebug(String line)
-    {
-        Logger.getLogger("Minecraft").log(Level.FINE, "[WorldInventories] {0}", line);
-    }
-
-//    private boolean loadConfig(boolean createDefaults)
+    //    private boolean loadConfig(boolean createDefaults)
 //    {
 //        try
 //        {
@@ -532,7 +466,7 @@ public class WorldInventories extends JavaPlugin
         }
         catch(NullPointerException e) {
             nodes = new HashSet<String>();
-            logError("Warning: No groups found. Everything will be in the 'default' group.");
+            InventoriesLogger.logError("Warning: No groups found. Everything will be in the 'default' group.");
         }
         
         List<String> empty = Collections.emptyList();
@@ -548,7 +482,7 @@ public class WorldInventories extends JavaPlugin
                 groups.add(group);
                 for (String world : worldnames)
                 {
-                    logDebug("Adding " + sgroup + ":" + world + ":" + group.getGameMode().toString());
+                    InventoriesLogger.logDebug("Adding " + sgroup + ":" + world + ":" + group.getGameMode().toString());
                 }
             }
         }
@@ -564,10 +498,10 @@ public class WorldInventories extends JavaPlugin
         
         for (String player : exempts)
         {
-            logDebug("Adding " + player + " to exemption list");
+            InventoriesLogger.logDebug("Adding " + player + " to exemption list");
         }
-        
-        logStandard("Loaded " + Integer.toString(exempts.size()) + " player exemptions.");
+
+        InventoriesLogger.logStandard("Loaded " + Integer.toString(exempts.size()) + " player exemptions.");
         
         return true;
     }
@@ -580,10 +514,10 @@ public class WorldInventories extends JavaPlugin
         boolean bLanguage = locale.loadLanguages(sLanguage);
 
         if (bLanguage) {
-            logStandard("Loaded language " + sLanguage + " successfully");
+            InventoriesLogger.logStandard("Loaded language " + sLanguage + " successfully");
         }
         else {
-            logStandard("Problems encountered whilst loading language " + sLanguage + ", used defaults.");
+            InventoriesLogger.logStandard("Problems encountered whilst loading language " + sLanguage + ", used defaults.");
         }
         
         return bLanguage;
@@ -592,13 +526,13 @@ public class WorldInventories extends JavaPlugin
     @Override
     public void onEnable()
     {
-        logStandard("Initialising...");
+        InventoriesLogger.logStandard("Initialising...");
 
         this.commandHandler = new CommandHandler(this);
 
         boolean bInitialised = true;
 
-        logStandard("Loading configuration...");
+        InventoriesLogger.logStandard("Loading configuration...");
 //        boolean loaded = this.loadConfig(true);
         this.saveDefaultConfig();
 
@@ -611,24 +545,24 @@ public class WorldInventories extends JavaPlugin
         boolean bConfiguration = this.loadConfiguration();
 
         if (!bConfiguration) {
-            logError("Failed to load configuration.");
+            InventoriesLogger.logError("Failed to load configuration.");
             bInitialised = false;
         }
         else {
-            logStandard("Loaded configuration successfully");
+            InventoriesLogger.logStandard("Loaded configuration successfully");
         }
         
         if (bInitialised) {
             this.loadLanguage();
             
             if (getConfig().getBoolean("dovanillaimport")) {
-                boolean bSuccess = this.importVanilla();
+                boolean bSuccess = VanillaImporter.performImport();
                 
                 this.getConfig().set("dovanillaimport", false);
                 this.saveConfig();
                 
                 if (bSuccess) {
-                    logStandard("Vanilla saves import was a success!");
+                    InventoriesLogger.logStandard("Vanilla saves importers was a success!");
                 }                
             }
 
@@ -644,7 +578,7 @@ public class WorldInventories extends JavaPlugin
                 metrics.start();
             }
             catch (IOException e) {
-                logDebug("Failed to submit Metrics statistics.");
+                InventoriesLogger.logDebug("Failed to submit Metrics statistics.");
             }            
             
             // start timed saving
@@ -653,10 +587,10 @@ public class WorldInventories extends JavaPlugin
                 saveTimer.scheduleAtFixedRate(new SaveTask(this), interval, interval);
             }
 
-            logStandard("Initialised successfully!");
+            InventoriesLogger.logStandard("Initialised successfully!");
         }
         else {
-            logError("Failed to initialise.");
+            InventoriesLogger.logError("Failed to initialise.");
         }
     }
 
@@ -664,23 +598,12 @@ public class WorldInventories extends JavaPlugin
     public void onDisable()
     {
         savePlayers(true);
-        logStandard("Plugin disabled");
+        InventoriesLogger.logStandard("Plugin disabled");
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
     {
         return this.commandHandler.onCommand(sender, cmd, args);
-    }
-    
-    /*
-     * Checks if the given message key is hidden or not, send if appropriate
-     */
-    public void sendMessage(String key, Player player, String message)
-    {
-        if(!this.getConfig().getBoolean("message-hidden." + key, false) && this.getConfig().getBoolean("donotifications" + key, true))
-        {
-            player.sendMessage(message);
-        }
     }
 }
