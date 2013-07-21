@@ -85,7 +85,7 @@ public class InventoryPersistenceManager
         File file = new File(path);
         File parent = file.getParentFile();
 
-        if (!parent.exists() && !file.getParentFile().mkdirs()) {
+        if (!parent.exists() && !parent.mkdirs()) {
             Logger.logError("Could not create inventory folder for group'" + group.getName() + "'. Cannot save!");
             return;
         }
@@ -108,7 +108,6 @@ public class InventoryPersistenceManager
             pc.save(file);
         }
         catch (Exception e) {
-            e.printStackTrace();
             Logger.logError("Failed to save " + inventoryTypeName + " for player: " + player + ": " + e.getMessage());
             return;
         }
