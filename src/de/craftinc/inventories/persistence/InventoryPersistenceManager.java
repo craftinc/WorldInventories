@@ -20,6 +20,27 @@ public class InventoryPersistenceManager
 {
     protected static final String inventoryFileVersion = "v5";
 
+    protected static final String inventoryStorageName = "inventory";
+    protected static final String enderChestStorageName = "enderchest";
+    protected static final String armourStorageName = "armour";
+    protected static final String fallbackStorageName = "unknown";
+
+
+    protected static String stringForInventoryType(InventoryLoadType type)
+    {
+        switch (type) {
+            case INVENTORY:
+                return inventoryStorageName;
+
+            case ENDERCHEST:
+                return enderChestStorageName;
+
+            default:
+                return fallbackStorageName;
+        }
+    }
+
+
     public static void savePlayers(boolean printOnConsole)
     {
         Plugin plugin = Plugin.getSharedInstance();
@@ -68,50 +89,35 @@ public class InventoryPersistenceManager
             }
         }
 
-        String sType = "unknown";
-        if(type == InventoryLoadType.INVENTORY)
-        {
-            sType = "inventory";
-        }
-        else if(type == InventoryLoadType.ENDERCHEST)
-        {
-            sType = "enderchest";
-        }
+        String inventoryTypeName = stringForInventoryType(type);
 
-        path += File.separator + player + "." + sType + "." + inventoryFileVersion + ".yml";
+        path += File.separator + player + "." + inventoryTypeName + "." + inventoryFileVersion + ".yml";
 
-        try
-        {
+        try {
             FileConfiguration pc = YamlConfiguration.loadConfiguration(new File(path));
 
             if (type == InventoryLoadType.INVENTORY) {
-                pc.set("armour", inventory.get(InventoryStoredType.ARMOUR));
-                pc.set("inventory", inventory.get(InventoryStoredType.INVENTORY));
+                pc.set(armourStorageName, inventory.get(InventoryStoredType.ARMOUR));
+                pc.set(inventoryStorageName, inventory.get(InventoryStoredType.INVENTORY));
             }
             else if (type == InventoryLoadType.ENDERCHEST) {
-                pc.set("enderchest", inventory.get(InventoryStoredType.INVENTORY));
+                pc.set(enderChestStorageName, inventory.get(InventoryStoredType.INVENTORY));
             }
 
             pc.save(file);
         }
         catch (Exception e) {
-            Logger.logError("Failed to save " + sType + " for player: " + player + ": " + e.getMessage());
+            Logger.logError("Failed to save " + inventoryTypeName + " for player: " + player + ": " + e.getMessage());
             return;
         }
 
-        Logger.logDebug("Saved " + sType + " for player: " + player + " " + path);
+        Logger.logDebug("Saved " + inventoryTypeName + " for player: " + player + " " + path);
     }
 
 
     public static HashMap<Integer, ItemStack[]> loadPlayerInventory(String player, Group group, InventoryLoadType type)
     {
-        String sType = "unknown";
-        if (type == InventoryLoadType.INVENTORY) {
-            sType = "inventory";
-        }
-        else if (type == InventoryLoadType.ENDERCHEST) {
-            sType = "enderchest";
-        }
+        String inventoryTypeName = stringForInventoryType(type);
 
         Plugin plugin = Plugin.getSharedInstance();
         String path = plugin.getDataFolder().getAbsolutePath() + File.separator + group.getName();
@@ -122,19 +128,19 @@ public class InventoryPersistenceManager
             final boolean success = file.mkdir();
 
             if (!success) {
-                Logger.logError("Failed to load " + sType + " for player: " + player + ": Could not create data folder!");
+                Logger.logError("Failed to load " + inventoryTypeName + " for player: " + player + ": Could not create data folder!");
                 return new HashMap<Integer, ItemStack[]>();
             }
         }
 
-        path += File.separator + player + "." + sType + "." + inventoryFileVersion + ".yml";
+        path += File.separator + player + "." + inventoryTypeName + "." + inventoryFileVersion + ".yml";
         FileConfiguration pc = null;
 
         try {
             pc = YamlConfiguration.loadConfiguration(new File(path));
         }
         catch (Exception e) {
-            Logger.logError("Failed to load " + sType + " for player: " + player + ": " + e.getMessage());
+            Logger.logError("Failed to load " + inventoryTypeName + " for player: " + player + ": " + e.getMessage());
         }
 
         List armour = null;
@@ -146,8 +152,8 @@ public class InventoryPersistenceManager
         if (type == InventoryLoadType.INVENTORY) {
 
             if (pc != null) {
-                armour = pc.getList("armour", null);
-                inventory = pc.getList("inventory", null);
+                armour = pc.getList(armourStorageName, null);
+                inventory = pc.getList(inventoryStorageName, null);
             }
 
 
@@ -184,7 +190,7 @@ public class InventoryPersistenceManager
         else if (type == InventoryLoadType.ENDERCHEST) {
 
             if (pc != null) {
-                inventory = pc.getList("enderchest", null);
+                inventory = pc.getList(enderChestStorageName, null);
             }
 
             iInventory = new ItemStack[27];
@@ -207,7 +213,7 @@ public class InventoryPersistenceManager
         ret.put(InventoryStoredType.ARMOUR, iArmour);
         ret.put(InventoryStoredType.INVENTORY, iInventory);
 
-        Logger.logDebug("Loaded " + sType + " for player: " + player + " " + path);
+        Logger.logDebug("Loaded " + inventoryTypeName + " for player: " + player + " " + path);
 
         return ret;
     }
