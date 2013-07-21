@@ -3,6 +3,7 @@ package de.craftinc.inventories.utils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
+import java.util.Map;
 
 import de.craftinc.inventories.WorldInventories;
 import de.craftinc.inventories.utils.Logger;
@@ -23,22 +24,18 @@ public class Language
     public final static String loadedMessageKey = "loadedMessage";
     private final static String loadedMessageDefault = "Player information loaded for group: ";
 
-    private final WorldInventories plugin;
-    private HashMap<String, String> messages;
-    
-    public Language(WorldInventories plugin)
-    {
-        this.plugin = plugin;
-        this.messages = new HashMap<String, String>();
-    }
-    
+
+    private Map<String, String> messages = new HashMap<String, String>();
+
+
     public String get(String key)
     {
         return messages.get(key);
     }
     
-    public boolean loadLanguages(String locale)
+    public boolean loadLanguage(String locale)
     {
+        WorldInventories plugin = WorldInventories.getSharedInstance();
         YamlConfiguration config = new YamlConfiguration();
         
         try {

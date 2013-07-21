@@ -509,19 +509,19 @@ public class WorldInventories extends JavaPlugin
 
     public boolean loadLanguage()
     {
-        String sLanguage = this.getConfig().getString(ConfigurationKeys.languageKey);
-        locale = new Language(this);
+        String languageName = this.getConfig().getString(ConfigurationKeys.languageKey);
+        locale = new Language();
 
-        boolean bLanguage = locale.loadLanguages(sLanguage);
+        boolean success = locale.loadLanguage(languageName);
 
-        if (bLanguage) {
-            Logger.logStandard("Loaded language " + sLanguage + " successfully");
+        if (success) {
+            Logger.logStandard("Loaded language " + languageName + " successfully");
         }
         else {
-            Logger.logStandard("Problems encountered whilst loading language " + sLanguage + ", used defaults.");
+            Logger.logStandard("Problems encountered whilst loading language " + languageName + ", used defaults.");
         }
         
-        return bLanguage;
+        return success;
     }
     
     @Override
