@@ -17,7 +17,7 @@ public class SaveTask extends TimerTask
             int saveTimeInterval = plugin.getConfig().getInt(ConfigurationKeys.saveTimerIntervalKey);
             Logger.logStandard("Timer: Saving player information. New save due in " + saveTimeInterval + " seconds.");
 	    }
-        
-        plugin.savePlayers(plugin.getConfig().getBoolean(ConfigurationKeys.logSaveTimerMessagesKey));
+
+        InventoryPersistenceManager.savePlayers(plugin.getConfig().getBoolean(ConfigurationKeys.logSaveTimerMessagesKey));
     }
 }

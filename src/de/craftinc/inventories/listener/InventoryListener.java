@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import de.craftinc.inventories.Group;
 import de.craftinc.inventories.persistence.InventoryLoadType;
+import de.craftinc.inventories.persistence.InventoryPersistenceManager;
 import de.craftinc.inventories.utils.Logger;
 import de.craftinc.inventories.persistence.InventoryStoredType;
 import de.craftinc.inventories.WorldInventories;
@@ -41,9 +42,9 @@ public class InventoryListener implements Listener
 
         Logger.logDebug("Ender Chest opened by " + playerName + " in world " + world + ", group " + worldGroup);
 
-        HashMap<Integer, ItemStack[]> playerInventoryMap = plugin.loadPlayerInventory(playerName,
-                                                                                      worldGroup,
-                                                                                      InventoryLoadType.ENDERCHEST);
+        HashMap<Integer, ItemStack[]> playerInventoryMap = InventoryPersistenceManager.loadPlayerInventory(playerName,
+                worldGroup,
+                InventoryLoadType.ENDERCHEST);
         inventory.setContents(playerInventoryMap.get(InventoryStoredType.INVENTORY));
     }
 
@@ -73,6 +74,6 @@ public class InventoryListener implements Listener
         toSave.put(InventoryStoredType.ARMOUR, null);
         toSave.put(InventoryStoredType.INVENTORY, inventory.getContents());
 
-        plugin.savePlayerInventory(playerName, worldGroup, InventoryLoadType.ENDERCHEST, toSave);
+        InventoryPersistenceManager.savePlayerInventory(playerName, worldGroup, InventoryLoadType.ENDERCHEST, toSave);
     }
 }

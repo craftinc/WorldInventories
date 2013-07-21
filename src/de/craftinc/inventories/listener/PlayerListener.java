@@ -5,6 +5,7 @@ import java.util.HashMap;
 import de.craftinc.inventories.*;
 
 import de.craftinc.inventories.persistence.InventoryLoadType;
+import de.craftinc.inventories.persistence.InventoryPersistenceManager;
 import de.craftinc.inventories.persistence.InventoryStoredType;
 import de.craftinc.inventories.utils.ConfigurationKeys;
 import de.craftinc.inventories.utils.Language;
@@ -39,8 +40,8 @@ public class PlayerListener implements Listener
         HashMap<Integer, ItemStack[]> toSave = new HashMap<Integer, ItemStack[]>();
         toSave.put(InventoryStoredType.ARMOUR, new ItemStack[4]);
         toSave.put(InventoryStoredType.INVENTORY, new ItemStack[36]);
-            
-        plugin.savePlayerInventory(player.getName(), group, InventoryLoadType.INVENTORY, toSave);
+
+        InventoryPersistenceManager.savePlayerInventory(player.getName(), group, InventoryLoadType.INVENTORY, toSave);
 
         if (plugin.getConfig().getBoolean(ConfigurationKeys.doStatisticsKey)) {
             plugin.savePlayerStats(player.getName(), group, new PlayerStats(20, 20, 0, 0, 0, 0F, null));
@@ -74,14 +75,14 @@ public class PlayerListener implements Listener
         toSave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
         toSave.put(InventoryStoredType.INVENTORY, player.getInventory().getContents());
 
-        plugin.savePlayerInventory(player.getName(), fromGroup, InventoryLoadType.INVENTORY, toSave);
+        InventoryPersistenceManager.savePlayerInventory(player.getName(), fromGroup, InventoryLoadType.INVENTORY, toSave);
 
         if (plugin.getConfig().getBoolean(ConfigurationKeys.doStatisticsKey)) {
             plugin.savePlayerStats(player, fromGroup);
         }
 
         if (!fromGroup.getName().equals(toGroup.getName())) {
-            plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player.getName(), toGroup, InventoryLoadType.INVENTORY));
+            InventoryPersistenceManager.setPlayerInventory(player, InventoryPersistenceManager.loadPlayerInventory(player.getName(), toGroup, InventoryLoadType.INVENTORY));
 
             if (plugin.getConfig().getBoolean(ConfigurationKeys.doStatisticsKey)) {
                 plugin.setPlayerStats(player, plugin.loadPlayerStats(player.getName(), toGroup));
@@ -126,8 +127,8 @@ public class PlayerListener implements Listener
             HashMap<Integer, ItemStack[]> toSave = new HashMap<Integer, ItemStack[]>();
             toSave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
             toSave.put(InventoryStoredType.INVENTORY, player.getInventory().getContents());
-            
-            plugin.savePlayerInventory(player.getName(), toGroup, InventoryLoadType.INVENTORY, toSave);
+
+        InventoryPersistenceManager.savePlayerInventory(player.getName(), toGroup, InventoryLoadType.INVENTORY, toSave);
             
             if (plugin.getConfig().getBoolean(ConfigurationKeys.doStatisticsKey)) {
                 plugin.savePlayerStats(player, toGroup);
@@ -139,7 +140,7 @@ public class PlayerListener implements Listener
             toSave.put(InventoryStoredType.ARMOUR, null);
             toSave.put(InventoryStoredType.INVENTORY, player.getOpenInventory().getTopInventory().getContents());
 
-            plugin.savePlayerInventory(player.getName(), toGroup, InventoryLoadType.ENDERCHEST, toSave);
+            InventoryPersistenceManager.savePlayerInventory(player.getName(), toGroup, InventoryLoadType.ENDERCHEST, toSave);
         }
     }
     
@@ -162,7 +163,7 @@ public class PlayerListener implements Listener
             Group toGroup = plugin.findGroup(world);
             
             //WorldInventories.logDebug("Loading inventory of " + player.getName());
-            plugin.setPlayerInventory(player, plugin.loadPlayerInventory(player.getName(), toGroup, InventoryLoadType.INVENTORY));
+            InventoryPersistenceManager.setPlayerInventory(player, InventoryPersistenceManager.loadPlayerInventory(player.getName(), toGroup, InventoryLoadType.INVENTORY));
             
             if (plugin.getConfig().getBoolean(ConfigurationKeys.doStatisticsKey)) {
                 plugin.setPlayerStats(player, plugin.loadPlayerStats(player.getName(), toGroup));

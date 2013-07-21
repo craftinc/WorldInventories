@@ -2,6 +2,7 @@ package de.craftinc.inventories.importers;
 
 import de.craftinc.inventories.*;
 import de.craftinc.inventories.persistence.InventoryLoadType;
+import de.craftinc.inventories.persistence.InventoryPersistenceManager;
 import de.craftinc.inventories.persistence.InventoryStoredType;
 import de.craftinc.inventories.utils.Logger;
 import org.bukkit.OfflinePlayer;
@@ -65,12 +66,12 @@ public class VanillaImporter
             toSave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
             toSave.put(InventoryStoredType.INVENTORY, player.getInventory().getContents());
 
-            plugin.savePlayerInventory(player.getName(), group, InventoryLoadType.INVENTORY, toSave);
+            InventoryPersistenceManager.savePlayerInventory(player.getName(), group, InventoryLoadType.INVENTORY, toSave);
 
             toSave.put(InventoryStoredType.ARMOUR, null);
             toSave.put(InventoryStoredType.INVENTORY, player.getEnderChest().getContents());
 
-            plugin.savePlayerInventory(player.getName(), group, InventoryLoadType.ENDERCHEST, toSave);
+            InventoryPersistenceManager.savePlayerInventory(player.getName(), group, InventoryLoadType.ENDERCHEST, toSave);
 
             imported++;
         }

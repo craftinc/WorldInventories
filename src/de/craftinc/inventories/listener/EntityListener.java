@@ -5,6 +5,7 @@ import java.util.HashMap;
 import de.craftinc.inventories.*;
 
 import de.craftinc.inventories.persistence.InventoryLoadType;
+import de.craftinc.inventories.persistence.InventoryPersistenceManager;
 import de.craftinc.inventories.persistence.InventoryStoredType;
 import de.craftinc.inventories.utils.ConfigurationKeys;
 import de.craftinc.inventories.utils.Logger;
@@ -44,7 +45,7 @@ public class EntityListener implements Listener
         toSave.put(InventoryStoredType.ARMOUR, new ItemStack[4]);
         toSave.put(InventoryStoredType.INVENTORY, new ItemStack[36]);
 
-        plugin.savePlayerInventory(playerName, toGroup, InventoryLoadType.INVENTORY, toSave);
+        InventoryPersistenceManager.savePlayerInventory(playerName, toGroup, InventoryLoadType.INVENTORY, toSave);
 
         if (plugin.getConfig().getBoolean(ConfigurationKeys.doStatisticsKey)) {
             plugin.savePlayerStats(playerName, toGroup, new PlayerStats(20, 20, 0, 0, 0, 0F, null));

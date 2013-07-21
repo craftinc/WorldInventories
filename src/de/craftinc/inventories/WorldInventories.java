@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.*;
 
 import de.craftinc.inventories.persistence.InventoryLoadType;
+import de.craftinc.inventories.persistence.InventoryPersistenceManager;
 import de.craftinc.inventories.persistence.InventoryStoredType;
 import de.craftinc.inventories.persistence.SaveTask;
 import de.craftinc.inventories.utils.ConfigurationKeys;
@@ -36,7 +37,6 @@ public class WorldInventories extends JavaPlugin
     protected Timer saveTimer = new Timer();
 
     public static final String statsFileVersion = "v5";
-    public static final String inventoryFileVersion = "v5";
 
     protected Language locale;
 
@@ -101,14 +101,6 @@ public class WorldInventories extends JavaPlugin
     }
 
 
-    public void setPlayerInventory(Player player, HashMap<Integer, ItemStack[]> playerInventory)
-    {
-        if (playerInventory != null) {
-            player.getInventory().setContents(playerInventory.get(InventoryStoredType.INVENTORY));
-            player.getInventory().setArmorContents(playerInventory.get(InventoryStoredType.ARMOUR));
-        }
-    }
-
     public void setPlayerStats(Player player, PlayerStats playerstats)
     {
         // Never kill a player - must be a bug if it was 0
@@ -130,200 +122,6 @@ public class WorldInventories extends JavaPlugin
         {
             player.addPotionEffects(playerstats.getPotionEffects());
         }
-    }
-
-    public void savePlayers(boolean outputtoconsole)
-    {
-        if(outputtoconsole) {
-            Logger.logStandard("Saving player information...");
-        }
-
-        for (Player player : this.getServer().getOnlinePlayers()) {
-            String world = player.getLocation().getWorld().getName();
-            Group tGroup = this.findGroup(world);
-            
-            HashMap<Integer, ItemStack[]> tosave = new HashMap<Integer, ItemStack[]>();
-            // Don't save if we don't care where we are (default group)
-            if (!"default".equals(tGroup.getName()))
-            {
-                tosave.put(InventoryStoredType.ARMOUR, player.getInventory().getArmorContents());
-                tosave.put(InventoryStoredType.INVENTORY, player.getInventory().getContents());
-                
-                savePlayerInventory(player.getName(), this.findGroup(world), InventoryLoadType.INVENTORY, tosave);
-                
-                if (getConfig().getBoolean(ConfigurationKeys.doStatisticsKey)) {
-                    savePlayerStats(player, this.findGroup(world));
-                }
-            }
-        }
-
-        if (outputtoconsole) {
-            Logger.logStandard("Done.");
-        }
-    }
-
-    public void savePlayerInventory(String player, Group group, InventoryLoadType type, HashMap<Integer, ItemStack[]> inventory)
-    {
-        if (!this.getDataFolder().exists()) {
-            this.getDataFolder().mkdir();
-        }
-
-        String path = File.separator + group.getName();
-
-        path = this.getDataFolder().getAbsolutePath() + path;
-
-        File file = new File(path);
-        if (!file.exists()) {
-            file.mkdir();
-        }      
-        
-        String sType = "unknown";
-        if(type == InventoryLoadType.INVENTORY)
-        {
-            sType = "inventory";
-        }
-        else if(type == InventoryLoadType.ENDERCHEST)
-        {
-            sType = "enderchest";
-        }
-
-        path += File.separator + player + "." + sType + "." + inventoryFileVersion + ".yml";
-        
-        file = new File(path);
-
-        try
-        {
-            file.createNewFile();
-            FileConfiguration pc = YamlConfiguration.loadConfiguration(new File(path));
-            
-            if(type == InventoryLoadType.INVENTORY)
-            {
-                pc.set("armour", inventory.get(InventoryStoredType.ARMOUR));
-                pc.set("inventory", inventory.get(InventoryStoredType.INVENTORY));
-            }
-            else if(type == InventoryLoadType.ENDERCHEST)
-            {
-                pc.set("enderchest", inventory.get(InventoryStoredType.INVENTORY));
-            }
-            
-            pc.save(file);
-        }        
-        catch (Exception e)
-        {
-            Logger.logError("Failed to save " + sType + " for player: " + player + ": " + e.getMessage());
-        }
-
-        Logger.logDebug("Saved " + sType + " for player: " + player + " " + path);
-    }
-    
-    public HashMap<Integer, ItemStack[]> loadPlayerInventory(String player, Group group, InventoryLoadType type)
-    {
-        String path = File.separator + group.getName();
-
-        path = this.getDataFolder().getAbsolutePath() + path;
-
-        File file = new File(path);
-        if (!file.exists())
-        {
-            file.mkdir();
-        }         
-        
-        String sType = "unknown";
-        if(type == InventoryLoadType.INVENTORY)
-        {
-            sType = "inventory";
-        }
-        else if(type == InventoryLoadType.ENDERCHEST)
-        {
-            sType = "enderchest";
-        }
-
-        path += File.separator + player + "." + sType + "." + inventoryFileVersion + ".yml";       
-        
-        file = new File(path);
-        FileConfiguration pc = null;
-
-        try {
-            file.createNewFile();
-            pc = YamlConfiguration.loadConfiguration(new File(path));        
-        }
-        catch (Exception e) {
-            Logger.logError("Failed to load " + sType + " for player: " + player + ": " + e.getMessage());
-        }    
-
-        List armour = null;
-        List inventory = null;
-        
-        ItemStack[] iArmour = new ItemStack[4];
-        ItemStack[] iInventory = null;
-        
-        if (type == InventoryLoadType.INVENTORY) {
-
-            if (pc != null) {
-                armour = pc.getList("armour", null);
-                inventory = pc.getList("inventory", null);
-            }
-
-            
-            if (armour == null) {
-                Logger.logDebug("Player " + player + " will get new armour on next save (clearing now).");
-
-                for (int i = 0; i < 4; i++) {
-                    iArmour[i] = new ItemStack(Material.AIR);
-                }            
-            }
-            else {
-
-                for(int i = 0; i < 4; i++) {
-                    iArmour[i] = (ItemStack)armour.get(i);
-                }
-            }
-            
-            iInventory = new ItemStack[36];
-
-            if (inventory == null) {
-                Logger.logDebug("Player " + player + " will get new items on next save (clearing now).");
-
-                for (int i = 0; i < 36; i++) {
-                    iInventory[i] = new ItemStack(Material.AIR);
-                }              
-            }
-            else {
-
-                for (int i = 0; i < 36; i++) {
-                    iInventory[i] = (ItemStack)inventory.get(i);
-                }  
-            }            
-        }
-        else if (type == InventoryLoadType.ENDERCHEST) {
-
-            if (pc != null) {
-                inventory = pc.getList("enderchest", null);
-            }
-
-            iInventory = new ItemStack[27];
-
-            if (inventory == null) {
-                
-                for (int i = 0; i < 27; i++) {
-                    iInventory[i] = new ItemStack(Material.AIR);
-                }                  
-            }
-            else {
-
-                for(int i = 0; i < 27; i++) {
-                    iInventory[i] = (ItemStack)inventory.get(i);
-                }
-            }            
-        }
-        
-        HashMap<Integer, ItemStack[]> ret = new HashMap<Integer, ItemStack[]>();
-        ret.put(InventoryStoredType.ARMOUR, iArmour);
-        ret.put(InventoryStoredType.INVENTORY, iInventory);
-
-        Logger.logDebug("Loaded " + sType + " for player: " + player + " " + path);
-
-        return ret;
     }
 
     public PlayerStats loadPlayerStats(String player, Group group)
@@ -457,7 +255,7 @@ public class WorldInventories extends JavaPlugin
 //        return true;
 //    }
 
-    public boolean loadConfiguration()
+    protected boolean loadConfiguration()
     {
         groups = new ArrayList<Group>();
 
@@ -510,7 +308,7 @@ public class WorldInventories extends JavaPlugin
         return true;
     }
 
-    public boolean loadLanguage()
+    protected boolean loadLanguage()
     {
         String languageName = this.getConfig().getString(ConfigurationKeys.languageKey);
         locale = new Language();
@@ -600,7 +398,7 @@ public class WorldInventories extends JavaPlugin
     @Override
     public void onDisable()
     {
-        savePlayers(true);
+        InventoryPersistenceManager.savePlayers(true);
         Logger.logStandard("Plugin disabled");
     }
 
