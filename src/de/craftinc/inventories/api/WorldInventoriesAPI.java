@@ -1,6 +1,6 @@
 package de.craftinc.inventories.api;
 
-import de.craftinc.inventories.InventoryLoadType;
+import de.craftinc.inventories.persistence.InventoryLoadType;
 import de.craftinc.inventories.Group;
 import de.craftinc.inventories.PlayerStats;
 import de.craftinc.inventories.WorldInventories;

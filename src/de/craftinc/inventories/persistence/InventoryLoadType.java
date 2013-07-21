@@ -1,4 +1,4 @@
-package de.craftinc.inventories;
+package de.craftinc.inventories.persistence;
 
 public enum InventoryLoadType
 {

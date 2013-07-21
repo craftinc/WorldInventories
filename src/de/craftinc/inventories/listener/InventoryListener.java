@@ -3,8 +3,9 @@ package de.craftinc.inventories.listener;
 import java.util.HashMap;
 
 import de.craftinc.inventories.Group;
+import de.craftinc.inventories.persistence.InventoryLoadType;
 import de.craftinc.inventories.utils.Logger;
-import de.craftinc.inventories.InventoryStoredType;
+import de.craftinc.inventories.persistence.InventoryStoredType;
 import de.craftinc.inventories.WorldInventories;
 
 import org.bukkit.event.EventHandler;
@@ -42,7 +43,7 @@ public class InventoryListener implements Listener
 
         HashMap<Integer, ItemStack[]> playerInventoryMap = plugin.loadPlayerInventory(playerName,
                                                                                       worldGroup,
-                                                                                      de.craftinc.inventories.InventoryLoadType.ENDERCHEST);
+                                                                                      InventoryLoadType.ENDERCHEST);
         inventory.setContents(playerInventoryMap.get(InventoryStoredType.INVENTORY));
     }
 
@@ -72,6 +73,6 @@ public class InventoryListener implements Listener
         toSave.put(InventoryStoredType.ARMOUR, null);
         toSave.put(InventoryStoredType.INVENTORY, inventory.getContents());
 
-        plugin.savePlayerInventory(playerName, worldGroup, de.craftinc.inventories.InventoryLoadType.ENDERCHEST, toSave);
+        plugin.savePlayerInventory(playerName, worldGroup, InventoryLoadType.ENDERCHEST, toSave);
     }
 }

@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 import de.craftinc.inventories.*;
 
+import de.craftinc.inventories.persistence.InventoryLoadType;
+import de.craftinc.inventories.persistence.InventoryStoredType;
 import de.craftinc.inventories.utils.ConfigurationKeys;
 import de.craftinc.inventories.utils.Logger;
 import org.bukkit.entity.Player;

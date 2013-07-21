@@ -1,5 +1,6 @@
-package de.craftinc.inventories;
+package de.craftinc.inventories.persistence;
 
+import de.craftinc.inventories.WorldInventories;
 import de.craftinc.inventories.utils.ConfigurationKeys;
 import de.craftinc.inventories.utils.Logger;
 

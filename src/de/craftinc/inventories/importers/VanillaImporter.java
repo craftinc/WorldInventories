@@ -1,6 +1,8 @@
 package de.craftinc.inventories.importers;
 
 import de.craftinc.inventories.*;
+import de.craftinc.inventories.persistence.InventoryLoadType;
+import de.craftinc.inventories.persistence.InventoryStoredType;
 import de.craftinc.inventories.utils.Logger;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;

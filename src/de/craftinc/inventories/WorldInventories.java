@@ -7,6 +7,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import de.craftinc.inventories.persistence.InventoryLoadType;
+import de.craftinc.inventories.persistence.InventoryStoredType;
+import de.craftinc.inventories.persistence.SaveTask;
 import de.craftinc.inventories.utils.ConfigurationKeys;
 import de.craftinc.inventories.utils.Language;
 import de.craftinc.inventories.utils.Logger;
