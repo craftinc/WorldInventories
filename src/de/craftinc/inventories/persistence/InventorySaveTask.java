@@ -6,7 +6,7 @@ import de.craftinc.inventories.utils.Logger;
 
 import java.util.TimerTask;
 
-public class SaveTask extends TimerTask
+public class InventorySaveTask extends TimerTask
 {
     @Override
     public void run()

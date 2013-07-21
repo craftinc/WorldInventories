@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.*;
 
 import de.craftinc.inventories.persistence.InventoryPersistenceManager;
-import de.craftinc.inventories.persistence.SaveTask;
+import de.craftinc.inventories.persistence.InventorySaveTask;
 import de.craftinc.inventories.utils.ConfigurationKeys;
 import de.craftinc.inventories.utils.Language;
 import de.craftinc.inventories.utils.Logger;
@@ -249,7 +249,7 @@ public class WorldInventories extends JavaPlugin
 
             if (interval >= 30) {
                 interval *= 1000;
-                saveTimer.scheduleAtFixedRate(new SaveTask(), interval, interval);
+                saveTimer.scheduleAtFixedRate(new InventorySaveTask(), interval, interval);
             }
 
             Logger.logStandard("Initialised successfully!");
