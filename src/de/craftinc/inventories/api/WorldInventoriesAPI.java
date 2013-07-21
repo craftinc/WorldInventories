@@ -1,9 +1,9 @@
 package de.craftinc.inventories.api;
 
+import de.craftinc.inventories.Plugin;
 import de.craftinc.inventories.persistence.InventoryLoadType;
 import de.craftinc.inventories.Group;
 import de.craftinc.inventories.PlayerStats;
-import de.craftinc.inventories.WorldInventories;
 
 import de.craftinc.inventories.persistence.InventoryPersistenceManager;
 import de.craftinc.inventories.persistence.StatsPersistenceManager;
@@ -19,7 +19,7 @@ public class WorldInventoriesAPI
      */
     public static Group findGroup(String world)
     {
-        return WorldInventories.getSharedInstance().findGroup(world);
+        return Plugin.getSharedInstance().findGroup(world);
     }
 
     /**
@@ -27,7 +27,7 @@ public class WorldInventoriesAPI
      */
     public static List<Group> getGroups()
     {
-        return WorldInventories.getSharedInstance().getAllGroups();
+        return Plugin.getSharedInstance().getAllGroups();
     }
     
     /**

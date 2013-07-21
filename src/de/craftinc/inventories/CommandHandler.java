@@ -29,7 +29,7 @@ public class CommandHandler
 
     protected static boolean handleReloadCommand(CommandSender sender, String[] args)
     {
-        WorldInventories plugin = WorldInventories.getSharedInstance();
+        Plugin plugin = Plugin.getSharedInstance();
 
         if (sender.hasPermission("worldinventories.reload")) {
 
@@ -49,16 +49,16 @@ public class CommandHandler
                 Logger.logStandard("Reloading all configuration...");
                 plugin.reloadConfig();
                 plugin.loadConfiguration();
-                sender.sendMessage(ChatColor.GREEN + "Reloaded all WorldInventories configuration successfully");
+                sender.sendMessage(ChatColor.GREEN + "Reloaded all Plugin configuration successfully");
             }
             else if ("language".equals(args[0])) {
                 Logger.logStandard("Reloading language...");
                 plugin.reloadConfig();
 
                 if(plugin.loadLanguage())
-                    sender.sendMessage(ChatColor.GREEN + "Reloaded WorldInventories language successfully");
+                    sender.sendMessage(ChatColor.GREEN + "Reloaded Plugin language successfully");
                 else
-                    sender.sendMessage(ChatColor.GREEN + "Problem occurred whilst reloading WorldInventories language, used defaults.");
+                    sender.sendMessage(ChatColor.GREEN + "Problem occurred whilst reloading Plugin language, used defaults.");
             }
         }
 
@@ -68,7 +68,7 @@ public class CommandHandler
 
     protected static boolean handleExemptCommand(CommandSender sender, String[] args)
     {
-        WorldInventories plugin = WorldInventories.getSharedInstance();
+        Plugin plugin = Plugin.getSharedInstance();
 
         if (sender.hasPermission("worldinventories.exempt")) {
 

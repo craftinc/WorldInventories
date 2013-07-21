@@ -19,9 +19,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
 
 
-public class WorldInventories extends JavaPlugin
+public class Plugin extends JavaPlugin
 {
-    protected static WorldInventories sharedInstance;
+    protected static Plugin sharedInstance;
 
     protected ArrayList<Group> groups = null;
     protected List<String> exempts = null;
@@ -30,13 +30,13 @@ public class WorldInventories extends JavaPlugin
     protected Language locale;
 
 
-    public WorldInventories()
+    public Plugin()
     {
         sharedInstance = this;
     }
 
 
-    public static WorldInventories getSharedInstance()
+    public static Plugin getSharedInstance()
     {
         return sharedInstance;
     }
@@ -89,35 +89,6 @@ public class WorldInventories extends JavaPlugin
         this.saveConfig();
     }
 
-
-    //    private boolean loadConfig(boolean createDefaults)
-//    {
-//        try
-//        {
-//            YamlConfiguration config = new YamlConfiguration();
-//            config.load(new File(this.getDataFolder().getPath(), "config.yml"));
-//        }
-//        catch(FileNotFoundException e)
-//        {
-//            if(createDefaults)
-//            {
-//                saveDefaultConfig();
-//                return true;
-//            }
-//            else return false;
-//        }
-//        catch(Exception e)
-//        {
-//            logError("Failed to load configuration: " + e.getMessage());
-//
-//            return false;
-//        }
-//
-//        getConfig().options().copyDefaults(true);
-//        saveConfig();
-//
-//        return true;
-//    }
 
     protected boolean loadConfiguration()
     {
@@ -172,6 +143,7 @@ public class WorldInventories extends JavaPlugin
         return true;
     }
 
+
     protected boolean loadLanguage()
     {
         String languageName = this.getConfig().getString(ConfigurationKeys.languageKey);
@@ -188,7 +160,8 @@ public class WorldInventories extends JavaPlugin
         
         return success;
     }
-    
+
+
     @Override
     public void onEnable()
     {

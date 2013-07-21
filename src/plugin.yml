@@ -1,7 +1,7 @@
 name: ${project.name}
 version: ${project.version}
 description: Automatic inventory switching for groups of worlds
-main: de.craftinc.inventories.WorldInventories
+main: de.craftinc.inventories.Plugin
 author: tomco, s1m0ne
 authors: [drayshak, s1m0ne, tomco]
 

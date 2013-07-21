@@ -2,7 +2,7 @@ package de.craftinc.inventories.persistence;
 
 
 import de.craftinc.inventories.Group;
-import de.craftinc.inventories.WorldInventories;
+import de.craftinc.inventories.Plugin;
 import de.craftinc.inventories.utils.ConfigurationKeys;
 import de.craftinc.inventories.utils.Logger;
 import org.bukkit.Material;
@@ -22,7 +22,7 @@ public class InventoryPersistenceManager
 
     public static void savePlayers(boolean printOnConsole)
     {
-        WorldInventories plugin = WorldInventories.getSharedInstance();
+        Plugin plugin = Plugin.getSharedInstance();
 
         if(printOnConsole) {
             Logger.logStandard("Saving player information...");
@@ -55,7 +55,7 @@ public class InventoryPersistenceManager
 
     public static void savePlayerInventory(String player, Group group, InventoryLoadType type, HashMap<Integer, ItemStack[]> inventory)
     {
-        WorldInventories plugin = WorldInventories.getSharedInstance();
+        Plugin plugin = Plugin.getSharedInstance();
 
         if (!plugin.getDataFolder().exists()) {
             plugin.getDataFolder().mkdir();
@@ -112,7 +112,7 @@ public class InventoryPersistenceManager
 
     public static HashMap<Integer, ItemStack[]> loadPlayerInventory(String player, Group group, InventoryLoadType type)
     {
-        WorldInventories plugin = WorldInventories.getSharedInstance();
+        Plugin plugin = Plugin.getSharedInstance();
 
         String path = File.separator + group.getName();
         path = plugin.getDataFolder().getAbsolutePath() + path;

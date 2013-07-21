@@ -2,7 +2,7 @@ package de.craftinc.inventories.persistence;
 
 import de.craftinc.inventories.Group;
 import de.craftinc.inventories.PlayerStats;
-import de.craftinc.inventories.WorldInventories;
+import de.craftinc.inventories.Plugin;
 import de.craftinc.inventories.utils.Logger;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -44,7 +44,7 @@ public class StatsPersistenceManager
 
     public static  PlayerStats loadPlayerStats(String player, Group group)
     {
-        WorldInventories plugin = WorldInventories.getSharedInstance();
+        Plugin plugin = Plugin.getSharedInstance();
         String path = File.separator + group.getName();
         path = plugin.getDataFolder().getAbsolutePath() + path;
 
@@ -109,7 +109,7 @@ public class StatsPersistenceManager
 
     public static void savePlayerStats(String player, Group group, PlayerStats playerstats)
     {
-        WorldInventories plugin = WorldInventories.getSharedInstance();
+        Plugin plugin = Plugin.getSharedInstance();
 
         if (!plugin.getDataFolder().exists()) {
             plugin.getDataFolder().mkdir();

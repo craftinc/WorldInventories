@@ -28,7 +28,7 @@ public class PlayerListener implements Listener
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event)
     {
-        WorldInventories plugin = WorldInventories.getSharedInstance();
+        Plugin plugin = Plugin.getSharedInstance();
         Player player = event.getEntity().getPlayer();
         
         if (plugin.isPlayerOnExemptList(player.getName())) {
@@ -56,7 +56,7 @@ public class PlayerListener implements Listener
     @EventHandler
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event)
     {
-        WorldInventories plugin = WorldInventories.getSharedInstance();
+        Plugin plugin = Plugin.getSharedInstance();
         Player player = event.getPlayer();
         
         if (plugin.isPlayerOnExemptList(player.getName())) {
@@ -107,7 +107,7 @@ public class PlayerListener implements Listener
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event)
     {
-        WorldInventories plugin = WorldInventories.getSharedInstance();
+        Plugin plugin = Plugin.getSharedInstance();
         Player player = event.getPlayer();
         String world = player.getLocation().getWorld().getName();
 
@@ -148,7 +148,7 @@ public class PlayerListener implements Listener
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event)
     {
-        WorldInventories plugin = WorldInventories.getSharedInstance();
+        Plugin plugin = Plugin.getSharedInstance();
 
         if (plugin.getConfig().getBoolean(ConfigurationKeys.loadInventoriesOnLoginKey)) {
             Player player = event.getPlayer();
@@ -163,7 +163,7 @@ public class PlayerListener implements Listener
             
             Group toGroup = plugin.findGroup(world);
             
-            //WorldInventories.logDebug("Loading inventory of " + player.getName());
+            //Plugin.logDebug("Loading inventory of " + player.getName());
             InventoryPersistenceManager.setPlayerInventory(player, InventoryPersistenceManager.loadPlayerInventory(player.getName(), toGroup, InventoryLoadType.INVENTORY));
             
             if (plugin.getConfig().getBoolean(ConfigurationKeys.doStatisticsKey)) {
@@ -171,7 +171,7 @@ public class PlayerListener implements Listener
             }
             
             if (plugin.getConfig().getBoolean(ConfigurationKeys.doGameModeSwitchKey)) {
-                //WorldInventories.logDebug("Should change game mode to " + tGroup.getGameMode().toString() + " for " + player.getName());
+                //Plugin.logDebug("Should change game mode to " + tGroup.getGameMode().toString() + " for " + player.getName());
                 event.getPlayer().setGameMode(toGroup.getGameMode());
             }
 

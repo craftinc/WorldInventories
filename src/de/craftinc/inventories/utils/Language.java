@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.craftinc.inventories.WorldInventories;
+import de.craftinc.inventories.Plugin;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -34,7 +34,7 @@ public class Language
     
     public boolean loadLanguage(String locale)
     {
-        WorldInventories plugin = WorldInventories.getSharedInstance();
+        Plugin plugin = Plugin.getSharedInstance();
         YamlConfiguration config = new YamlConfiguration();
         
         try {

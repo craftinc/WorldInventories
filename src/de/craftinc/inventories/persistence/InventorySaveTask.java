@@ -1,6 +1,6 @@
 package de.craftinc.inventories.persistence;
 
-import de.craftinc.inventories.WorldInventories;
+import de.craftinc.inventories.Plugin;
 import de.craftinc.inventories.utils.ConfigurationKeys;
 import de.craftinc.inventories.utils.Logger;
 
@@ -11,7 +11,7 @@ public class InventorySaveTask extends TimerTask
     @Override
     public void run()
     {
-        WorldInventories plugin = WorldInventories.getSharedInstance();
+        Plugin plugin = Plugin.getSharedInstance();
         boolean logSaveTimerMessages = plugin.getConfig().getBoolean(ConfigurationKeys.logSaveTimerMessagesKey);
 
         if (logSaveTimerMessages) {

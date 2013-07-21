@@ -3,11 +3,11 @@ package de.craftinc.inventories.listener;
 import java.util.HashMap;
 
 import de.craftinc.inventories.Group;
+import de.craftinc.inventories.Plugin;
 import de.craftinc.inventories.persistence.InventoryLoadType;
 import de.craftinc.inventories.persistence.InventoryPersistenceManager;
 import de.craftinc.inventories.utils.Logger;
 import de.craftinc.inventories.persistence.InventoryStoredType;
-import de.craftinc.inventories.WorldInventories;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -24,7 +24,7 @@ public class InventoryListener implements Listener
     public void onInventoryOpen(InventoryOpenEvent event)
     {
         Inventory inventory = event.getInventory();
-        WorldInventories plugin = WorldInventories.getSharedInstance();
+        Plugin plugin = Plugin.getSharedInstance();
 
         if (inventory.getType() != InventoryType.ENDER_CHEST) {
             return;
@@ -52,7 +52,7 @@ public class InventoryListener implements Listener
     public void onInventoryClosed(InventoryCloseEvent event)
     {
         Inventory inventory = event.getInventory();
-        WorldInventories plugin = WorldInventories.getSharedInstance();
+        Plugin plugin = Plugin.getSharedInstance();
         
         if (inventory.getType() != InventoryType.ENDER_CHEST) {
             return;

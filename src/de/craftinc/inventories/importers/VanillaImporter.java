@@ -20,7 +20,7 @@ public class VanillaImporter
         int imported = 0;
         int failed = 0;
 
-        WorldInventories plugin = WorldInventories.getSharedInstance();
+        Plugin plugin = Plugin.getSharedInstance();
         FileConfiguration config = plugin.getConfig();
 
         Logger.logStandard("Starting vanilla players importers...");

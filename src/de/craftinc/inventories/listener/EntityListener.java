@@ -4,10 +4,7 @@ import java.util.HashMap;
 
 import de.craftinc.inventories.*;
 
-import de.craftinc.inventories.persistence.InventoryLoadType;
-import de.craftinc.inventories.persistence.InventoryPersistenceManager;
-import de.craftinc.inventories.persistence.InventoryStoredType;
-import de.craftinc.inventories.persistence.StatsPersistenceManager;
+import de.craftinc.inventories.persistence.*;
 import de.craftinc.inventories.utils.ConfigurationKeys;
 import de.craftinc.inventories.utils.Logger;
 import org.bukkit.entity.Player;
@@ -30,7 +27,7 @@ public class EntityListener implements Listener
         String worldName = player.getWorld().getName();
         String playerName = player.getName();
 
-        WorldInventories plugin = WorldInventories.getSharedInstance();
+        Plugin plugin = Plugin.getSharedInstance();
 
         if (plugin.isPlayerOnExemptList(playerName)) {
             Logger.logDebug("Ignoring exempt player death: " + playerName);

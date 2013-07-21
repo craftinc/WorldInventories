@@ -1,6 +1,6 @@
 package de.craftinc.inventories.utils;
 
-import de.craftinc.inventories.WorldInventories;
+import de.craftinc.inventories.Plugin;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -13,17 +13,17 @@ public class Logger
 
     public static void logStandard(String line)
     {
-        logger.log(Level.INFO, "[WorldInventories] {0}", line);
+        logger.log(Level.INFO, "[Plugin] {0}", line);
     }
 
     public static void logError(String line)
     {
-        logger.log(Level.SEVERE, "[WorldInventories] {0}", line);
+        logger.log(Level.SEVERE, "[Plugin] {0}", line);
     }
 
     public static void logDebug(String line)
     {
-        logger.log(Level.FINEST, "[WorldInventories] {0}", line);
+        logger.log(Level.FINEST, "[Plugin] {0}", line);
     }
 
     /**
@@ -31,7 +31,7 @@ public class Logger
      */
     public static void sendMessage(String key, Player player, String message)
     {
-        FileConfiguration config = WorldInventories.getSharedInstance().getConfig();
+        FileConfiguration config = Plugin.getSharedInstance().getConfig();
         String fullKey = ConfigurationKeys.hideMessagesGroupKey + key;
 
         if (!config.getBoolean(fullKey, false)) {
