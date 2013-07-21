@@ -77,24 +77,25 @@ public class InventoryPersistenceManager
     public static void savePlayerInventory(String player, Group group, InventoryLoadType type, HashMap<Integer, ItemStack[]> inventory)
     {
         Plugin plugin = Plugin.getSharedInstance();
-        String path = plugin.getDataFolder().getAbsolutePath() + File.separator + group.getName();
-        File file = new File(path);
-        
-        if (!file.exists()) {
-            final boolean success = file.mkdir();
-
-            if (!success) {
-                Logger.logError("Could not create inventory folder for group'" + group.getName() + "'. Cannot save!");
-                return;
-            }
-        }
-
         String inventoryTypeName = stringForInventoryType(type);
 
+        String path = plugin.getDataFolder().getAbsolutePath() + File.separator + group.getName();
         path += File.separator + player + "." + inventoryTypeName + "." + inventoryFileVersion + ".yml";
 
+        File file = new File(path);
+        File parent = file.getParentFile();
+
+        if (!parent.exists() && !file.getParentFile().mkdirs()) {
+            Logger.logError("Could not create inventory folder for group'" + group.getName() + "'. Cannot save!");
+            return;
+        }
+
         try {
-            FileConfiguration pc = YamlConfiguration.loadConfiguration(new File(path));
+            if (file.exists() && !file.delete()) {
+                throw new Exception("Old file could not be removed!");
+            }
+
+            FileConfiguration pc = YamlConfiguration.loadConfiguration(file);
 
             if (type == InventoryLoadType.INVENTORY) {
                 pc.set(armourStorageName, inventory.get(InventoryStoredType.ARMOUR));
@@ -107,6 +108,7 @@ public class InventoryPersistenceManager
             pc.save(file);
         }
         catch (Exception e) {
+            e.printStackTrace();
             Logger.logError("Failed to save " + inventoryTypeName + " for player: " + player + ": " + e.getMessage());
             return;
         }
