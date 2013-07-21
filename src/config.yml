@@ -27,17 +27,11 @@
 #   creative_overworld to survival_end
 #   survival_nether to creative_nether
 
-# Set "domiimport" to true to make WorldInventories attempt to import MultiInv data
-#  Automatically sets itself to false when an attempt is made
-# Set "miimportmode" to the integer identifier of the mode WI should import from (eg, 0 for MI survival)
+
 # Set "dostats" to true to make hearts, food level, experience and such track with inventory
 # If a save interval is specified, set "outputtimertoconsole" to false to stop it from outputting to the console
 # Set "saveinterval" to anything above 30 to make inventories/stats save automatically every x seconds
 # Set "loadinvonlogin" to true to make the plugin load the player's inventory on login no matter where they spawn
-# Set "do78import" to true to force a conversion of the pre build 78 files for use in newer versions
-#  Automatically resets itself to false on an attempt
-# Set "do141import" to true to force a conversion of the pre version 1.4.1 files for use in newer versions
-#  Automatically resets itself to false on an attempt
 # When this plugin loads it will automatically try to convert pre build 78 files and add "auto78updated: true" to this file if successful
 # When this plugin loads it will automatically try to convert pre version 1.4.1 files and add "auto141updated: true" to this file if successful
 # Set "dovanillaimport" to true to attempt an import of the items and stats stored in players player.dat file
@@ -50,18 +44,11 @@
 #   creativegroup: CREATIVE
 #   survivalgroup: SURVIVAL
 
-# NOTE: donotifications has been deprecated, use message-hidden instead
-# donotifications still overrides everything else but don't use it!
-
 dogamemodeswitch: false
-domiimport: false
-miimportmode: 0
 dostats: true
 outputtimertoconsole: true
 saveinterval: 0
 loadinvonlogin: true
-do78import: false
-do141import: false
 dovanillaimport: false
 language: en_GB
 message-hidden:
