@@ -1,40 +1,36 @@
 package de.craftinc.inventories;
 
 
+import de.craftinc.inventories.utils.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 public class CommandHandler
 {
-    private final WorldInventories plugin;
-
     private static final String reloadCommand = "wireload";
     private static final String exemptCommand = "wiexempt";
 
-    public CommandHandler(WorldInventories plugin)
-    {
-        this.plugin = plugin;
-    }
 
-
-    public boolean onCommand(CommandSender sender, Command cmd, String[] args)
+    public static boolean onCommand(CommandSender sender, Command cmd, String[] args)
     {
         String command = cmd.getName().toLowerCase();
 
         if (command.equals(reloadCommand)) {
-            return this.handleReloadCommand(sender, args);
+            return handleReloadCommand(sender, args);
         }
         else if (command.equals(exemptCommand)) {
-            return this.handleExemptCommand(sender, args);
+            return handleExemptCommand(sender, args);
         }
 
         return false;
     }
 
 
-    protected boolean handleReloadCommand(CommandSender sender, String[] args)
+    protected static boolean handleReloadCommand(CommandSender sender, String[] args)
     {
+        WorldInventories plugin = WorldInventories.getSharedInstance();
+
         if (sender.hasPermission("worldinventories.reload")) {
 
             if (args.length != 1) {
@@ -50,13 +46,13 @@ public class CommandHandler
             }
 
             if ("all".equals(args[0])) {
-                InventoriesLogger.logStandard("Reloading all configuration...");
+                Logger.logStandard("Reloading all configuration...");
                 plugin.reloadConfig();
                 plugin.loadConfiguration();
                 sender.sendMessage(ChatColor.GREEN + "Reloaded all WorldInventories configuration successfully");
             }
             else if ("language".equals(args[0])) {
-                InventoriesLogger.logStandard("Reloading language...");
+                Logger.logStandard("Reloading language...");
                 plugin.reloadConfig();
 
                 if(plugin.loadLanguage())
@@ -70,8 +66,10 @@ public class CommandHandler
     }
 
 
-    protected boolean handleExemptCommand(CommandSender sender, String[] args)
+    protected static boolean handleExemptCommand(CommandSender sender, String[] args)
     {
+        WorldInventories plugin = WorldInventories.getSharedInstance();
+
         if (sender.hasPermission("worldinventories.exempt")) {
 
             if (args.length != 2) {

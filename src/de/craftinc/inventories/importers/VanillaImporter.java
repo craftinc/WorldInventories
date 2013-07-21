@@ -1,6 +1,7 @@
 package de.craftinc.inventories.importers;
 
 import de.craftinc.inventories.*;
+import de.craftinc.inventories.utils.Logger;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -18,18 +19,18 @@ public class VanillaImporter
         WorldInventories plugin = WorldInventories.getSharedInstance();
         FileConfiguration config = plugin.getConfig();
 
-        InventoriesLogger.logStandard("Starting vanilla players importers...");
+        Logger.logStandard("Starting vanilla players importers...");
 
         Group group = plugin.findGroup(config.getString("vanillatogroup"));
 
         if (group == null) {
-            InventoriesLogger.logStandard("Warning: importing from vanilla in to the default group (does the group specified exist?)");
+            Logger.logStandard("Warning: importing from vanilla in to the default group (does the group specified exist?)");
         }
 
         OfflinePlayer[] offlinePlayers = plugin.getServer().getOfflinePlayers();
 
         if (offlinePlayers.length <= 0) {
-            InventoriesLogger.logStandard("Found no offline players to importers!");
+            Logger.logStandard("Found no offline players to importers!");
             return false;
         }
 
@@ -40,7 +41,7 @@ public class VanillaImporter
                 player = (Player) offlineplayer;
             }
             catch(Exception e) {
-                InventoriesLogger.logError("  (Warning) Couldn't convert a player: " + e.getMessage());
+                Logger.logError("  (Warning) Couldn't convert a player: " + e.getMessage());
             }
 
             if (player == null) {
@@ -50,7 +51,7 @@ public class VanillaImporter
                     playerName = offlineplayer.getName();
                 }
 
-                InventoriesLogger.logStandard("Failed to import '" + playerName + "', couldn't create EntityPlayer.");
+                Logger.logStandard("Failed to import '" + playerName + "', couldn't create EntityPlayer.");
                 failed++;
 
                 continue;
@@ -72,7 +73,7 @@ public class VanillaImporter
             imported++;
         }
 
-        InventoriesLogger.logStandard("Imported " + Integer.toString(imported) + "/" + Integer.toString(offlinePlayers.length) + " (" + Integer.toString(failed) + " failures).");
+        Logger.logStandard("Imported " + Integer.toString(imported) + "/" + Integer.toString(offlinePlayers.length) + " (" + Integer.toString(failed) + " failures).");
 
         return (failed < offlinePlayers.length);
     }

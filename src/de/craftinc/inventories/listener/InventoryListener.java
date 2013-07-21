@@ -3,7 +3,7 @@ package de.craftinc.inventories.listener;
 import java.util.HashMap;
 
 import de.craftinc.inventories.Group;
-import de.craftinc.inventories.InventoriesLogger;
+import de.craftinc.inventories.utils.Logger;
 import de.craftinc.inventories.InventoryStoredType;
 import de.craftinc.inventories.WorldInventories;
 
@@ -18,17 +18,11 @@ import org.bukkit.inventory.ItemStack;
 
 public class InventoryListener implements Listener
 {
-    private final WorldInventories plugin;
-
-    public InventoryListener(final WorldInventories plugin)
-    {
-       this.plugin = plugin;
-    }
-
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInventoryOpen(InventoryOpenEvent event)
     {
         Inventory inventory = event.getInventory();
+        WorldInventories plugin = WorldInventories.getSharedInstance();
 
         if (inventory.getType() != InventoryType.ENDER_CHEST) {
             return;
@@ -38,13 +32,13 @@ public class InventoryListener implements Listener
         String world = event.getPlayer().getWorld().getName();
 
         if (plugin.isPlayerOnExemptList(playerName)) {
-            InventoriesLogger.logDebug("Ignoring exempt player Ender Chest open: " + playerName);
+            Logger.logDebug("Ignoring exempt player Ender Chest open: " + playerName);
             return;
         }
 
         Group worldGroup = plugin.findGroup(world);
 
-        InventoriesLogger.logDebug("Ender Chest opened by " + playerName + " in world " + world + ", group " + worldGroup);
+        Logger.logDebug("Ender Chest opened by " + playerName + " in world " + world + ", group " + worldGroup);
 
         HashMap<Integer, ItemStack[]> playerInventoryMap = plugin.loadPlayerInventory(playerName,
                                                                                       worldGroup,
@@ -56,6 +50,7 @@ public class InventoryListener implements Listener
     public void onInventoryClosed(InventoryCloseEvent event)
     {
         Inventory inventory = event.getInventory();
+        WorldInventories plugin = WorldInventories.getSharedInstance();
         
         if (inventory.getType() != InventoryType.ENDER_CHEST) {
             return;
@@ -65,13 +60,13 @@ public class InventoryListener implements Listener
         String worldName = event.getPlayer().getWorld().getName();
 
         if (plugin.isPlayerOnExemptList(playerName)) {
-            InventoriesLogger.logDebug("Ignoring exempt player Ender Chest close: " + playerName);
+            Logger.logDebug("Ignoring exempt player Ender Chest close: " + playerName);
             return;
         }
 
         Group worldGroup = plugin.findGroup(worldName);
 
-        InventoriesLogger.logDebug("Ender Chest closed by " + playerName + " in world " + worldName + ", group " + worldGroup);
+        Logger.logDebug("Ender Chest closed by " + playerName + " in world " + worldName + ", group " + worldGroup);
 
         HashMap<Integer, ItemStack[]> toSave = new HashMap<Integer, ItemStack[]>();
         toSave.put(InventoryStoredType.ARMOUR, null);

@@ -7,9 +7,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import de.craftinc.inventories.utils.ConfigurationKeys;
+import de.craftinc.inventories.utils.Language;
+import de.craftinc.inventories.utils.Logger;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -34,7 +36,6 @@ public class WorldInventories extends JavaPlugin
     public static final String inventoryFileVersion = "v5";
 
     protected Language locale;
-    protected CommandHandler commandHandler;
 
 
     public WorldInventories()
@@ -78,7 +79,7 @@ public class WorldInventories extends JavaPlugin
     public void addPlayerToExemptList(String playerName)
     {
         this.exempts.add(playerName.toLowerCase());
-        this.getConfig().set("exempt", this.exempts);
+        this.getConfig().set(ConfigurationKeys.exemptPlayersGroupKey, this.exempts);
         this.saveConfig();
     }
 
@@ -92,7 +93,7 @@ public class WorldInventories extends JavaPlugin
     public void removePlayerFromExemptList(String playerName)
     {
         this.exempts.remove(playerName.toLowerCase());
-        this.getConfig().set("exempt", this.exempts);
+        this.getConfig().set(ConfigurationKeys.exemptPlayersGroupKey, this.exempts);
         this.saveConfig();
     }
 
@@ -131,7 +132,7 @@ public class WorldInventories extends JavaPlugin
     public void savePlayers(boolean outputtoconsole)
     {
         if(outputtoconsole) {
-            InventoriesLogger.logStandard("Saving player information...");
+            Logger.logStandard("Saving player information...");
         }
 
         for (Player player : this.getServer().getOnlinePlayers()) {
@@ -147,14 +148,14 @@ public class WorldInventories extends JavaPlugin
                 
                 savePlayerInventory(player.getName(), this.findGroup(world), InventoryLoadType.INVENTORY, tosave);
                 
-                if (getConfig().getBoolean("dostats")) {
+                if (getConfig().getBoolean(ConfigurationKeys.doStatisticsKey)) {
                     savePlayerStats(player, this.findGroup(world));
                 }
             }
         }
 
         if (outputtoconsole) {
-            InventoriesLogger.logStandard("Done.");
+            Logger.logStandard("Done.");
         }
     }
 
@@ -206,10 +207,10 @@ public class WorldInventories extends JavaPlugin
         }        
         catch (Exception e)
         {
-            InventoriesLogger.logError("Failed to save " + sType + " for player: " + player + ": " + e.getMessage());
+            Logger.logError("Failed to save " + sType + " for player: " + player + ": " + e.getMessage());
         }
 
-        InventoriesLogger.logDebug("Saved " + sType + " for player: " + player + " " + path);
+        Logger.logDebug("Saved " + sType + " for player: " + player + " " + path);
     }
     
     public HashMap<Integer, ItemStack[]> loadPlayerInventory(String player, Group group, InventoryLoadType type)
@@ -244,7 +245,7 @@ public class WorldInventories extends JavaPlugin
             pc = YamlConfiguration.loadConfiguration(new File(path));        
         }
         catch (Exception e) {
-            InventoriesLogger.logError("Failed to load " + sType + " for player: " + player + ": " + e.getMessage());
+            Logger.logError("Failed to load " + sType + " for player: " + player + ": " + e.getMessage());
         }    
 
         List armour = null;
@@ -262,7 +263,7 @@ public class WorldInventories extends JavaPlugin
 
             
             if (armour == null) {
-                InventoriesLogger.logDebug("Player " + player + " will get new armour on next save (clearing now).");
+                Logger.logDebug("Player " + player + " will get new armour on next save (clearing now).");
 
                 for (int i = 0; i < 4; i++) {
                     iArmour[i] = new ItemStack(Material.AIR);
@@ -278,7 +279,7 @@ public class WorldInventories extends JavaPlugin
             iInventory = new ItemStack[36];
 
             if (inventory == null) {
-                InventoriesLogger.logDebug("Player " + player + " will get new items on next save (clearing now).");
+                Logger.logDebug("Player " + player + " will get new items on next save (clearing now).");
 
                 for (int i = 0; i < 36; i++) {
                     iInventory[i] = new ItemStack(Material.AIR);
@@ -317,7 +318,7 @@ public class WorldInventories extends JavaPlugin
         ret.put(InventoryStoredType.ARMOUR, iArmour);
         ret.put(InventoryStoredType.INVENTORY, iInventory);
 
-        InventoriesLogger.logDebug("Loaded " + sType + " for player: " + player + " " + path);
+        Logger.logDebug("Loaded " + sType + " for player: " + player + " " + path);
 
         return ret;
     }
@@ -343,7 +344,7 @@ public class WorldInventories extends JavaPlugin
             pc = YamlConfiguration.loadConfiguration(new File(path));        
         }
         catch (Exception e) {
-            InventoriesLogger.logError("Failed to load stats for player: " + player + ": " + e.getMessage());
+            Logger.logError("Failed to load stats for player: " + player + ": " + e.getMessage());
             return null;
         }
         
@@ -366,7 +367,7 @@ public class WorldInventories extends JavaPlugin
         PlayerStats playerstats = new PlayerStats(20, 20, 0, 0, 0, 0F, null);
         
         if(health == -1) {
-            InventoriesLogger.logDebug("Player " + player + " will get a new stats file on next save (clearing now).");
+            Logger.logDebug("Player " + player + " will get a new stats file on next save (clearing now).");
         }
         else {
             playerstats = new PlayerStats(health, foodLevel, (float)exhaustion, (float)saturation, level, (float)exp, potionEffects);
@@ -374,7 +375,7 @@ public class WorldInventories extends JavaPlugin
         
         this.setPlayerStats(this.getServer().getPlayer(player), playerstats);
 
-        InventoriesLogger.logDebug("Loaded stats for player: " + player + " " + path);
+        Logger.logDebug("Loaded stats for player: " + player + " " + path);
 
         return playerstats;
     }
@@ -417,10 +418,10 @@ public class WorldInventories extends JavaPlugin
             pc.save(file);
         }    
         catch (Exception e) {
-            InventoriesLogger.logError("Failed to save stats for player: " + player + ": " + e.getMessage());
+            Logger.logError("Failed to save stats for player: " + player + ": " + e.getMessage());
         }
 
-        InventoriesLogger.logDebug("Saved stats for player: " + player + " " + path);
+        Logger.logDebug("Saved stats for player: " + player + " " + path);
     }
 
 
@@ -457,67 +458,67 @@ public class WorldInventories extends JavaPlugin
     {
         groups = new ArrayList<Group>();
 
-        String defaultmode = getConfig().getString("gamemodes.default", "SURVIVAL");
+        String defaultMode = getConfig().getString(ConfigurationKeys.defaultGameModeKey, "SURVIVAL");
         
         Set<String> nodes;
 
         try {
-            nodes = getConfig().getConfigurationSection("groups").getKeys(false);
+            nodes = getConfig().getConfigurationSection(ConfigurationKeys.worldGroupsKey).getKeys(false);
         }
         catch(NullPointerException e) {
             nodes = new HashSet<String>();
-            InventoriesLogger.logError("Warning: No groups found. Everything will be in the 'default' group.");
+            Logger.logError("Warning: No groups found. Everything will be in the 'default' group.");
         }
         
         List<String> empty = Collections.emptyList();
-        Group defaultgroup = new Group("default", empty, GameMode.valueOf(getConfig().getString("gamemodes.default", defaultmode)));
-        groups.add(defaultgroup);
+        Group defaultGroup = new Group("default", empty, GameMode.valueOf(defaultMode));
+        groups.add(defaultGroup);
         
-        for (String sgroup : nodes)
-        {
-            List<String> worldnames = getConfig().getStringList("groups." + sgroup);
-            if (worldnames != null)
-            {
-                Group group = new Group(sgroup, worldnames, GameMode.valueOf(getConfig().getString("gamemodes." + sgroup, defaultmode)));
+        for (String groupName : nodes) {
+            List<String> worldNames = getConfig().getStringList(ConfigurationKeys.worldGroupsKey + "." + groupName);
+
+            if (worldNames != null) {
+                GameMode groupGameMode = GameMode.valueOf(getConfig().getString(ConfigurationKeys.gameModesGroupKey + groupName, defaultMode));
+                Group group = new Group(groupName,
+                                        worldNames,
+                                        groupGameMode);
+
                 groups.add(group);
-                for (String world : worldnames)
-                {
-                    InventoriesLogger.logDebug("Adding " + sgroup + ":" + world + ":" + group.getGameMode().toString());
+
+                for (String world : worldNames) {
+                    Logger.logDebug("Adding " + groupName + ":" + world + ":" + group.getGameMode().toString());
                 }
             }
         }
 
-        try
-        {
-            exempts = getConfig().getStringList("exempt");
+        try {
+            exempts = getConfig().getStringList(ConfigurationKeys.exemptPlayersGroupKey);
         }
-        catch(NullPointerException e)
-        {
+        catch(NullPointerException e) {
             exempts = new ArrayList<String>();
         }
         
-        for (String player : exempts)
-        {
-            InventoriesLogger.logDebug("Adding " + player + " to exemption list");
+        for (String player : exempts) {
+            Logger.logDebug("Adding " + player + " to exemption list");
         }
 
-        InventoriesLogger.logStandard("Loaded " + Integer.toString(exempts.size()) + " player exemptions.");
+        Logger.logStandard("Loaded " + Integer.toString(exempts.size()) + " player exemptions.");
         
         return true;
     }
 
     public boolean loadLanguage()
     {
-        String sLanguage = this.getConfig().getString("language");
+        String sLanguage = this.getConfig().getString(ConfigurationKeys.languageKey);
         locale = new Language(this);
 
         boolean bLanguage = locale.loadLanguages(sLanguage);
 
         if (bLanguage) {
-            InventoriesLogger.logStandard("Loaded language " + sLanguage + " successfully");
+            Logger.logStandard("Loaded language " + sLanguage + " successfully");
         }
         else {
-            InventoriesLogger.logStandard("Problems encountered whilst loading language " + sLanguage + ", used defaults.");
+            Logger.logStandard("Problems encountered whilst loading language " + sLanguage + ", used defaults.");
         }
         
         return bLanguage;
@@ -526,13 +527,11 @@ public class WorldInventories extends JavaPlugin
     @Override
     public void onEnable()
     {
-        InventoriesLogger.logStandard("Initialising...");
-
-        this.commandHandler = new CommandHandler(this);
+        Logger.logStandard("Initialising...");
 
         boolean bInitialised = true;
 
-        InventoriesLogger.logStandard("Loading configuration...");
+        Logger.logStandard("Loading configuration...");
 //        boolean loaded = this.loadConfig(true);
         this.saveDefaultConfig();
 
@@ -545,32 +544,31 @@ public class WorldInventories extends JavaPlugin
         boolean bConfiguration = this.loadConfiguration();
 
         if (!bConfiguration) {
-            InventoriesLogger.logError("Failed to load configuration.");
+            Logger.logError("Failed to load configuration.");
             bInitialised = false;
         }
         else {
-            InventoriesLogger.logStandard("Loaded configuration successfully");
+            Logger.logStandard("Loaded configuration successfully");
         }
         
         if (bInitialised) {
             this.loadLanguage();
             
-            if (getConfig().getBoolean("dovanillaimport")) {
-                boolean bSuccess = VanillaImporter.performImport();
-                
-                this.getConfig().set("dovanillaimport", false);
+            if (getConfig().getBoolean(ConfigurationKeys.doVanillaImportKey)) {
+                boolean importSuccess = VanillaImporter.performImport();
+
+                this.getConfig().set(ConfigurationKeys.doVanillaImportKey, false);
                 this.saveConfig();
                 
-                if (bSuccess) {
-                    InventoriesLogger.logStandard("Vanilla saves importers was a success!");
+                if (importSuccess) {
+                    Logger.logStandard("Vanilla saves importers was a success!");
                 }                
             }
 
             // setup listeners
-            getServer().getPluginManager().registerEvents(new EntityListener(this), this);
-            getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
-            getServer().getPluginManager().registerEvents(new InventoryListener(this), this);
-
+            getServer().getPluginManager().registerEvents(new EntityListener(), this);
+            getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+            getServer().getPluginManager().registerEvents(new InventoryListener(), this);
 
             // setup metrics
             try {
@@ -578,19 +576,21 @@ public class WorldInventories extends JavaPlugin
                 metrics.start();
             }
             catch (IOException e) {
-                InventoriesLogger.logDebug("Failed to submit Metrics statistics.");
+                Logger.logDebug("Failed to submit Metrics statistics.");
             }            
-            
+
             // start timed saving
-            if (getConfig().getInt("saveinterval") >= 30) {
-                int interval = getConfig().getInt("saveinterval") * 1000;
-                saveTimer.scheduleAtFixedRate(new SaveTask(this), interval, interval);
+            int interval = getConfig().getInt(ConfigurationKeys.saveTimerIntervalKey);
+
+            if (interval >= 30) {
+                interval *= 1000;
+                saveTimer.scheduleAtFixedRate(new SaveTask(), interval, interval);
             }
 
-            InventoriesLogger.logStandard("Initialised successfully!");
+            Logger.logStandard("Initialised successfully!");
         }
         else {
-            InventoriesLogger.logError("Failed to initialise.");
+            Logger.logError("Failed to initialise.");
         }
     }
 
@@ -598,12 +598,12 @@ public class WorldInventories extends JavaPlugin
     public void onDisable()
     {
         savePlayers(true);
-        InventoriesLogger.logStandard("Plugin disabled");
+        Logger.logStandard("Plugin disabled");
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
     {
-        return this.commandHandler.onCommand(sender, cmd, args);
+        return CommandHandler.onCommand(sender, cmd, args);
     }
 }

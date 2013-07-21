@@ -1,9 +1,11 @@
-package de.craftinc.inventories;
+package de.craftinc.inventories.utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 
+import de.craftinc.inventories.WorldInventories;
+import de.craftinc.inventories.utils.Logger;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -46,7 +48,7 @@ public class Language
             plugin.saveResource("lang.yml", true);
         }
         catch(Exception e) {
-            InventoriesLogger.logError("Failed to load languages, using defaults: " + e.getMessage());
+            Logger.logError("Failed to load languages, using defaults: " + e.getMessage());
         }
 
         messages.put(diedMessageKey, diedMessageDefault);
@@ -68,12 +70,12 @@ public class Language
                     messages.put(key, language.getString(key));
                 }
                 catch(Exception e) {
-                    InventoriesLogger.logError("Failed to load language key, using default: " + key);
+                    Logger.logError("Failed to load language key, using default: " + key);
                 }
             }
         }
         catch(Exception e) {
-            InventoriesLogger.logError("Failed to load language '" + locale + "', using defaults: " + e.getMessage());
+            Logger.logError("Failed to load language '" + locale + "', using defaults: " + e.getMessage());
             return false;
         }
         

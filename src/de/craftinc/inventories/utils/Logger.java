@@ -1,14 +1,14 @@
-package de.craftinc.inventories;
+package de.craftinc.inventories.utils;
 
+import de.craftinc.inventories.WorldInventories;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class InventoriesLogger
+public class Logger
 {
-    protected static final Logger logger = Logger.getLogger("Minecraft");
+    protected static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Minecraft");
 
 
     public static void logStandard(String line)
@@ -23,7 +23,7 @@ public class InventoriesLogger
 
     public static void logDebug(String line)
     {
-        logger.log(Level.FINE, "[WorldInventories] {0}", line);
+        logger.log(Level.FINEST, "[WorldInventories] {0}", line);
     }
 
     /**
@@ -32,10 +32,9 @@ public class InventoriesLogger
     public static void sendMessage(String key, Player player, String message)
     {
         FileConfiguration config = WorldInventories.getSharedInstance().getConfig();
+        String fullKey = ConfigurationKeys.hideMessagesGroupKey + key;
 
-        if (!config.getBoolean("message-hidden." + key, false) &&
-             config.getBoolean("donotifications" + key, true)) {
-
+        if (!config.getBoolean(fullKey, false)) {
             player.sendMessage(message);
         }
     }

@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 import de.craftinc.inventories.*;
 
+import de.craftinc.inventories.utils.ConfigurationKeys;
+import de.craftinc.inventories.utils.Logger;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,13 +14,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class EntityListener implements Listener
 {
-    private final WorldInventories plugin;
-    
-    public EntityListener(final WorldInventories plugin)
-    {
-       this.plugin = plugin;
-    }
-    
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event)
     {
@@ -31,15 +26,16 @@ public class EntityListener implements Listener
         String worldName = player.getWorld().getName();
         String playerName = player.getName();
 
+        WorldInventories plugin = WorldInventories.getSharedInstance();
 
         if (plugin.isPlayerOnExemptList(playerName)) {
-            InventoriesLogger.logDebug("Ignoring exempt player death: " + playerName);
+            Logger.logDebug("Ignoring exempt player death: " + playerName);
             return;
         }
 
         Group toGroup = plugin.findGroup(worldName);
 
-        InventoriesLogger.logDebug("Player " + playerName + " died in world " + worldName + ", emptying inventory for group: " + toGroup.getName());
+        Logger.logDebug("Player " + playerName + " died in world " + worldName + ", emptying inventory for group: " + toGroup.getName());
 
         // Make the saved inventory blank so players can't duplicate by switching worlds and picking items back up
         HashMap<Integer, ItemStack[]> toSave = new HashMap<Integer, ItemStack[]>();
@@ -48,7 +44,7 @@ public class EntityListener implements Listener
 
         plugin.savePlayerInventory(playerName, toGroup, InventoryLoadType.INVENTORY, toSave);
 
-        if (plugin.getConfig().getBoolean("dostats")) {
+        if (plugin.getConfig().getBoolean(ConfigurationKeys.doStatisticsKey)) {
             plugin.savePlayerStats(playerName, toGroup, new PlayerStats(20, 20, 0, 0, 0, 0F, null));
         }
     }
