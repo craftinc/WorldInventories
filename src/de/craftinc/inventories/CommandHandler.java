@@ -8,9 +8,11 @@ import org.bukkit.command.CommandSender;
 
 public class CommandHandler
 {
-    private static final String reloadCommand = "wireload";
-    private static final String exemptCommand = "wiexempt";
+    protected static final String reloadCommand = "wireload";
+    protected static final String exemptCommand = "wiexempt";
 
+    protected static final String reloadPermission = "worldinventories.reload";
+    protected static final String exemptPermission = "worldinventories.exempt";
 
     public static boolean onCommand(CommandSender sender, Command cmd, String[] args)
     {
@@ -31,7 +33,7 @@ public class CommandHandler
     {
         Plugin plugin = Plugin.getSharedInstance();
 
-        if (sender.hasPermission("worldinventories.reload")) {
+        if (sender.hasPermission(reloadPermission)) {
 
             if (args.length != 1) {
                 sender.sendMessage(ChatColor.RED + "Wrong number of arguments given. Usage is /wireload <all/language>");
@@ -70,7 +72,7 @@ public class CommandHandler
     {
         Plugin plugin = Plugin.getSharedInstance();
 
-        if (sender.hasPermission("worldinventories.exempt")) {
+        if (sender.hasPermission(exemptPermission)) {
 
             if (args.length != 2) {
                 sender.sendMessage(ChatColor.RED + "Wrong number of arguments given. Usage is /wiexempt <add/remove> <player>");
@@ -85,10 +87,9 @@ public class CommandHandler
                 else {
                     plugin.addPlayerToExemptList(args[1]);
                     sender.sendMessage(ChatColor.GREEN + "Added " + args[1] + " to the exemption list successfully.");
-
                 }
             }
-            else if(args[0].equalsIgnoreCase("remove")) {
+            else if (args[0].equalsIgnoreCase("remove")) {
 
                 if (!plugin.isPlayerOnExemptList(args[1])) {
                     sender.sendMessage(ChatColor.RED + "That player isn't in the exemption list.");

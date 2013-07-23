@@ -43,10 +43,11 @@ public class InventoryListener implements Listener
         Logger.logDebug("Ender Chest opened by " + playerName + " in world " + world + ", group " + worldGroup);
 
         HashMap<Integer, ItemStack[]> playerInventoryMap = InventoryPersistenceManager.loadPlayerInventory(playerName,
-                worldGroup,
-                InventoryLoadType.ENDERCHEST);
+                                                                                                           worldGroup,
+                                                                                                           InventoryLoadType.ENDERCHEST);
         inventory.setContents(playerInventoryMap.get(InventoryStoredType.INVENTORY));
     }
+
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInventoryClosed(InventoryCloseEvent event)
