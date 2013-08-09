@@ -6,7 +6,9 @@ import de.craftinc.inventories.*;
 
 import de.craftinc.inventories.persistence.*;
 import de.craftinc.inventories.utils.ConfigurationKeys;
+import de.craftinc.inventories.utils.Language;
 import de.craftinc.inventories.utils.Logger;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -48,5 +50,9 @@ public class EntityListener implements Listener
         if (plugin.getConfig().getBoolean(ConfigurationKeys.doStatisticsKey)) {
             StatsPersistenceManager.savePlayerStats(playerName, toGroup, new PlayerStats(20, 20, 0, 0, 0, 0F, null));
         }
+
+        Logger.sendMessage(ConfigurationKeys.hideDiedMessageKey,
+                           player,
+                           ChatColor.GREEN + plugin.getLocale().get(Language.diedMessageKey) + toGroup.getName());
     }
 }

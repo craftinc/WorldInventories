@@ -93,12 +93,12 @@ public class PlayerListener implements Listener
                 player.setGameMode(toGroup.getGameMode());
             }
 
-            Logger.sendMessage(Language.changedMessageKey,
+            Logger.sendMessage(ConfigurationKeys.hideChangedInventoryKey,
                                player,
                                ChatColor.GREEN + plugin.getLocale().get(Language.changedMessageKey) + toGroup.getName());
         }
         else {
-            Logger.sendMessage(Language.noChangeMessageKey,
+            Logger.sendMessage(ConfigurationKeys.hideNotChangedInventoryKey,
                                player,
                                ChatColor.GREEN + plugin.getLocale().get(Language.noChangeMessageKey) + toGroup.getName());
         }
@@ -175,7 +175,7 @@ public class PlayerListener implements Listener
                 event.getPlayer().setGameMode(toGroup.getGameMode());
             }
 
-            Logger.sendMessage(Language.loadedMessageKey,
+            Logger.sendMessage(ConfigurationKeys.hideLoadedInventoryKey,
                                player,
                                ChatColor.GREEN + plugin.getLocale().get(Language.loadedMessageKey) + toGroup.getName());
         }
