@@ -8,6 +8,7 @@ public class ConfigurationKeys
     public static final String saveTimerIntervalKey = "saveinterval";
     public static final String loadInventoriesOnLoginKey = "loadinvonlogin";
     public static final String doVanillaImportKey = "dovanillaimport";
+    public static final String vanillaImportGroup = "vanillatogroup";
     public static final String languageKey = "language";
 
     public static final String gameModesGroupKey = "gamemodes."; // keep the '.' at the end!

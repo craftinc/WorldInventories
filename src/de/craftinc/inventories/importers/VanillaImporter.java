@@ -5,6 +5,7 @@ import de.craftinc.inventories.persistence.InventoryLoadType;
 import de.craftinc.inventories.persistence.InventoryPersistenceManager;
 import de.craftinc.inventories.persistence.InventoryStoredType;
 import de.craftinc.inventories.persistence.StatsPersistenceManager;
+import de.craftinc.inventories.utils.ConfigurationKeys;
 import de.craftinc.inventories.utils.Logger;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -25,7 +26,7 @@ public class VanillaImporter
 
         Logger.logStandard("Starting vanilla players importers...");
 
-        Group group = plugin.findGroup(config.getString("vanillatogroup"));
+        Group group = plugin.findGroup(config.getString(ConfigurationKeys.vanillaImportGroup));
 
         if (group == null) {
             Logger.logStandard("Warning: importing from vanilla in to the default group (does the group specified exist?)");

@@ -50,6 +50,7 @@ outputtimertoconsole: true
 saveinterval: 0
 loadinvonlogin: true
 dovanillaimport: false
+vanillatogroup: default
 language: en_GB
 
 message-hidden:
