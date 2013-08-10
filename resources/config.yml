@@ -28,33 +28,42 @@
 #   survival_nether to creative_nether
 
 
-# Set "dostats" to true to make hearts, food level, experience and such track with inventory
-# If a save interval is specified, set "outputtimertoconsole" to false to stop it from outputting to the console
-# Set "saveinterval" to anything above 30 to make inventories/stats save automatically every x seconds
-# Set "loadinvonlogin" to true to make the plugin load the player's inventory on login no matter where they spawn
+# Set "store-player-stats" to true to make hearts, food level, experience and such track with inventory
+# If a save interval is specified, set "log-saving-to-disk" to false to stop it from outputting to the console
+# Set "save-interval" to anything above 30 to make inventories/stats save automatically every x seconds
+# Set "load-inventory-on-login" to true to make the plugin load the player's inventory on login no matter where they spawn
 # When this plugin loads it will automatically try to convert pre build 78 files and add "auto78updated: true" to this file if successful
 # When this plugin loads it will automatically try to convert pre version 1.4.1 files and add "auto141updated: true" to this file if successful
-# Set "dovanillaimport" to true to attempt an import of the items and stats stored in players player.dat file
-# Set "vanillatogroup" to the group you want to import to. If blank it will use the default group.
-# Set "dogamemodeswitch" to true and add groups to gamemodes as per the example to enforce gamemodes
+# Set "perform-vanilla-import" to true to attempt an import of the items and stats stored in players player.dat file
+# Set "vanilla-import-group" to the group you want to import to. If blank it will use the default group.
+# Set "perform-game-mode-switches" to true and add groups to game modes as per the example to enforce game modes
 #  SURVIVAL, CREATIVE or HARDCORE at the time of writing (follows Bukkit's names)
 
-# gamemodes:
+# game-modes:
 #   default: SURVIVAL
 #   creativegroup: CREATIVE
 #   survivalgroup: SURVIVAL
 
-dogamemodeswitch: false
-dostats: true
-outputtimertoconsole: true
-saveinterval: 0
-loadinvonlogin: true
-dovanillaimport: false
-vanillatogroup: default
+perform-game-mode-switches: false
+
+# persistence
+store-player-stats: true
+log-saving-to-disk: true
+save-interval: 0
+load-inventory-on-login: true
+
+# importing
+perform-world-inventories-import: false
+
+perform-vanilla-import: false
+vanilla-import-group: default
+
+
+# language and messages
 language: en_GB
 
 message-hidden:
   died-message: true
   changed-message: true
-  nochange-message: true
+  no-change-message: true
   loaded-message: true
